@@ -2,20 +2,34 @@
 
 ## Introduction
 
-STAM is a simple data model for text annotation and comes with a library and a
-set of tools to work with the data model.
+STAM is a simple data model for text annotation.
+
+Our aim with STAM is to lay a simple, minimalistic but strong foundation for stand-off annotations on text. We define
+annotations as any kind of remark, classification/tagging on any particular portion(s) of the text. Examples may be
+linguistic annotations, editorial annotations, technical annotations, or whatever comes to mind. STAM does not define
+the vocabularies, it merely defines a model so *you* can define your own vocabularies and a model in which you can
+express your annotations using your own vocabularies.
+
+Simplicity is the keyword, the data model must be easy to understand and use. It does not depend on other more complex
+data models such as RDF, Web Annotations, TEI, FoLiA or whatever, but instead addresses the problem from a more
+functional and pragmatic perspective. STAM does offer a degree of formalisation and allows for validation to ensure
+that the annotations are correct. Conversion to from STEM more formal and more complex Linked Open Data formats should always
+be feasible, the reverse, however, would be subject to some strict contraints.
 
 Goals:
 
- * Simple and minimal, no unnecessary abstractions/complexity.
+ * Simple and minimal; no unnecessary abstractions/complexity.
  * Stand-off annotations on plain text
- * Full separation of annotation syntax from annotation semantics (vocabularies)
- * Provides a foundation upon which more complex solutions can be created (using the vocabularies).
- * Correctness, allow validation of data against schemas/vocabularies
- * JSON/YAML/XML serialisations
- * No hard-coded vocabularies
- * Exportable to Web Annotations
- * Performant tooling, no unnecessary overhead
+ * No commitment to any annotation paradigm aside from stand-off annotation
+ * Usable with user-defined vocabularies
+ * Full separation between underlying and data model and vocabularies
+ * Validation of correctness
+ * Interoperability but no dependency:
+    * Self-sustained, does not rely on other data models that introduce
+      additional complexity.
+    * Not dependent on any particular infrastructure
+    * Exportable to webannotations / RDF
+
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
 NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
@@ -58,7 +72,7 @@ Attributes:
 * ``id`` - Unique Id for the annotation (optional)
 * ``begin`` - Selector begin character position in the text (optional, absence denotes metadata/higher-order annotation)
 * ``end`` - Selector end character position in the text (optional, absende denotes metadata/higher-order annotation)
-* ``group_id`` - Id for the annotation that may be shared between multiple annotations, all of which are required for full interpretation.
+* ``group_id`` - Id for the annotation that may be shared between multiple annotations, all of which are required for full interpretation. A group ID *MUST NOT* clash with any existing annotation id, i.e. they share the same namespace.
 * ``text`` - Text value of the pointed text (optional, for validation purposes)
 * ``vocab`` -  URL to the vocabulary used in the body (or in-line definition)
 * ``body`` - The body of the annotation, a scalar value or a key/value map (optional)
@@ -92,7 +106,8 @@ Providing a vocabulary is *RECOMMENDED* for validation purposes.  If no
 vocabulary is provided, the key/value map of body *MAY* contain anything and is
 completely unchecked.
 
-The ``vocab`` attribute, if provided, *MUST* point to a URL describing a **vocabulary set**.
+The ``vocab`` attribute, if provided, *MUST* point to a URL describing a **vocabulary set**. It *MAY* be a list of
+multiple vocabulary sets, all of which will apply equally and *MUST NOT* have any conflicting terms.
 
 It is possible that an annotation can not be interpreted by itself but relies on other annotations
 for a full interpretation. Such annotations *SHOULD* be represented by setting the ``group_id`` to an identifier that
@@ -125,6 +140,8 @@ Attributes:
     * ``type`` - The datatype of this key (all types start with ``@``)
         * An array of specific values, this defines the closed vocabulary
         * A map, indicating that this is a nested type
+        * ``@id`` - A reference to another annotation
+        * ``@ids`` - A list of references to another annotation
         * ``@str`` - A string
         * ``@strs`` - A string list
         * ``@int`` - An integer

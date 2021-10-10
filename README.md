@@ -2,36 +2,37 @@
 
 ## Introduction
 
-STAM is a simple data model for text annotation.
+STAM is a simple data model for stand-off text annotation.
 
 Our aim with STAM is to lay a simple but strong foundation for **stand-off annotations on text**. We define an *annotation*
-as any kind of remark, classification/tagging on any particular portion(s) of the text, although we we do also allow
+as any kind of remark, classification/tagging on any particular portion(s) of the text, although we do also allow
 annotations to not point to any particular part of the text, in which case they are considered *metadata*.  Examples of
-annotation may be linguistic annotation, editorial annotation, technical annotation, or whatever comes to mind. STAM
-does not define the vocabularies, it merely defines a model so *you* can define your own vocabularies and a model in
+annotation may be linguistic annotation, editorial annotation, technical annotation, or whatever comes to mind. OUr
+model does not define the vocabularies, it merely defines a model so *you* can define your own vocabularies and a model in
 which you can express your annotations using your own vocabularies.
 
 *Simplicity* is the keyword, the data model must be easy to understand and use and only contain what is needed, not
 more. STAM does not depend on other more complex data models such as RDF, Web Annotations, TEI, FoLiA or whatever, but
 instead addresses the problem from a more functional and pragmatic perspective. We separate pragmatics from semantics.
-STAM does offer a significant degree of formalisation and allows for validation to ensure that the annotations are
-correct and references to the text are valid.  This level of formalism makes conversion from STEM to more more formal
-Linked Open Data formats feasible, the reverse, however, would be subject to some strict contraints.
+The data model is also designed in such as way that an efficient implementation (both speed & memory) is feasible.
 
-STAM operates on any of three levels of increased abstraction/complexity/formality (the concepts are correlated so I
-group them together). The level you use STAM at depends on the needs of the user/tool developer/data provider:
-
-1. **Untyped Annotation** - Annotations are ad-hoc constructs with no formal semantics.
-2. **Typed Annotation** - Annotations are validated against a normative user-defined vocabularies.
-3. **Constrained Annotation** - Like above, but additionally imposes user-defined constraints on how annotations and
-   annotation types relate to other annotations/annotation types.
+We do focus on a high degree of interoperability with richer models, most notably the W3C Web Annotation Model. Most of
+what we can express in STAM can also be expressed as a web annotation, but there are some constraints here.
 
 Goals/Features:
 
  * Stand-off annotation on plain text
- * Simple and minimal; no unnecessary abstractions/complexity/formality, approachable at multiple levels.
+ * Simple and minimal; no unnecessary abstractions/complexity/formality
  * No commitment to any annotation paradigm aside from stand-off annotation, the model basically allows for any kind of directed or
    undirected graph.
+ * Interoperability without dependency:
+    * Self-sustained; STAM does not rely on other data models (e.g. RDF) that introduce additional complexity.
+    * Exportable to webannotations (subject to some constraints)
+    * Import from webannotations (within various constraints)
+ * Separation from semantics: the data model does not commit to any vocabulary or annotation paradigm.
+
+Later goals (for an extension):
+
  * Semantics: the data model allows expressing semantics and checking compliance against a specific
    user-defined formalism.
    STAM does not define the semantics, instead:
@@ -39,10 +40,6 @@ Goals/Features:
      * Usable with user-defined annotation paradigms
  * Validation: The ability to validate annotations of the data and basic correctness is one of the core goals of the
      model: Users (and systems) make mistakes, correctness of the data has to be ensured.
- * Interoperability but no dependency:
-    * Self-sustained, STAM does not rely on other data models (e.g. RDF) that introduce
-      additional complexity.
-    * Exportable to webannotations / RDF, when used with the higher levels of formality.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
 NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
@@ -55,32 +52,110 @@ In this section, we will describe the STAM data model, note that the data model 
 serialisation format. Usually, the default serialisation will be JSON, in which case class in the data model
 can be instantiated as a JSON object.
 
-### Annotation Set
+The below UML-like diagram expresses the data model.
 
-Attributes:
+![UML diagram](model.png)
 
-* ``target`` - The URL of the resource that is annotated, treated as plain text
-* ``checksum`` - sha256 checksum of the target file
-* ``modeltype`` - A URL to a **Constraint Set** (more on this later on)
-* ``annotations`` -  List of **Annotation** objects.
+Some notes to interpret the diagram:
+*  A circled C stands for a Class (items listed are properties that must all be satisfied).
+*  A circled E stands for an Enumeration (items listed are options in the enumeration)
+   *  Enumerations may be parametrised (technically a union of an enumeration and a struct/class).
+*  The ampersand (``&``) represent a reference/pointer. The details of the implementation are not prescribed though.
+*  ``Option<>`` represents optional properties. ``Map<>`` represents a key/value map/dictionary.
+*  ``[]`` represents a list/vector/array.
 
-An Annotation Set is a set of annotations on a particular target text. Aside
-from the fact that the annotations in a set are on the same target, there is no
-intrinsic meaning in them being grouped together. Each annotation set *MUST*
-have exactly one target. The target *MUST* refer to either a full URL or a path
-on the local filesystem.  Libraries and tools *MUST* be able to download the
-data pointed to by URLs; a dead link renders the annotation set invalid. The
-target is interpreted as plain text and *MUST* use the unicode code set.
-UTF-8 encoding is *RECOMMENDED* and NFC normalisation is *REQUIRED*.
-All text position offsets in STAM *MUST* refer to
-NFC-normalised unicode points (i.e. characters, not bytes).
+### Identifiers
 
-The target *MAY* still contain markup such as XML, MarkDown, but this is opaque
-to the annotation model and not interpreted in any way.
+Many of the items carry two identifiers. The first is a *private identifier*, an internal numeric identifier which serves for particular
+implementations but should not be used outside of the context of a particular implementation. It serves as the primary
+identifier and is *REQUIRED*, but it is transparent and automatically derivable by the implementation.  In the diagram above, we
+use an leading underscore for this type of ID.
 
-A checksum *SHOULD* be provided over the full target text, this is used to ensure the annotations describe the right text.
+The second identifier is an actual
+*public identifier* intended to be persistent and usable for data exchange, this is an arbitrary string and is *OPTIONAL*.
 
-### Annotation
+Both identifiers, by definition, *MUST* be unique.
+
+The following overriding constraints apply only for compatibility with Web Annotations:
+
+*  The public identifier *MUST* be an [IRI](https://datatracker.ietf.org/doc/html/rfc3987)
+*  There *MUST* be a public identifier for each **Annotation**
+
+### Class: Annotation Set
+
+An Annotation Set is a collection of annotations. There is no intrinsic meaning in them being grouped together. The set
+*MUST* be ordered, but this too is without intrinsic meaning.
+
+### Class: Annotation
+
+This represents a particular instance of annotation. The target of the annotation is indicated by the ``selector``
+property, which in turn one of takes three forms:
+
+* A selector on the entire target resource rather than any particular portion of the text. This means
+  the annotation *SHOULD* be interpreted as metadata.
+* A selector on a particular range of the target text, indicated by offsets.
+  The ``begin`` and ``end`` attributes *MUST* describe the character position in NFC-normalised unicode
+  points, relative to the data referenced by the  ``resource_id`` property of the selector. Indexing *MUST* be zero-based and the end offset *MUST* be
+  non-inclusive and therefore larger than the begin offset.
+* A selector pointing to another annotation rather than directly to the text. This effectively enables
+  *higher-order annotation* (annotations on annotations). If an annotation A has a selector pointing to annotation B,
+  then annotation B *MUST* have annotation A included in its ``references`` property.
+
+The ``selector`` of the annotation identifies the target and the part of
+the target that the annotation applies to. There *MAY* be multiple selectors and there *MUST* be at least one.
+
+The actual contents/value/body of the annotation (e.g. the tag or comment) is stored in a separate ``AnnotationData`` instance. This is done so
+multiple annotations with the exact same content require less storage space, and to facilitate search. Any further
+metadata on the annotation is similarly stored in ``AnnotationData`` instances. We make no distinction between data and
+metadata. Let's look into this:
+
+### Class: AnnotationData
+
+This stores the actual content of an annotation. It is decoupled from the actual ``Annotation`` instances so multiple
+instances can point to the same content. The ``instances`` attribute of ``AnnotationData`` links to all annotations that
+instantiate this exact same content.
+
+The actual value of the data is represented by the ``data`` property, which is a ``DataValue`` instance that holds the
+actual value along with its data type.
+
+The ``type`` of the annotation data also can be specified, this pertains to the type of the annotation. These types are
+not predefined by our data model, but are usually made in reference to some external vocabulary.
+
+AnnotationData is used both for
+
+
+For compatibility with Web Annotations, the use of the following type strings with ``Meta`` is *RECOMMENDED*. See the
+[web annotation model](https://www.w3.org/TR/annotation-model/#other-properties) for further details, such as the
+cardinality for each of these metadata items.
+
+* ``creator`` - The data value represents the agent responsible for creating the resource. This may be either a human, an organization or a software agent.
+* ``created`` - The time at which the resource was created.
+* ``generator`` - The agent responsible for generating the serialization of the Annotation.
+* ``generated`` - The time at which the Annotation serialization was generated. The
+* ``modified`` - The time at which the resource was modified, after creation.
+* ``audience`` - The intended audience for the annotation
+* ``accessibility`` - The accessibility of the annotation
+* ``motivation`` - The reason why the annotation was created
+* ``rights`` - The license for the annotation
+
+
+### Enum: DataValue
+
+This ``DataValue`` class encapsulates data valus along with their data types, as well as some collection types.
+It can be set to one of the following:
+
+* ``Id(v: str)`` - A public identifier (when used with Web Annotations, this *MUST* be an IRI)
+* ``String(v: str)``
+* ``Int(v: int)``
+* ``Float(v: float)``
+* ``Datetime(v: datetime)`` - A datetime representation, compatible with ``xsd:datetime``.
+* ``Annotation(annotation: &Annotation)`` - A reference to another annotation
+* The following are recursive-types:
+    * ``Map(v: Map<DataKey,DataValue>)`` - A key, value map; this enables arbitrarily nested key/value pairs. The values are ``DataValue`` instances,
+        the keys are arbitrary strings.
+    * ``List(v: [DataValue])`` - A list of multiple ``DataValue`` instances
+
+
 
 Attributes:
 
@@ -97,12 +172,6 @@ it is given is an arbitrary identifier (a string) which must be unique for the e
 format of identifiers for STAM, but different serialisations/export options *MAY* posit additional constraints, as such
 it is *RECOMMENDED* to stick to basic alphanumeric characters.
 
-The ``begin`` and ``end`` attributes, when provided, *MUST* describe the character position in NFC-normalised unicode
-points, in reference to the ``target`` of the annotation set. Indexing *MUST* be zero-based and the end offset *MUST* be
-non-inclusive and therefore larger than the begin offset.  The ``begin`` and ``end`` attributes *MAY* be omitted when the annotation covers the target file as a
-whole and is less strictly related to any text span. In this case it *SHOULD* be interpreted as metadata, either over
-the text as a whole or over another annotation (higher-order annotation or annotation over annotation). The latter
-interpretation is suggested when the body makes reference to any other annotation.
 
 The ``text`` attribute is *OPTIONAL* but *RECOMMENDED*. When used, its value *MUST* be a
 copy of the exact same text string as the ``begin`` and ``end`` attributes point to. This is

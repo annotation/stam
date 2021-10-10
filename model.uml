@@ -1,0 +1,98 @@
+@startuml
+class TextResource {
+    _resource_id : int
+    uri : str
+    text : str
+    --
+    <i>An instance of an annotation</i>
+}
+
+class AnnotationSet {
+    _set_id: int
+    id: Option<str>
+    annotations: [Annotation]
+    --
+    <i>A collection of annotations</i>
+    <i>(may be quite arbitrary)</i>
+}
+
+class Annotation {
+    _annotation_id : int
+    id: Option<str>
+    selector: [Selector]
+    data: [&AnnotationData]
+    references: [&Annotation]
+    --
+    <i>An instance of an annotation</i>
+}
+
+enum Selector {
+    ResourcePart(resource: &Resource, begin: int, end: int)
+    Resource(resource: &Resource)
+    Annotation(annotation: &Annotation)
+    --
+    <i>Points to the target text,
+    <i>a part of it (unicode codepoint
+    <i>offset), or to a target annotation</i>
+}
+
+class AnnotationData {
+    _data_id : int
+    id: Option<str>
+    type: DataKey
+    value: DataValue
+    instances: [Annotation]
+    --
+    <i>The value of the annotation</i>
+    <i>Used for the body and for</i>
+    <i>metadata</i>
+}
+
+
+class DataKey {
+    namespace: Option< &Namespace>
+    key: str
+    --
+    <i>Represents a key in any
+    key/value map</i>
+}
+
+class Namespace {
+    _namespace_id: int
+    id : str
+    schema : str
+}
+
+enum DataValue {
+    Id(v: str)
+    String(v: str)
+    Int(v: int)
+    Float(v: float)
+    Datetime(v: datetime)
+    Map(v: Map<DataKey,DataValue>)
+    List(v: [DataValue])
+    Annotation(annotation: &Annotation)
+    --
+    <i>Encapsulates a data value</i>
+    <i>along with its type</i>
+}
+
+AnnotationSet "1" *--> "*" Annotation : > annotation
+
+Annotation "1" *--> "+" Selector : > selector
+Annotation "1" o--> "*" AnnotationData : > data
+Annotation "1" --> "*" Annotation : > references
+
+AnnotationData "1" --> "*" Annotation : > instances
+AnnotationData "1" *--> "1" DataValue : > value
+AnnotationData "1" *--> "1" DataKey : > type
+
+Selector "1" --> "1" TextResource : > (resource_id,begin,end)
+Selector "1" --> "1" Annotation : > annotation_id
+
+DataValue "1" --> "1" Annotation : > annotation
+DataValue "1" *--> "1" DataValue : > datavalue (Map)
+DataValue "1" *--> "1" DataKey : > datakey (Map)
+
+DataKey "1" --> "1" Namespace : > namespace
+@enduml

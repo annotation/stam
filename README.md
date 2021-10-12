@@ -2,22 +2,22 @@
 
 ## Introduction
 
-STAM is a data model for stand-off annotation. It is initially intended for text, but it also supports
-other media such as images, video and audio.
+STAM is a data model for **stand-off annotation**. The underlying premise is that any information on a text/audio/video
+is represented as an *annotation*. We define an annotation as any kind of remark, classification/tagging on any
+particular portion(s) of a text/audio/video, or to the resource as a whole, in which case they can be interpreted as *metadata*.
+Examples of annotation may be linguistic annotation, structure/layout annotation, editorial annotation, technical annotation,
+or whatever comes to mind. Our model does not define the vocabularies, it merely defines a model so *you* can define your own vocabularies
+and a model in which you can express your annotations using your own vocabularies.
 
-Our aim with STAM is to lay a simple but strong foundation for **stand-off annotation**. We define an *annotation* as
-any kind of remark, classification/tagging on any particular portion(s) of a text/image/audioclip/videoclip, although we
-do also allow annotations to not point to any particular part but to the resource as a whole, in which case they are
-considered *metadata*.  Examples of annotation may be linguistic annotation, editorial annotation, technical annotation,
-or whatever comes to mind. Our model does not define the vocabularies, it merely defines a model so *you* can define
-your own vocabularies and a model in which you can express your annotations using your own vocabularies.
+The underlying resource is taken its most bare form without further information; e.g. plain text, an audio/video stream
+or an image canvas. After all, any additional information would be considered an annotation in our model. Interpreting
+and supporting particular formats/encodings is up to the implementations and opaque to the data model.
 
-*Simplicity* is the keyword, the data model must be easy to understand and use and only contain what is needed, not
+We aim for a *simple* model; the data model must be easy to understand for a user/developer and use only define what is needed, not
 more. STAM does not depend on other more complex data models such as RDF, Web Annotations, TEI, FoLiA or whatever, but
 instead addresses the problem from a more functional and pragmatic perspective. We separate pragmatics from semantics.
-The data model is designed in such as way that an efficient implementation (both speed & memory) is feasible, and puts a
-bigger emphasis on this than annotation models. Because of this, our model is a slightly more specific variant of a
-generic graph-based model, yet it should be reducable to an acyclic directed graph model without much difficulty.
+The data model is designed in such as way that an efficient implementation (both speed & memory) is feasible. Our model
+can be generalised to an acyclic directed graph model without much difficulty.
 
 We focus on a high degree of interoperability with richer models, most notably the W3C Web Annotation Model.
 But not everything that can be expressed in STAM can be expressed as a web annotation (which is a more specific model),

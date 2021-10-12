@@ -1,5 +1,7 @@
 @startuml
 
+skinparam groupInheritance 2
+
 title "STAM: STand-off Annotation Model"
 
 abstract class Resource {
@@ -44,6 +46,7 @@ class Annotation {
     data: [&AnnotationData]
     target: [Selector]
     source: [Selector]
+    _referenced_by: [&Annotation]
     --
     <i>An instance of an annotation</i>
 }
@@ -98,7 +101,7 @@ class AnnotationData {
     key: DataKey
     vocabulary: Option< &Vocabulary>
     value: DataValue
-    _instances: [&annotation]
+    _referenced_by: [&annotation]
     --
     <i>The value of the annotation</i>
     <i>Used for the body and for</i>
@@ -147,6 +150,7 @@ class Vocabulary {
     open: bool
     datatype: DataType
     options: [(value: DataValue, label: Option<String>)]
+    _referenced_by: [&AnnotationData]
     --
     <i>Defines all possible values from which can be</i>
     <i>chosen and optionally attaches human-readable</i>
@@ -154,14 +158,14 @@ class Vocabulary {
 }
 
 AnnotationSet "1" *--> "*" Annotation : > annotation
-AnnotationSet "1" *--> "*" AnnotationData : > _data
+AnnotationSet "1" *-[#gray]-> "*" AnnotationData : > _data
 
 Annotation "1" *--> "+" Selector : > target
 Annotation "1" *--> "*" Selector : > source
 Annotation "1" o--> "*" AnnotationData : > data
-Annotation "1" --> "*" Annotation : > references
+Annotation "1" -[#gray]-> "*" Annotation : > _referenced_by
 
-AnnotationData "1" --> "+" Annotation : > _instances
+AnnotationData "1" -[#gray]-> "+" Annotation : > _referenced_by
 AnnotationData "1" *--> "1" DataValue : > value
 AnnotationData "1" *--> "1" DataKey : > key
 AnnotationData "1" --> "1" Vocabulary : > vocabulary
@@ -175,4 +179,5 @@ DataValue "1" *--> "1" DataKey : > datakey (Map)
 DataKey "1" --> "1" Vocabulary : > namespace
 
 Vocabulary "1" --> "1" DataType : > datatype
+Vocabulary "1" -[#gray]-> "+" AnnotationData : > _referenced_by
 @enduml

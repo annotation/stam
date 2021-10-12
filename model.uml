@@ -1,16 +1,38 @@
 @startuml
-class TextResource {
+
+title "STAM: STand-off Annotation Model"
+
+abstract class Resource {
     _resource_id : int
-    uri : str
-    text : str
-    --
-    <i>An instance of an annotation</i>
+     uri : str
 }
+
+class TextResource {
+    text : Option<str>
+}
+
+class AudioResource {
+    data: Option<bytestr>
+}
+
+class ImageResource {
+    data: Option<bytes>
+}
+
+class VideoResource {
+    data: Option<bytes>
+}
+
+Resource <|-- TextResource
+Resource <|-- AudioResource
+Resource <|-- ImageResource
+Resource <|-- VideoResource
 
 class AnnotationSet {
     _set_id: int
     id: Option<str>
     annotations: [Annotation]
+    _data: [AnnotationData]
     --
     <i>A collection of annotations</i>
     <i>(may be quite arbitrary)</i>
@@ -19,29 +41,64 @@ class AnnotationSet {
 class Annotation {
     _annotation_id : int
     id: Option<str>
-    selector: [Selector]
     data: [&AnnotationData]
-    references: [&Annotation]
+    target: [Selector]
+    source: [Selector]
     --
     <i>An instance of an annotation</i>
 }
 
-enum Selector {
-    ResourcePart(resource: &Resource, begin: int, end: int)
-    Resource(resource: &Resource)
-    Annotation(annotation: &Annotation)
+abstract class Selector {
     --
-    <i>Points to the target text,
-    <i>a part of it (unicode codepoint
-    <i>offset), or to a target annotation</i>
+    <i>Selects the target</i>
+    <i>(or source) of annotation</i>
 }
+
+class TextSelector {
+    resource: &TextResource,
+    offsets: [(begin: int, end: int)]
+    ---
+    <i>Selects a part of the text,</i>
+    <i>(one or more contiguous spans)</i>
+    <i>Offsets are unicode codepoints,</i>
+    <i>zero-indexed, end is non-inclusive,</i>
+
+}
+
+class ResourceSelector {
+    resources: [&Resource]
+    ---
+    <i>Selects one or more resources</i>
+}
+
+class AnnotationSelector {
+    annotations: [&Annotation]
+    --
+    <i>Selects one or more annotations</i>
+}
+
+class ParallelSelector {
+    selectors: [Selector]
+    --
+    <i>Combines selectors</i>
+}
+
+Selector <|-- TextSelector
+Selector <|-- ResourceSelector
+Selector <|-- AnnotationSelector
+Selector <|-- ParallelSelector
+
+
+
+
 
 class AnnotationData {
     _data_id : int
     id: Option<str>
-    type: DataKey
+    key: DataKey
+    vocabulary: Option< &Vocabulary>
     value: DataValue
-    instances: [Annotation]
+    _instances: [&annotation]
     --
     <i>The value of the annotation</i>
     <i>Used for the body and for</i>
@@ -50,18 +107,13 @@ class AnnotationData {
 
 
 class DataKey {
-    namespace: Option< &Namespace>
+    namespace: Option< &Vocabulary>
     key: str
     --
-    <i>Represents a key in any
-    key/value map</i>
+    <i>Represents a key in any</i>
+    <i>key/value map</i>
 }
 
-class Namespace {
-    _namespace_id: int
-    id : str
-    schema : str
-}
 
 enum DataValue {
     Id(v: str)
@@ -71,28 +123,56 @@ enum DataValue {
     Datetime(v: datetime)
     Map(v: Map<DataKey,DataValue>)
     List(v: [DataValue])
-    Annotation(annotation: &Annotation)
     --
     <i>Encapsulates a data value</i>
     <i>along with its type</i>
 }
 
-AnnotationSet "1" *--> "*" Annotation : > annotation
+enum DataType {
+    ID,
+    STRING,
+    INT,
+    FLOAT,
+    DATETIME,
+    MAP,
+    LIST,
+    --
+    <i>Represents</i>
+    <i>a data type</i>
+}
 
-Annotation "1" *--> "+" Selector : > selector
+class Vocabulary {
+    _vocab_id: int
+    id: Option<str>
+    open: bool
+    datatype: DataType
+    options: [(value: DataValue, label: Option<String>)]
+    --
+    <i>Defines all possible values from which can be</i>
+    <i>chosen and optionally attaches human-readable</i>
+    <i>labels</i>
+}
+
+AnnotationSet "1" *--> "*" Annotation : > annotation
+AnnotationSet "1" *--> "*" AnnotationData : > _data
+
+Annotation "1" *--> "+" Selector : > target
+Annotation "1" *--> "*" Selector : > source
 Annotation "1" o--> "*" AnnotationData : > data
 Annotation "1" --> "*" Annotation : > references
 
-AnnotationData "1" --> "*" Annotation : > instances
+AnnotationData "1" --> "+" Annotation : > _instances
 AnnotationData "1" *--> "1" DataValue : > value
-AnnotationData "1" *--> "1" DataKey : > type
+AnnotationData "1" *--> "1" DataKey : > key
+AnnotationData "1" --> "1" Vocabulary : > vocabulary
 
-Selector "1" --> "1" TextResource : > (resource_id,begin,end)
-Selector "1" --> "1" Annotation : > annotation_id
+TextSelector "1" --> "1" TextResource : > offsets
+AnnotationSelector "1" --> "+" Annotation : > annotations
 
-DataValue "1" --> "1" Annotation : > annotation
 DataValue "1" *--> "1" DataValue : > datavalue (Map)
 DataValue "1" *--> "1" DataKey : > datakey (Map)
 
-DataKey "1" --> "1" Namespace : > namespace
+DataKey "1" --> "1" Vocabulary : > namespace
+
+Vocabulary "1" --> "1" DataType : > datatype
 @enduml

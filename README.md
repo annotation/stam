@@ -1,28 +1,32 @@
-# Simple Text Annotation Model
+# STand-off Annotation Model
 
 ## Introduction
 
-STAM is a simple data model for stand-off text annotation.
+STAM is a data model for stand-off annotation. It is initially intended for text, but it also supports
+other media such as images, video and audio.
 
-Our aim with STAM is to lay a simple but strong foundation for **stand-off annotations on text**. We define an *annotation*
-as any kind of remark, classification/tagging on any particular portion(s) of the text, although we do also allow
-annotations to not point to any particular part of the text, in which case they are considered *metadata*.  Examples of
-annotation may be linguistic annotation, editorial annotation, technical annotation, or whatever comes to mind. OUr
-model does not define the vocabularies, it merely defines a model so *you* can define your own vocabularies and a model in
-which you can express your annotations using your own vocabularies.
+Our aim with STAM is to lay a simple but strong foundation for **stand-off annotation**. We define an *annotation* as
+any kind of remark, classification/tagging on any particular portion(s) of a text/image/audioclip/videoclip, although we
+do also allow annotations to not point to any particular part but to the resource as a whole, in which case they are
+considered *metadata*.  Examples of annotation may be linguistic annotation, editorial annotation, technical annotation,
+or whatever comes to mind. Our model does not define the vocabularies, it merely defines a model so *you* can define
+your own vocabularies and a model in which you can express your annotations using your own vocabularies.
 
 *Simplicity* is the keyword, the data model must be easy to understand and use and only contain what is needed, not
 more. STAM does not depend on other more complex data models such as RDF, Web Annotations, TEI, FoLiA or whatever, but
 instead addresses the problem from a more functional and pragmatic perspective. We separate pragmatics from semantics.
-The data model is also designed in such as way that an efficient implementation (both speed & memory) is feasible.
+The data model is designed in such as way that an efficient implementation (both speed & memory) is feasible, and puts a
+bigger emphasis on this than annotation models. Because of this, our model is a slightly more specific variant of a
+generic graph-based model, yet it should be reducable to an acyclic directed graph model without much difficulty.
 
-We do focus on a high degree of interoperability with richer models, most notably the W3C Web Annotation Model. Most of
-what we can express in STAM can also be expressed as a web annotation, but there are some constraints here.
+We focus on a high degree of interoperability with richer models, most notably the W3C Web Annotation Model.
+But not everything that can be expressed in STAM can be expressed as a web annotation (which is a more specific model),
+and not everything that is expressed in web annotations translates well to STAM.
 
 Goals/Features:
 
  * Stand-off annotation on plain text
- * Simple and minimal; no unnecessary abstractions/complexity/formality
+ * A fairly Simple model
  * No commitment to any annotation paradigm aside from stand-off annotation, the model basically allows for any kind of directed or
    undirected graph.
  * Interoperability without dependency:
@@ -58,8 +62,9 @@ The below UML-like diagram expresses the data model.
 
 Some notes to interpret the diagram:
 *  A circled C stands for a Class (items listed are properties that must all be satisfied).
+*  A circled A stands for a Abstract class (items listed are properties that must all be satisfied).
 *  A circled E stands for an Enumeration (items listed are options in the enumeration)
-   *  Enumerations may be parametrised (technically a union of an enumeration and a struct/class).
+   *  Enumerations may be parametrised (this could be expanded to an abstract class and concrete classes).
 *  The ampersand (``&``) represent a reference/pointer. The details of the implementation are not prescribed though.
 *  ``Option<>`` represents optional properties. ``Map<>`` represents a key/value map/dictionary.
 *  ``[]`` represents a list/vector/array.
@@ -84,50 +89,64 @@ The following overriding constraints apply only for compatibility with Web Annot
 ### Class: Annotation Set
 
 An Annotation Set is a collection of annotations. There is no intrinsic meaning in them being grouped together. The set
-*MUST* be ordered, but this too is without intrinsic meaning.
+*MUST* be ordered, but this too is without intrinsic meaning. The actual data of the annotation is also held by the
+AnnotationSet. When serialising all annotations in the data model to file, it usually takes place at this level.
 
 ### Class: Annotation
 
-This represents a particular instance of annotation. The target of the annotation is indicated by the ``selector``
-property, which in turn one of takes three forms:
+This represents a particular instance of annotation.
+Each annotation *MUST* have at least one ``target``, multiple targets are possible. The target point to that which is
+annotated, the data of the annotation effectively associates a label with the target.
 
-* A selector on the entire target resource rather than any particular portion of the text. This means
-  the annotation *SHOULD* be interpreted as metadata.
-* A selector on a particular range of the target text, indicated by offsets.
-  The ``begin`` and ``end`` attributes *MUST* describe the character position in NFC-normalised unicode
-  points, relative to the data referenced by the  ``resource_id`` property of the selector. Indexing *MUST* be zero-based and the end offset *MUST* be
-  non-inclusive and therefore larger than the begin offset.
-* A selector pointing to another annotation rather than directly to the text. This effectively enables
-  *higher-order annotation* (annotations on annotations). If an annotation A has a selector pointing to annotation B,
-  then annotation B *MUST* have annotation A included in its ``references`` property.
+The target is selected using a ``Selector``. It identifies the target and the part of
+the target that the annotation applies to.  There are multiple types of selectors:
 
-The ``selector`` of the annotation identifies the target and the part of
-the target that the annotation applies to. There *MAY* be multiple selectors and there *MUST* be at least one.
+* ``TextSelector`` - Selects a target resource and a text span within it. The text span *MAY* be noncontiguous. The span
+    is specified through one or more offset pairs consisting of a ``begin`` and ``end``.
+  These ``begin`` and ``end`` attributes *MUST* describe the character position in NFC-normalised unicode
+  points, in text of the resources that is being pointed at. Indexing *MUST* be zero-based and the end offset *MUST* be
+  non-inclusive.
+* ``ResourceSelector``  - A selector point to a resource as whole. These type of annotations can be interpreted as *metadata*.
+* ``AnnotationSelector``  - A selector pointing to one or more other annotations (enables higher-order annotation).
 
-The actual contents/value/body of the annotation (e.g. the tag or comment) is stored in a separate ``AnnotationData`` instance. This is done so
-multiple annotations with the exact same content require less storage space, and to facilitate search. Any further
-metadata on the annotation is similarly stored in ``AnnotationData`` instances. We make no distinction between data and
-metadata. Let's look into this:
+An annotation *MAY* have multiple targets, this *MUST* be interpreted as the annotation as a whole applying equally to
+each of the targets individually. It would be functionally equivalent to having multiple annotations with the same data,
+each with one of the targets.
+
+In contrast, if the annotation has a selector that references multiple spans/resources/annotations, then this *MUST* be
+interpreted as the annotation applying to the conjunction as a whole. (Note for Web Annotation compatibility: Web
+Annotation can not express this, multiple selectors there means something different)
+
+In addition to the ``target`` attribute, there may also be a ``source`` attribute. If both source and target are set,
+the annotation is expressing a *relation* between the two selectors; in a graph sense it can be considered a label on a
+directed edge, whereas only having a target can be interpreted as a node label.
+
+The actual contents/value/body of the annotation (e.g. the tag/label/comment) is stored in a separate ``AnnotationData`` instance. This is done so
+multiple annotations with the exact same content require less storage space, and to facilitate search.
+We make no distinction between data and metadata here. Let's look into this:
 
 ### Class: AnnotationData
 
 This stores the actual content of an annotation. It is decoupled from the actual ``Annotation`` instances so multiple
 instances can point to the same content. The ``instances`` attribute of ``AnnotationData`` links to all annotations that
-instantiate this exact same content.
+instantiate this exact same content, this is effectively a reverse index to facilitate search.
 
-The actual value of the data is represented by the ``data`` property, which is a ``DataValue`` instance that holds the
-actual value along with its data type.
+The actual value of the data is presented by a single key/value pair. The ``key`` *MAY* for instance denote the
+annotation type (none are predefined). The key can be assigned to a ``namespace`` to make explicit what paradigm is
+followed, and prevent clashes with possibly identical keys. Using a ``key`` is *RECOMMENDED* but *NOT REQUIRED*.  Key
+uniqueness also *RECOMENDED* but *NOT REQUIRED*, i.e. there *MAY* be multiple annotations on the same data with
+identical keys.
 
-The ``type`` of the annotation data also can be specified, this pertains to the type of the annotation. These types are
-not predefined by our data model, but are usually made in reference to some external vocabulary.
+The ``value`` property is a ``DataValue`` instance that holds the
+actual value along with its data type. For some data types (like Strings), it may also refer to a ``Vocabulary``. The
+vocabulary defines what values are allowed.
 
-AnnotationData is used both for
+For compatibility with Web Annotations, the use of the following *keys* is *RECOMMENDED* with the namespace
+``http://www.w3.org/ns/anno.jsonld``. See the [web annotation
+model](https://www.w3.org/TR/annotation-model/#other-properties) for further details, such as the cardinality for each
+of these metadata items.
 
-
-For compatibility with Web Annotations, the use of the following type strings with ``Meta`` is *RECOMMENDED*. See the
-[web annotation model](https://www.w3.org/TR/annotation-model/#other-properties) for further details, such as the
-cardinality for each of these metadata items.
-
+* ``body`` - The body of the annotation (encapsulated the actual value in the Web Annotation model)
 * ``creator`` - The data value represents the agent responsible for creating the resource. This may be either a human, an organization or a software agent.
 * ``created`` - The time at which the resource was created.
 * ``generator`` - The agent responsible for generating the serialization of the Annotation.
@@ -145,7 +164,7 @@ This ``DataValue`` class encapsulates data valus along with their data types, as
 It can be set to one of the following:
 
 * ``Id(v: str)`` - A public identifier (when used with Web Annotations, this *MUST* be an IRI)
-* ``String(v: str)``
+* ``String(v: str, vocab: Option<&Vocabulary>)``
 * ``Int(v: int)``
 * ``Float(v: float)``
 * ``Datetime(v: datetime)`` - A datetime representation, compatible with ``xsd:datetime``.
@@ -154,6 +173,26 @@ It can be set to one of the following:
     * ``Map(v: Map<DataKey,DataValue>)`` - A key, value map; this enables arbitrarily nested key/value pairs. The values are ``DataValue`` instances,
         the keys are arbitrary strings.
     * ``List(v: [DataValue])`` - A list of multiple ``DataValue`` instances
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

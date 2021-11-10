@@ -121,6 +121,7 @@ class DataKey {
 enum DataValue {
     Id(v: str)
     String(v: str)
+    Bool(v: bool)
     Int(v: int)
     Float(v: float)
     Datetime(v: datetime)
@@ -134,6 +135,7 @@ enum DataValue {
 enum DataType {
     ID,
     STRING,
+    BOOL,
     INT,
     FLOAT,
     DATETIME,
@@ -150,6 +152,8 @@ class Vocabulary {
     open: bool
     datatype: DataType
     options: [(value: DataValue, label: Option<String>)]
+    min_value: Option<DataValue>,
+    max_value: Option<DataValue>,
     _referenced_by: [&AnnotationData]
     --
     <i>Defines all possible values from which can be</i>

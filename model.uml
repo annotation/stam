@@ -10,19 +10,28 @@ class TextResource {
     text: str
     --
     _id : int
+    _index: Map<>
 }
 
+class AnnotationStore {
+    id: str?
+    annotationsets: [AnnotationSet*]
+    resources: [TextResource*]
+    --
+    <i>Highest-order grouping</i>
+    <i>holds annotation sets and resources</i>
+}
 
 class AnnotationSet {
     id: str?
     annotations: [Annotation*]
+    keys: [DataKey*]
+    data: [AnnotationData*]
     --
     _id: int
-    _keys: [AnnotationKey*]
-    _data: [AnnotationData*]
     --
-    <i>A collection of annotations</i>
-    <i>(grouping may be quite arbitrary)</i>
+    <i>A group of annotations</i>
+    <i>that share the same vocabulary</i>
 }
 
 class Annotation {
@@ -32,6 +41,7 @@ class Annotation {
     --
     _id : int
     _referenced_by: [&Annotation*]
+    _part_of_set: &AnnotationSet
     --
     <i>An instance of an annotation</i>
 }
@@ -44,11 +54,12 @@ abstract class Selector {
 
 class TextSelector {
     resource: &TextResource,
-    offsets: (begin: int, end: int)
+    offsets: (begin: Cursor, end: Cursor)
     ---
     <i>Selects a single part of the text,</i>
-    <i>Offsets are unicode codepoints,</i>
-    <i>zero-indexed, end is non-inclusive,</i>
+    <i>Offsets are unicode codepoints relative</i>
+    <i>to the text, zero-indexed, </i>
+    <i>end is non-inclusive,</i>
 
 }
 
@@ -56,19 +67,27 @@ class ResourceSelector {
     resource: &TextResource
     ---
     <i>Selects a resource as a whole</i>
-    <i>(i.e. metadata)</i>
+    <i>(i.e. annotation is metadata)</i>
+}
+
+class SetSelector {
+    annotationset: &Annotationset
+    --
+    <i>Selects an annotation set as a whole</i>
+    <i>(i.e. annotation is metadata)</i>
 }
 
 class AnnotationSelector {
     annotation: &Annotation
-    offsets: (begin: int, end: int)?
+    offsets: (begin: Cursor, end: Cursor)?
     --
     <i>Selects an annotation. May optionally</i>
     <i>select a only part of the annotation's target</i>
-    <i>Offsets are unicode codepoints relative</i>
+    <i>Offsets are relative</i>
     <i>to the targeted annotation, </i>
-    <i>zero-indexed, end is non-inclusive.</i>
+    <i>end is non-inclusive.</i>
 }
+
 
 class MultiSelector {
     selectors: [Selector+]
@@ -85,6 +104,7 @@ class DirectedSelector {
 
 Selector <|-[#green]- TextSelector
 Selector <|-[#green]- ResourceSelector
+Selector <|-[#green]- SetSelector
 Selector <|-[#green]- AnnotationSelector
 Selector <|-[#green]- MultiSelector
 Selector <|-[#green]- DirectedSelector
@@ -100,52 +120,74 @@ class AnnotationData {
     --
     _id : int
     _referenced_by: [&Annotation*]
+    _part_of_set: &AnnotationSet
     --
     <i>The value of the annotation</i>
-    <i>Used for the body and for</i>
-    <i>metadata</i>
 }
 
 class DataKey {
     id: str
+    indexed: bool
     --
     _id: int
     _referenced_by: [&AnnotationData*]
+    _part_of_set: &AnnotationSet
     --
     <i>The key of an annotation</i>
 }
 
 enum DataValue {
-    Id(v: str)
-    String(v: str)
-    Bool(v: bool)
-    Int(v: int)
-    Float(v: float)
-    Datetime(v: datetime)
-    Set(v: [DataValue])
-    List(v: [DataValue])
+    Id(value: str)
+    String(value: str)
+    Bool(value: bool)
+    Int(value: int)
+    Float(value: float)
+    Datetime(value: datetime)
+    Set(value: [DataValue])
+    List(value: [DataValue])
     --
     <i>Encapsulates a data value</i>
     <i>along with its type</i>
 }
 ' There is no Map() in DataValue, a Map should be expressed as an Annotation on an Annotation
 
+enum Cursor {
+    BeginAligned(v: int)
+    EndAligned(v: int)
+    --
+    <i>Used to select offsets</i>
+    <i>Units are unicode codepoints,</i>
+    <i>(not bytes!), zero-indexed</i>
+}
+
+AnnotationStore "1" *--> "*" AnnotationSet : > annotationsets
+AnnotationStore "1" *--> "*" TextResource : > resources
+
 AnnotationSet "1" *--> "*" Annotation : > annotations
-AnnotationSet "1" *.[#blue].> "*" AnnotationData : > _data
-AnnotationSet "1" *.[#blue].> "*" DataKey : > _keys
+AnnotationSet "1" *--> "*" AnnotationData : > data
+AnnotationSet "1" *--> "*" DataKey : > keys
 
 Annotation "1" *--> "+" Selector : > target
-Annotation "1" o--> "*" AnnotationData : > data
+Annotation "1" o-[#red]-> "*" AnnotationData : > data
 Annotation "1" .[#red].> "*" Annotation : > _referenced_by
+Annotation "1" .[#red].> "1" AnnotationSet : > _part_of_set
 
 AnnotationData "1" .[#red].> "+" Annotation : > _referenced_by
 AnnotationData "1" *--> "1" DataValue : > value
-AnnotationData "1" *--> "1" DataKey : > key
+AnnotationData "1" *-[#red]-> "1" DataKey : > key
+AnnotationData "1" .[#red].> "1" AnnotationSet : > _part_of_set
 
-TextSelector "1" --> "1" TextResource : > resource
-ResourceSelector "1" --> "1" TextResource : > resource
-AnnotationSelector "1" --> "+" Annotation : > annotation
+TextSelector "1" -[#red]-> "1" TextResource : > resource
+ResourceSelector "1" -[#red]-> "1" TextResource : > resource
+AnnotationSelector "1" -[#red]-> "1" Annotation : > annotation
+SetSelector "1" -[#red]-> "1" AnnotationSet : > annotationset
 
 DataKey "1" .[#red].> "+" AnnotationData : > _referenced_by
+DataKey "1" .[#red].> "1" AnnotationSet : > _part_of_set
+
+MultiSelector "1" --> "*" Selector : > selectors
+DirectedSelector "1" --> "*" Selector : > selectors
+TextSelector "1" --> "2" Cursor : > offsets
+AnnotationSelector "1" --> "2" Cursor : > offsets
 
 @enduml

@@ -22,7 +22,7 @@ Implementations implementing this extension *MUST* validate whether `AnnotationD
 
 ### Class: DataKey
 
-This extensions introduces three new properties:
+This extension extends the data model for DataKey with several new properties:
 
 * ``vocabularies`` (type: ``[&AnnotationData*]``) - Links to all predefined values for this key.
 * ``typeconstraint`` - Signals that values must be of the specified type. This takes an enum `TypeConstraint` with the following options:
@@ -35,6 +35,11 @@ This extensions introduces three new properties:
     * ``ListConstraint(TypeConstraint)`` - Type must be a list, all members must adhere to the wrapped constraint
     * ``OrConstraint([TypeConstraint+])`` - Allow any of multiple constraints
     * ``NotConstaint([TypeConstraint+])`` - Allow none of one or more constraints
-* ``relationconstraint`` -  
+* ``maxcountconstraint`` - (type: ``int?``) -  Signals how many times this key may occur within the same annotation
 * ``closed`` (type: ``bool``) - Signals that the vocabulary is closed and one of the values predefined values in vocabularies must be set, otherwise it can be either one of the predefined values or any other.
 
+### Class: AnnotationDataSet
+
+New property:
+
+* ``closed`` (type: ``bool``) - Signals that the vocabulary is closed, no new keys can be added

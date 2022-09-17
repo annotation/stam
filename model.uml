@@ -2,7 +2,7 @@
 
 skinparam groupInheritance 2
 
-title "STAM: Simple Stand-off Text Annotation Model"
+title "STAM: Stand-off Text Annotation Model"
 
 class TextResource {
     --
@@ -10,28 +10,29 @@ class TextResource {
     text: str
     --
     _id : int
-    _index: Map<>
 }
 
 class AnnotationStore {
     id: str?
-    annotationsets: [AnnotationSet*]
+    annotations: [Annotation*]
+    sets: [AnnotationDataSet*]
     resources: [TextResource*]
     --
-    <i>Highest-order grouping</i>
-    <i>holds annotation sets and resources</i>
+    <i>Holds the full annotation graph model</i>
+    <i>(entry-point)</i>
 }
 
-class AnnotationSet {
+class AnnotationDataSet {
     id: str?
-    annotations: [Annotation*]
     keys: [DataKey*]
     data: [AnnotationData*]
     --
     _id: int
     --
-    <i>A group of annotations</i>
-    <i>that share the same vocabulary</i>
+    <i>An annotation dataset holds</i>
+    <i>the actual data associated with annotations</i>
+    <i>and defines the vocabulary (the keys), it does</i>
+    <i>not hold the annotations themselves</i>
 }
 
 class Annotation {
@@ -41,9 +42,10 @@ class Annotation {
     --
     _id : int
     _referenced_by: [&Annotation*]
-    _part_of_set: &AnnotationSet
     --
     <i>An instance of an annotation</i>
+    <i>Core concept, i.e. nodes in the graph,
+    <i>binds everything together</i>
 }
 
 abstract class Selector {
@@ -70,11 +72,11 @@ class ResourceSelector {
     <i>(i.e. annotation is metadata)</i>
 }
 
-class SetSelector {
-    annotationset: &Annotationset
+class DataSetSelector {
+    annotationset: &AnnotationDataSet
     --
-    <i>Selects an annotation set as a whole</i>
-    <i>(i.e. annotation is metadata)</i>
+    <i>Selects an annotation data set as</i>
+    <i>a whole (i.e. annotation is metadata)</i>
 }
 
 class AnnotationSelector {
@@ -104,7 +106,7 @@ class DirectedSelector {
 
 Selector <|-[#green]- TextSelector
 Selector <|-[#green]- ResourceSelector
-Selector <|-[#green]- SetSelector
+Selector <|-[#green]- DataSetSelector
 Selector <|-[#green]- AnnotationSelector
 Selector <|-[#green]- MultiSelector
 Selector <|-[#green]- DirectedSelector
@@ -120,7 +122,7 @@ class AnnotationData {
     --
     _id : int
     _referenced_by: [&Annotation*]
-    _part_of_set: &AnnotationSet
+    _part_of_set: &AnnotationDataSet
     --
     <i>The value of the annotation</i>
 }
@@ -131,12 +133,13 @@ class DataKey {
     --
     _id: int
     _referenced_by: [&AnnotationData*]
-    _part_of_set: &AnnotationSet
+    _part_of_set: &AnnotationDataSet
     --
     <i>The key of an annotation</i>
 }
 
 enum DataValue {
+    Null
     Id(value: str)
     String(value: str)
     Bool(value: bool)
@@ -160,34 +163,33 @@ enum Cursor {
     <i>(not bytes!), zero-indexed</i>
 }
 
-AnnotationStore "1" *--> "*" AnnotationSet : > annotationsets
+AnnotationStore "1" *--> "*" AnnotationDataSet : > annotationsets
 AnnotationStore "1" *--> "*" TextResource : > resources
+AnnotationStore "1" *--> "*" Annotation : > annotations
 
-AnnotationSet "1" *--> "*" Annotation : > annotations
-AnnotationSet "1" *--> "*" AnnotationData : > data
-AnnotationSet "1" *--> "*" DataKey : > keys
+AnnotationDataSet "1" *--> "*" AnnotationData : > data
+AnnotationDataSet "1" *--> "*" DataKey : > keys
 
 Annotation "1" *--> "+" Selector : > target
 Annotation "1" o-[#red]-> "*" AnnotationData : > data
 Annotation "1" .[#red].> "*" Annotation : > _referenced_by
-Annotation "1" .[#red].> "1" AnnotationSet : > _part_of_set
 
 AnnotationData "1" .[#red].> "+" Annotation : > _referenced_by
 AnnotationData "1" *--> "1" DataValue : > value
 AnnotationData "1" *-[#red]-> "1" DataKey : > key
-AnnotationData "1" .[#red].> "1" AnnotationSet : > _part_of_set
+AnnotationData "1" .[#red].> "1" AnnotationDataSet : > _part_of_set
 
 TextSelector "1" -[#red]-> "1" TextResource : > resource
 ResourceSelector "1" -[#red]-> "1" TextResource : > resource
 AnnotationSelector "1" -[#red]-> "1" Annotation : > annotation
-SetSelector "1" -[#red]-> "1" AnnotationSet : > annotationset
 
 DataKey "1" .[#red].> "+" AnnotationData : > _referenced_by
-DataKey "1" .[#red].> "1" AnnotationSet : > _part_of_set
+DataKey "1" .[#red].> "1" AnnotationDataSet : > _part_of_set
 
 MultiSelector "1" --> "*" Selector : > selectors
 DirectedSelector "1" --> "*" Selector : > selectors
 TextSelector "1" --> "2" Cursor : > offsets
 AnnotationSelector "1" --> "2" Cursor : > offsets
+DataSetSelector "1" --> "*" Selector : > annotationset
 
 @enduml

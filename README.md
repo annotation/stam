@@ -184,6 +184,11 @@ that holds everything together.
 Implementations themselves decide how to implement this (in memory, on disk,
 database backed, etc).
 
+### Class: TextResource
+
+This holds the textual resource to be annotated. The text *MUST* be Unicode and NFC normalised.
+Serialisations of the text *MUST* be in UTF-8, but STAM does not prescribe what implementations hold internally.
+
 ### Class: Annotation Data Set
 
 An *Annotation Data Set* stores the keys (`DataKey`) and values
@@ -229,7 +234,7 @@ There are multiple types of selectors:
   points, in text of the resources that is being pointed at. Indexing *MUST* be zero-based and the end offset *MUST* be
   non-inclusive.
 * ``ResourceSelector``  - A selector point to a resource as whole. These type of annotation can be interpreted as *metadata*.
-* ``AnnotationSelector``  - A selector pointing to one or more other annotations. This we call higher-order annotation is very common in STAM models. If the annotation that is being targeted eventually refers to a text (`TextSelector`), then offsets **MAY** be specified that select a subpart of this text. These offsets are now *relative* to the annotation. Internally, the implementation can always efficiently resolve these to absolute offsets on the resource.
+* ``AnnotationSelector``  - A selector pointing to one or more other annotations. This we call higher-order annotation is very common in STAM models. If the annotation that is being targeted eventually refers to a text (`TextSelector`), then offsets **MAY** be specified that select a subpart of this text. These offsets are now *relative* to the annotation. Internally, the implementation can always efficiently resolve these to absolute offsets on the resource. The use of `AnnotationSelector` has one important constraint: the graph of all annotations referring to other annotations  *MUST* be acyclic; i.e. it can't end up in a recursive loop of annotations referencing each-other. Implementations *SHOULD* check this.
 * ``MultiSelector``  - A selector that consists of multiple other selectors, used to select more complex targets that transcend the idea of a single simple selection. This *MUST* be interpreted as the annotation applying equally to the conjunction as a whole, its parts being inter-dependent and for any of them it goes that they *MUST NOT* be omitted for the annotation to makes sense. Note that the order of the selectors is not significant. When there is no dependency relation between the selectors, you *MUST* simply use multiple `Annotation`s instead.
 * ``DirectedSelector``  - Another selector that consists of multiple other selectors, but with an explicit direction (from -> to), used to select more complex targets that transcend the idea of a single simple selection.
 
@@ -294,6 +299,22 @@ It can be set to one of the following:
 Note that there is no ``Map`` type to associate further nested key/value pairs. If
 you want to express nested relations, you *MUST* use `Annotation`s on
 `Annotation`s (i.e. using `AnnotationSelector`).
+
+### Class: TextSelection
+
+Instances of this class make up the (reverse) index held by `TextResource`, it
+*SHOULD NOT* be serialised to file. The job of the reverse index, is to link
+text offsets, for the given resource, back to annotations. Usage of the reverse
+index and this  `TextSelection` class is a *RECOMMENDATION*, implementations
+*MAY* decide to implement this differently.
+
+Whenever an annotation on the text is added (i.e. an annotation with a
+`TextSelector`, or an annotation that indirectly refers to another annotation
+with a TextSelector), a `TextSelection` *SHOULD* added to the reverse index.
+
+To facilitate search, implementations are *RECOMMENDED* to keep all
+`TextSelection` in the reverse index in sorted order, where the order is based
+on the offsets. We do not prescribe how to implement this.
 
 ## Serialisation Formats
 

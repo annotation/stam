@@ -10,6 +10,19 @@ class TextResource {
     text: str
     --
     _id : int
+    _index: [TextSelection*]
+    --
+    <i>Holds the text</i>
+    <i>(and the reverse index)</i>
+}
+
+class TextSelection {
+    offset: (begin: int, end: int)
+    referenced_by: [&Annotation+]
+    --
+    <i>Links text positions to annotations</i>
+    <i>Used by the reverse index</i>
+    <i>(not serialised)</i>
 }
 
 class AnnotationStore {
@@ -191,5 +204,8 @@ DirectedSelector "1" --> "*" Selector : > selectors
 TextSelector "1" --> "2" Cursor : > offsets
 AnnotationSelector "1" --> "2" Cursor : > offsets
 DataSetSelector "1" --> "*" Selector : > annotationset
+
+TextResource "1" ..> "*" TextSelection : > _index
+TextSelection "1" .[#red].> "*" Annotation : > _referenced_by
 
 @enduml

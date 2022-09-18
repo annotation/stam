@@ -78,6 +78,7 @@ We keep STAM simple and define only the bare minimum. Other functionality is
 included in extensions. The following are currently defined:
 
 * [STAM-Vocab](extensions/stam-vocab) -  Allows expressing and validating against user-defined vocabularies.
+* [STAM-Webannotations](extensions/stam-webannotations) - Models W3C Web Annotations using STAM and vice versa.
 
 Implementations *SHOULD* explicitly state which extensions they support.
 
@@ -151,13 +152,13 @@ component the cursor can be either begin-aligned or end-aligned. This is best
 explained through an example on the string *"Hallå världen"* (Hello world in
 swedish):
 
-* ``BeginAligned(0), BeginAligned(1)`` - *"H"*
-* ``BeginAligned(4), BeginAligned(5)`` - *"å"*
-* ``BeginAligned(0), BeginAligned(5)`` - *"Hallå"*
-* ``BeginAligned(0), BeginAligned(13)`` - *"Hallå världen"*
-* ``BeginAligned(0), EndAligned(0)`` - *"Hallå världen"*
-* ``BeginAligned(7), EndAligned(-2)`` - *"värld"*
-* ``EndAligned(-7), EndAligned(0)`` - *"världen"*
+* ``BeginAlignedCursor(0), BeginAlignedCursor(1)`` - *"H"*
+* ``BeginAlignedCursor(4), BeginAlignedCursor(5)`` - *"å"*
+* ``BeginAlignedCursor(0), BeginAlignedCursor(5)`` - *"Hallå"*
+* ``BeginAlignedCursor(0), BeginAlignedCursor(13)`` - *"Hallå världen"*
+* ``BeginAlignedCursor(0), EndAlignedCursor(0)`` - *"Hallå världen"*
+* ``BeginAlignedCursor(7), EndAlignedCursor(-2)`` - *"värld"*
+* ``EndAlignedCursor(-7), EndAlignedCursor(0)`` -*"världen"*
 
 Also take note of the following constraints:
 
@@ -208,13 +209,30 @@ with the same label (multiple annotations may share the same annotation data).
 Moreover, an Annotation can have multiple annotation data associated. The result is that multiple annotations with the exact same content require less storage
 space, and searching and indexing is facilitated.  
 
-Multiple instances of `AnnotationData` *MAY* be associated with an
+Through the `data` property, multiple instances of `AnnotationData` *MAY* be associated with an
 `Annotation`, when this is the case, a strong dependency relation between the
-instances *MUST* be assumed in the interpretation and they are necessarily all part of the
-same `AnnotationDataSet`. The annotation would not be complete without any of
-them. If this is not the case, you *SHOULD* use multiple `Annotation`s instead,
-or most likely an`Annotation` on the `Annotation` (i.e. a higher-order
-annotation via `AnnotationSelector`).
+data *MUST* be assumed in the interpretation. The data is also assumed to be
+complete, you *SHOULD NOT* add data to existing annotations at a later point.
+If these conditions are not fulfilled, you *SHOULD* use
+multiple `Annotation`s instead, including possibly an `Annotation` on the
+original `Annotation` (i.e. a higher-order annotation via `AnnotationSelector`).
+
+The `data` property and the `AnnotationData` instances can for example be used to express things like (non-normative!):
+
+* The actual *value* of the annotation (what is the actual annotation's content?). For instance:
+    * linguistic information such as a Part-of-Speech tag (noun, verb), a lemma, etc...
+    * a textual correction (e.g. mississippi where the text had mississipi)
+    * some remark or opinion on the content (e.g. "I like this part!")
+* The *type* of the annotation (what kind of annotation is it? Like one of the above mentioned categories)
+    * No need to have a type, you can also choose for key/value pairs that imply a type (like *pos*, *correction*, *remark*).
+* The *purpose* of the annotation (why was it made?)
+* The *creator* of the annotation (who made the annotation?)
+* The *time* at which the annotation was made (when was it made?)
+
+The italicized part in the above list would correspond to the keys. *None of
+this vocabulary is predefined by STAM though!* It is the user-defined
+`AnnotationDataSet` determines the vocabulary used and you can use whatever
+annotation paradigm you deem fit. 
 
 Each annotation instance *MUST* have a single ``target``. The target is
 selected using a ``Selector``. Annotation is a broad concept in STAM and almost
@@ -401,11 +419,11 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
                 "resource": "hello.txt",
                 "offsets": {
                     "begin": {
-                        "@type": "BeginAligned",
+                        "@type": "BeginAlignedCursor",
                         "value": 6 
                     },
                     "end":  {
-                        "@type": "BeginAligned",
+                        "@type": "BeginAlignedCursor",
                         "value": 13
                     },
                 },
@@ -419,11 +437,11 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
                 "resource": "hello.txt",
                 "offsets": {
                     "begin": {
-                        "@type": "BeginAligned",
+                        "@type": "BeginAlignedCursor",
                         "value": 0 
                     },
                     "end":  {
-                        "@type": "EndAligned",
+                        "@type": "EndAlignedCursor",
                         "value": 0 
                     },
                 },
@@ -451,6 +469,7 @@ identical to before, but `data` and `key` have now been specified in-line:
         {
             "@id": "WordType",
             "@type": "AnnotationData",
+            "_part_of_set": "my-example",
             "key": {
                 "@type": "DataKey",
                 "@id": "type",
@@ -467,11 +486,21 @@ identical to before, but `data` and `key` have now been specified in-line:
 }
 ```
 
-As this may create redundancy/unnecessary duplication, it *SHOULD* only be used
-in cases where a reference is not needed. However, parser implementations *MUST* accept
-redundancy if and only if there are no collisions (a thing with the same ID
-described differently than before), if there are collisions, implementations
-*MUST* produce an error.
+There are two important points to notice for in-line use:
+
+1. It is *RECOMMENDED* to add an additional `_part_of_set` property to the `AnnotationData` to
+   specify what Annotation Data Set is to be used to store the annotation data
+   and the keys. Implementations *SHOULD* create the set on-the-fly as part of the `AnnotationStore`.
+   If the `annotationset` property is missing, implementations *SHOULD* 
+   just create a single `AnnotationDataSet` and reuse it for all 'orphaned' inline annotation data.
+2. Inline data leads to redundancy/unnecessary duplication, it *SHOULD* only be
+   used in cases where a reference is not needed. However, parser
+   implementations *MUST* accept redundancy if and only if there are no
+   collisions (a thing with the same ID described differently than before), if
+   there are collisions, implementations *MUST* produce an error.
+
+Serialisation implementations *MAY* reproduce inline annotations as read during parsing, but this is
+*NOT REQUIRED*. It is in fact much easier not to do so.
 
 #### Multiple files and the @include statement
 
@@ -548,6 +577,12 @@ Implementations *SHOULD* also serialize in the same order as items were parsed,
 this is for reproducibility purposes, even though order is not significant.
 STAM, however, does not prescribe how either of these should be done.
 
+When parser implementations encounter any JSON keys in the STAM JSON that are
+not defined in this specification, they *SHOULD* issue a warning to the user
+and proceed parsing, ignoring the particular key. Specifications *MUST NOT*
+produce a hard failure when encountering unknown keys, as these may be keys
+defined by STAM extensions.
+
 **Note:** Some readers will notice that the use of ``@type`` and ``@id`` are
 similar to their usage in JSON-LD. It has to be noted though that the default
 JSON serialisation is not proper JSON-LD. However, if certain constraints are
@@ -592,6 +627,13 @@ researcher.
 
 A lightweight TSV/CSV format will be proposed that can represent a fair subset
 of STAM. It is not part of STAM itself but considered a separate extension.
+
+
+## Examples
+
+Please consult [our examples](examples/) for various examples of STAM. This
+will aid in understanding the model and assessing its potential. These examples
+*MAY* also be used by implementations for test and validation purposes.
 
 ## Relation to other data models & motivations
 

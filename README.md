@@ -186,8 +186,7 @@ database backed, etc).
 
 ### Class: TextResource
 
-This holds the textual resource to be annotated. The text *MUST* be Unicode and NFC normalised.
-Serialisations of the text *MUST* be in UTF-8, but STAM does not prescribe what implementations hold internally.
+This holds the textual resource to be annotated. The text *MUST* be in Unicode Normal Form C (NFC).
 
 ### Class: Annotation Data Set
 

@@ -168,8 +168,8 @@ enum DataValue {
 ' There is no Map() in DataValue, a Map should be expressed as an Annotation on an Annotation
 
 enum Cursor {
-    BeginAligned(v: int)
-    EndAligned(v: int)
+    BeginAlignedCursor(value: int)
+    EndAlignedCursor(value: int)
     --
     <i>Used to select offsets</i>
     <i>Units are unicode codepoints,</i>

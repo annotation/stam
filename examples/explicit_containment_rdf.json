@@ -1,0 +1,62 @@
+{
+    "@type": "AnnotationStore",
+    "annotations": [
+        {
+            "@type": "Annotation",
+            "@id": "https://raw.githubusercontent.com/proycon/stam/master/examples/explicit_containment.json#sentence2"
+            "data": {
+                "key": {
+                    "@type": "DataKey",
+                    "@id": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                },
+                "value": {
+                    "@type": "Id",
+                    "value": "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#Sentence"
+                },
+                "_part_of_set": "http://www.w3.org/1999/02/22-rdf-syntax-ns"
+            },
+            "target": {
+                "@type": "TextSelector"
+                "offsets": {
+                    "begin": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 26,
+                    },
+                    "end": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 57,
+                    }
+                }
+            },
+        },
+        {
+            "@type": "Annotation",
+            "@id": "https://raw.githubusercontent.com/proycon/stam/master/examples/explicit_containment.json#sentence2word3"
+            "data": {
+                "key": {
+                    "@type": "DataKey",
+                    "@id": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                },
+                "value": {
+                    "@type": "Id",
+                    "value": "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#Word"
+                },
+                "_part_of_set": "http://www.w3.org/1999/02/22-rdf-syntax-ns"
+            },
+            "target": {
+                "@type": "AnnotationSelector"
+                "annotation": "https://raw.githubusercontent.com/proycon/stam/master/examples/explicit_containment.json#sentence2"
+                "offsets": {
+                    "begin": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 5,
+                    },
+                    "end": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 9,
+                    }
+                }
+            },
+        }
+    ]
+}

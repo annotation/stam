@@ -1,0 +1,60 @@
+{
+    "@type": "AnnotationStore",
+    "annotations": [
+        {
+            "@type": "Annotation",
+            "@id": "sentence2"
+            "data": {
+                "key": {
+                    "@type": "DataKey",
+                    "@id": "type"
+                },
+                "value": {
+                    "@type": "Id",
+                    "value": "sentence"
+                },
+            },
+            "target": {
+                "@type": "TextSelector"
+                "offsets": {
+                    "begin": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 26,
+                    },
+                    "end": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 57,
+                    }
+                }
+            },
+        },
+        {
+            "@type": "Annotation",
+            "@id": "sentence2word3"
+            "data": {
+                "key": {
+                    "@type": "DataKey",
+                    "@id": "type"
+                },
+                "value": {
+                    "@type": "Id",
+                    "value": "word"
+                },
+            },
+            "target": {
+                "@type": "AnnotationSelector"
+                "annotation": "sentence2"
+                "offsets": {
+                    "begin": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 5,
+                    },
+                    "end": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 9,
+                    }
+                }
+            },
+        }
+    ]
+}

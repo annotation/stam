@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
+   width="145mm"
+   height="64mm"
+   viewBox="0 0 145 64"
    version="1.1"
    id="svg5638"
    inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
@@ -25,8 +25,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="2.1707325"
-     inkscape:cx="321.32011"
-     inkscape:cy="63.57301"
+     inkscape:cx="321.78078"
+     inkscape:cy="63.112337"
      inkscape:window-width="3830"
      inkscape:window-height="2117"
      inkscape:window-x="2165"
@@ -229,11 +229,11 @@
        id="path7545"
        sodipodi:nodetypes="cccccc" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker7633);stroke-dasharray:none"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7633)"
        d="m 100.15902,27.405184 v 6.905821 h -4.306472 l -2.277965,-0.151749"
        id="path7629" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker7683);stroke-dasharray:none"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7683)"
        d="M 100.04907,34.306332 V 52.626304 H 47.246672 l -1.319594,-0.06282"
        id="path7679" />
   </g>

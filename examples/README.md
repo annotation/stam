@@ -82,3 +82,13 @@ a dependency relation (adverbial modifier).
 
 ![Directional Selector (overview)](directionalselector.svg)
 
+## Multiselector and grouping annotations
+
+This illustrates a similar annotation scenario as above, but here we do without
+the directional selector and show how you can use higher-order annotations and
+a multiselector to group multiple annotations:
+
+![Multiselector and higher order annotation](higher_order_annotation.svg)
+
+(This mirrors the way paradigms such as FoLiA handle dependency relations)
+

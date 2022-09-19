@@ -75,7 +75,11 @@ RFC 2119.
 ## Extensions
 
 We keep STAM simple and define only the bare minimum. Other functionality is
-included in extensions. The following are currently defined:
+included in extensions. Extensions do one or more of the following: they extend
+data model, specify new serialisations, specify mappings/crosswalks to other
+paradigms/formats, specify additional functionality
+
+The following are currently defined:
 
 * [STAM-Vocab](extensions/stam-vocab) -  Allows expressing and validating against user-defined vocabularies.
 * [STAM-Webannotations](extensions/stam-webannotations) - Models W3C Web Annotations using STAM and vice versa.
@@ -260,7 +264,7 @@ There are multiple types of selectors:
 * ``ResourceSelector``  - A selector point to a resource as whole. These type of annotation can be interpreted as *metadata*.
 * ``AnnotationSelector``  - A selector pointing to one or more other annotations. This we call higher-order annotation is very common in STAM models. If the annotation that is being targeted eventually refers to a text (`TextSelector`), then offsets **MAY** be specified that select a subpart of this text. These offsets are now *relative* to the annotation. Internally, the implementation can always efficiently resolve these to absolute offsets on the resource. The use of `AnnotationSelector` has one important constraint: the graph of all annotations referring to other annotations  *MUST* be acyclic; i.e. it can't end up in a recursive loop of annotations referencing each-other. Implementations *SHOULD* check this.
 * ``MultiSelector``  - A selector that consists of multiple other selectors, used to select more complex targets that transcend the idea of a single simple selection. This *MUST* be interpreted as the annotation applying equally to the conjunction as a whole, its parts being inter-dependent and for any of them it goes that they *MUST NOT* be omitted for the annotation to makes sense. Note that the order of the selectors is not significant. When there is no dependency relation between the selectors, you *MUST* simply use multiple `Annotation`s instead.
-* ``DirectedSelector``  - Another selector that consists of multiple other selectors, but with an explicit direction (from -> to), used to select more complex targets that transcend the idea of a single simple selection.
+* ``DirectionalSelector``  - Another selector that consists of multiple other selectors, but with an explicit direction (from -> to), used to select more complex targets that transcend the idea of a single simple selection.
 
 ### Class: AnnotationData
 
@@ -638,12 +642,12 @@ researcher.
 A lightweight TSV/CSV format will be proposed that can represent a fair subset
 of STAM. It is not part of STAM itself but considered a separate extension.
 
-
 ## Examples
 
 Please consult [our examples](examples/) for various examples of STAM. This
 will aid in understanding the model and assessing its potential. These examples
 *MAY* also be used by implementations for test and validation purposes.
+
 
 ## Relation to other data models & motivations
 

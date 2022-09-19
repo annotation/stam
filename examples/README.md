@@ -14,6 +14,14 @@ model leads to more memory efficiency.
 
 ![Example A](example_a.png)
 
+## Metadata
+
+This example shows an annotation on an entire resource (using
+`ResourceSelector`), rather than on a particular part of the text.
+Such annotations can be interpreted as metadata.
+
+![Metadata](metadata.svg)
+
 ## Implicit containment
 
 This example shows implicit containment and absolute offsets Targeting a short
@@ -91,4 +99,5 @@ a multiselector to group multiple annotations:
 ![Multiselector and higher order annotation](higher_order_annotation.svg)
 
 (This mirrors the way paradigms such as FoLiA handle dependency relations)
+
 

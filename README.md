@@ -391,12 +391,12 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
         "keys": [
             {
                 "@type": "DataKey",
-                "@id": "type",
+                "@id": "type"
             },
             }
                 "@type": "DataKey",
-                "@id": "function",
-            },
+                "@id": "function"
+            }
         ],
         "data": [
             {
@@ -473,7 +473,7 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
                 },
             }
         },
-    }]
+    ]
 }
 ```
 
@@ -592,7 +592,7 @@ trace of the two objects that encapsulate the `@include` statements remaining:
         },
         {
             "@include": "secondbatch.annotations.json"
-        ]
+        }
     ]
 }
 ```

@@ -1,5 +1,8 @@
 {
     "@type": "AnnotationStore",
+    "resources": [{
+        "@file": "explicit_containment.txt",
+    }],
     "annotations": [
         {
             "@type": "Annotation",

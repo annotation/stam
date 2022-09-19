@@ -1,5 +1,8 @@
 {
     "@type": "AnnotationStore",
+    "resources": [{
+        "@file": "https://raw.githubusercontent.com/proycon/stam/master/examples/explicit_constraints.txt",
+    }],
     "annotations": [
         {
             "@type": "Annotation",

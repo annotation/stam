@@ -393,7 +393,7 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
                 "@type": "DataKey",
                 "@id": "type"
             },
-            }
+            {
                 "@type": "DataKey",
                 "@id": "function"
             }
@@ -747,7 +747,7 @@ WebAnnotations are encouraged whereever appropriate.
 The best comparisons can be drawn with annotation models such as [Web
 Annotations](https://www.w3.org/TR/annotation-model/),  [Text
 Fabric](https://annotation.github.io/text-fabric/tf/),
-[Salt](https://corpus-tools.org/salt/) and GraF (LAF). Comparisons can also be
+[Salt](https://corpus-tools.org/salt/) and LAF. Comparisons can also be
 made with more specific-purpose text annotation formats or such as
 [TEI](https://tei-c.org/), [FoLiA](https://proycon.github.io/folia) (disclaimer: I am the author of FoLiA),
 [TCF](https://github.com/weblicht/tcf-spec), and

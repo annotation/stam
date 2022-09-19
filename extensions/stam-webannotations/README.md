@@ -44,7 +44,7 @@ For example, to express the creator and simple textual value of an annotation us
 {
     "@type": "Annotation",
     "id": "https://example.org/annotation1",
-    "data: [
+    "data": [
         {
             "@type": "AnnotationData",
             "key": "http://purl.org/dc/terms/creator",
@@ -105,7 +105,7 @@ preserved nicely when translating STAM to web annotations:
 {
     "@type": "Annotation",
     "id": "https://example.org/annotation2",
-    "data: [
+    "data": [
         {
             "@type": "AnnotationData",
             "key": "http://purl.org/dc/terms/creator",

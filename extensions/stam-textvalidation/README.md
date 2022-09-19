@@ -5,7 +5,10 @@
 This is an extension on top of STAM that adds extra information to STAM serialisations that safeguard the integrity of the data.
 It can also help make serialisations more readable upon introspection, as it adds a layer of redundancy.
 
-Validation is an important aspect of annotation, it is often too easy to have erroneous input pollute the annotation data.
+Validation is an important aspect of annotation, it is often too easy to have
+erroneous input pollute the annotation data. Stand-off annotation in particular
+is very sensitive to annotations and the resource running out of sync. This
+extension protects against that.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
 NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
@@ -19,9 +22,9 @@ This extensions adds two properties to ``TextSelector``, using either one of the
 * ``text``: The exact text of the annotation that is being pointed to. 
 * ``checksum``: The SHA-1 checksum of the text of the annotation. We use SHA-1 because it is *fast* and *small enough* (40 bytes). It does not offer strong cryptographic security though.
 
-The advantage over `text` over `checksum` is that it is directly interpretable
-and facilitates readability of a serialisation. However, for very large texts
-this may become a nuisance and a `checksum` may be more appropriate.
+The advantage of `text` over `checksum` is that it is directly interpretable
+and facilitates readability of a serialisation. However, for large texts
+the overhead may become a nuisance and a `checksum` may be more appropriate.
 
 It is *NOT REQUIRED* for implementations to keep these properties throughout the lifetime of the model. Implementations *SHOULD* merely consult them at parse-time and *SHOULD* recompute them at serialisation time. 
 

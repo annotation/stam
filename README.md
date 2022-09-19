@@ -630,7 +630,7 @@ JSON is verbose and parsing and serialisation is fairly slow. Optimized binary
 serialisations for STAM are conceivable. These are parsed and serialised considerably
 quicker than any other and are the *RECOMMENDED* solution in situations where
 quick reading/writing from/to disk is important. However, such serialisations
-*SHOULD* be consider implementation-specific and *MUST NOT* serve as
+*SHOULD* be considered implementation-specific and *MUST NOT* serve as
 interchange or archiving formats.
 
 ### STAM TSV/CSV
@@ -645,9 +645,66 @@ of STAM. It is not part of STAM itself but considered a separate extension.
 ## Examples
 
 Please consult [our examples](examples/) for various examples of STAM. This
-will aid in understanding the model and assessing its potential. These examples
+will greatly aid in understanding the model and assessing its potential. These examples
 *MAY* also be used by implementations for test and validation purposes.
 
+## Functionality
+
+This sections specifies, at a high-level, what functionality a core STAM
+implementation offers. A core STAM implementation is a software library or
+service offering some sort of API (which we will refer to as *interface* below). The precise nature of the API is not
+prescribed and up to the implementation:
+
+A core STAM implementation adheres to the following requirements:
+
+* *MUST* model all the classes of the core specification with the sole exception of `TextSelection`
+    * This entails that it *MUST* support all the selectors
+* *MUST* offer an interface to manipulate annotations:
+    * *MUST* offer an interface to add new annotations, annotation data, data keys, and annotation data sets
+    * *MUST* offer an interface to edit existing annotations, annotation data, data keys, and annotation data sets
+    * *MUST* offer an interface to remove annotations, annotation data, data keys, and annotation data sets
+* *MUST* offer an interface to search annotations:
+    * *MUST* offer an interface to find annotations given a `DataKey` and optionally a value
+    * *MUST* offer an interface to iterate over all annotations
+    * *MUST* offer an interface to iterate over all annotation data sets
+    * *MUST* offer an interface to iterate over all annotation data in an annotation data set
+    * *MUST* offer an interface to iterate over all data keys in an annotation data set
+* *MUST* offer an interface to retrieve the target text for any annotation
+    * the other way round, it *MUST* also offer an interface to find annotations that span over a certain queried text range
+    * *MUST* offer an interface to translate relative offsets to absolute begin-aligned offsets
+    * *MUST* offer an interface to retrieve any queried text ranges (even if there are no annotations)
+    * *MUST* offer an interface to retrieve text from the context of any annotation (preceding, succeeding)
+* *MUST* offer an interface to compute relationships with regard to text coverage:
+    * *MUST* offer an interface that computes whether an annotation overlaps with another
+    * *MUST* offer an interface that computes whether an annotation contains another
+    * *MUST* offer an interface that computes whether an annotation directly succeeds another in the textual order
+    * *MUST* offer an interface that computes whether an annotation directly precedes another in the textual order
+    * *MUST* offer an interface that computes whether an annotation succeeds another in the textual order
+    * *MUST* offer an interface that computes whether an annotation precedes another in the textual order
+* *MUST* offer an interface to compute relationships in higher-order annotations:
+    * *MUST* offer an interface that computes whether an annotation is a child of another
+    * *MUST* offer an interface that computes whether an annotation is a parent of another
+    * *MUST* offer an interface that computes whether an annotation is a descendant of another
+    * *MUST* offer an interface that computes whether an annotation is an ancestor of another
+    * *MUST* offer an interface that computes the common ancestor of two or more annotations (if any)
+    * *MUST* offer an interface that computes the depth of higher-order annotation
+    * *MUST* ensure that higher-order annotations are acyclic
+* *MUST* be able to parse from STAM JSON
+* *MUST* be able to serialise to STAM JSON
+
+If any of requirements are not met, the implementation is not a *core* STAM implementation but a *partial* one.
+
+Moreover, the following are *RECOMMENDED*, a STAM implementation:
+
+* *SHOULD* implement reverse index via `TextSelection` 
+* *SHOULD* implement indices at the `DataKey` level
+
+If these recommendations are also met, we speak of a *full* STAM implementation.
+
+Last, some guidelines that are entirely optional but worth mentioning, a STAM implementation:
+
+* *MAY* implement a binary serialisation
+* *MAY* also implement any of the STAM extensions, it *SHOULD* indicate exactly which ones it implements.
 
 ## Relation to other data models & motivations
 

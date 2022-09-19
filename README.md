@@ -76,7 +76,7 @@ Large parts of this specification are normative:
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
 NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
 "OPTIONAL" in this document are to be interpreted as described in
-RFC 2119.
+[RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
 ## Extensions
 
@@ -110,7 +110,7 @@ specification of requirements for implementations.
 In this section, we will describe the STAM data model, note that the data model is detached from any specific
 serialisation format, those will be discussed in a later section.
 
-The below UML-like diagram expresses the data model.
+The below UML diagram expresses the full data model.
 
 ![UML diagram](model.png)
 

@@ -171,11 +171,17 @@ Also take note of the following constraints:
 ### Example A
 
 Example A below shows an annotation example using this model, it shows a
-textual resource with a small Swedish text *"Hallå världen"* with tree annotations.
-Two annotations share the same data, illustrating how the model leads to more
-memory efficiency.
+textual resource with a small Swedish text *"Hallå världen"* with tree annotations (shown in yellow).
 
-![Example A](example_a.svg)
+![Example A (overview)](examples/example_a_overview.svg)
+
+None of the vocabulary (keys/values) in the annotations is predefined by STAM.
+
+After working this out in the STAM annotation model, we obtain the schema
+below. Note that two annotations share the same data, illustrating how the
+model leads to more memory efficiency.
+
+![Example A](examples/example_a.svg)
 
 ### Class: Annotation Store
 

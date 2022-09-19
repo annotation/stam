@@ -337,16 +337,19 @@ on the offsets. We do not prescribe how to implement this.
 
 ### STAM JSON
 
-The default JSON serialisation (STAM JSON) is the primary format for parsing
-and serialisation. It follows the model to the letter. The serialisation *MUST*
-adhere exactly to the property names introduced in this document (case sensitive). JSON is
-chosen as it is an ubiquitous a widely-accepted format.
+The canonical JSON serialisation (STAM JSON) is the primary format for parsing
+and serialisation. It follows the model to the letter, and *completeness* and
+*explicitness* is the main aim of the serialisation. It is not intended to be
+concise, minimal or even easily readable. JSON is chosen as it is an ubiquitous
+a widely-accepted format for which many implementations are available. The
+serialisation *MUST* adhere exactly to the property names introduced in this
+document (case sensitive). 
 
-* Private properties (those starting with an underscore) *SHOULD NOT* be serialised (those are recomputed at parsing). 
-* All STAM classes serialised as JSON objects *MUST* carry a ``@type`` attribute that denotes the STAM class as laid out in this specification. This helps readability and error detection.
+* Private properties (those starting with an underscore) *SHOULD NOT* be serialised (those can be recomputed at parsing). 
+* All STAM classes serialised as JSON objects *MUST* carry a ``@type`` attribute that denotes the STAM class as laid out in this specification. This helps readability prevents errors at the cost of some slight redundancy.
 * All public IDs are serialised through the ``@id`` attribute.
 
-For a complete serialisation, you *SHOULD* start at the level of the `AnnotationStore`, which is the root level. 
+For a complete serialisation, you *SHOULD* start with `AnnotationStore`, which is the root level. 
 
 In Example A1, shown below, we see the serialisation of the Example A that was shown before, 
 

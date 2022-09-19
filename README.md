@@ -79,6 +79,7 @@ included in extensions. The following are currently defined:
 
 * [STAM-Vocab](extensions/stam-vocab) -  Allows expressing and validating against user-defined vocabularies.
 * [STAM-Webannotations](extensions/stam-webannotations) - Models W3C Web Annotations using STAM and vice versa.
+* [STAM-TextValidation](extensions/stam-validations) - Adds an extra redundancy layer that helps protecting data integrity and aids readability of serialisations 
 
 Implementations *SHOULD* explicitly state which extensions they support.
 

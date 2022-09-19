@@ -2,16 +2,15 @@
 
 ## Introduction
 
-STAM is a data model for **stand-off text annotation**. The underlying
-premise is that any information on a text is represented as an *annotation*. We
-define an annotation as any kind of remark, classification/tagging on any
-particular portion(s) of a text, or on to the resource or annotation set as a whole, in which case
-we can interpret annotations as *metadata*. Additionally, rather than reference the
-text directly, annotations may point to other annotations (higher-order
-annotation). Examples of annotation may be linguistic
-annotation, structure/layout annotation, editorial annotation, technical
-annotation, or whatever comes to mind. Our model does not define any
-vocabularies whatsoever.
+STAM is a data model for **stand-off text annotation**. The underlying premise
+is that any information on a text is represented as an *annotation*. We define
+an annotation as any kind of remark, classification/tagging on any particular
+portion(s) of a text, or on the resource or annotation set as a whole, in which
+case we can interpret annotations as *metadata*. Additionally, rather than
+reference the text directly, annotations may point to other annotations
+(higher-order annotation). Examples of annotation may be linguistic annotation,
+structure/layout annotation, editorial annotation, technical annotation, or
+whatever comes to mind. Our model does not define any vocabularies whatsoever.
 
 The underlying resource is taken in its most bare form without further
 information; e.g. plain text (an ordered sequence of unicode points). *Any*
@@ -49,9 +48,12 @@ Goals/characteristics of STAM are:
   facilities to be specific enough for practical purposes. The model basically
   allows for any kind of directed or undirected graph.
 
-* *Standalone* - No dependency on other data models (e.g. RDF) aside from Unicode and JSON for serialisation, no dependency on any software services.
+* *Standalone* - No dependency on other data models (e.g. RDF) aside from
+  Unicode and JSON for serialisation, no dependency on any software services.
 
-* *Practical* - Rather than provide a theoretical framework, we primarily aim to provide a practical specification and actual low-level tooling you can get to work with right away.
+* *Practical* - Rather than provide a theoretical framework, we primarily aim
+  to provide a practical specification and actual low-level tooling you can get
+  to work with right away.
 
 * *Performant* - The data model is set up in such a way that it allows for
   efficient/performant implementations, with regard to processing requirements
@@ -59,7 +61,11 @@ Goals/characteristics of STAM are:
   (millions of annotations). We sit at a point where we deem to have an optimal
   trade-off between simplicity and performance.
 
-* *Import & Export* - Reads/writes a simple JSON format. But also designed with export to more complex formats in mind (such as W3C Web Annotations / RDF) and imports from common formats such as CONLL. Note that although STAM puts no constraints on annotation paradigms and vocabularies, higher data models may.
+* *Import & Export* - Reads/writes a simple JSON format. But also designed with
+  export to more complex formats in mind (such as W3C Web Annotations / RDF)
+  and imports from common formats such as CONLL. Note that although STAM puts
+  no constraints on annotation paradigms and vocabularies, higher data models
+  may.
 
 The name STAM, an acronym for *"Stand-off Text Annotation Model"*, is Dutch,
 Swedish, Afrikaans and Frisian for *"trunk"* (as in the trunk of a tree), the
@@ -95,6 +101,9 @@ to facilitate an efficient implementation. We refer to the following
 implementations:
 
 * (None exists yet)
+
+Please read the [Functionality](#Functionality) section further down to see a
+specification of requirements for implementations.
 
 ## Data Model
 
@@ -198,7 +207,7 @@ database backed, etc).
 
 ### Class: TextResource
 
-This holds the textual resource to be annotated. The text *MUST* be in Unicode Normal Form C (NFC).
+This holds the textual resource to be annotated. The text *MUST* be in [Unicode Normalization Form C (NFC)](https://www.unicode.org/reports/tr15/).
 
 ### Class: Annotation Data Set
 
@@ -261,10 +270,13 @@ There are multiple types of selectors:
   These ``begin`` and ``end`` attributes *MUST* describe the character position in NFC-normalised unicode
   points, in text of the resources that is being pointed at. Indexing *MUST* be zero-based and the end offset *MUST* be
   non-inclusive.
-* ``ResourceSelector``  - A selector point to a resource as whole. These type of annotation can be interpreted as *metadata*.
+* ``ResourceSelector``  - A selector point to a resource as whole. These type
+  of annotation can be interpreted as *metadata*.
 * ``AnnotationSelector``  - A selector pointing to one or more other annotations. This we call higher-order annotation is very common in STAM models. If the annotation that is being targeted eventually refers to a text (`TextSelector`), then offsets **MAY** be specified that select a subpart of this text. These offsets are now *relative* to the annotation. Internally, the implementation can always efficiently resolve these to absolute offsets on the resource. The use of `AnnotationSelector` has one important constraint: the graph of all annotations referring to other annotations  *MUST* be acyclic; i.e. it can't end up in a recursive loop of annotations referencing each-other. Implementations *SHOULD* check this.
 * ``MultiSelector``  - A selector that consists of multiple other selectors, used to select more complex targets that transcend the idea of a single simple selection. This *MUST* be interpreted as the annotation applying equally to the conjunction as a whole, its parts being inter-dependent and for any of them it goes that they *MUST NOT* be omitted for the annotation to makes sense. Note that the order of the selectors is not significant. When there is no dependency relation between the selectors, you *MUST* simply use multiple `Annotation`s instead.
-* ``DirectionalSelector``  - Another selector that consists of multiple other selectors, but with an explicit direction (from -> to), used to select more complex targets that transcend the idea of a single simple selection.
+* ``DirectionalSelector``  - Another selector that consists of multiple other
+  selectors, but with an explicit direction (from -> to), used to select more
+  complex targets that transcend the idea of a single simple selection.
 
 ### Class: AnnotationData
 
@@ -282,7 +294,7 @@ the key, but STAM does not prescribe any syntax). They key is encapsulated in a
 separate ``DataKey`` type for performance reasons, these too are held by the
 `AnnotationDataSet`.
 
-An `Annotation` instance *MAY* have reference multiple `AnnotationData` with the same `key`.
+An `Annotation` instance *MAY* reference multiple `AnnotationData` with the same `key`.
 
 The ``value`` property is a ``DataValue`` instance that holds the
 actual value along with its data type. 

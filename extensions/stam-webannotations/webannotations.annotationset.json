@@ -1,0 +1,18 @@
+{
+    "@type": "AnnotationSet",
+    "@id": "https://w3id.org/stam/OpenAnnotation",
+    "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "http://purl.org/dc/terms/creator",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "http://purl.org/dc/terms/created",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "http://purl.org/dc/terms/generator",
+        },
+    ]
+}

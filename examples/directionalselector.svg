@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg4620"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
+   sodipodi:docname="directionalselector.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview4622"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="3.0698793"
+     inkscape:cx="398.22412"
+     inkscape:cy="222.81006"
+     inkscape:window-width="3830"
+     inkscape:window-height="2117"
+     inkscape:window-x="2165"
+     inkscape:window-y="5"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs4617">
+    <marker
+       style="overflow:visible"
+       id="Arrow2"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow2"
+       markerWidth="7.6999998"
+       markerHeight="5.5999999"
+       viewBox="0 0 7.7 5.6"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="arrow2L" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="color:#000000;overflow:visible;fill:#ddafe9;stroke:none;stroke-width:0.14835;stroke-dasharray:none;stop-color:#000000"
+       id="rect1663-36-3-6"
+       width="20.137573"
+       height="7.8714418"
+       x="18.992737"
+       y="33.869003" />
+    <rect
+       style="color:#000000;overflow:visible;fill:#ddafe9;stroke:none;stroke-width:0.167905;stroke-dasharray:none;stop-color:#000000"
+       id="rect1663-36-3-6-1"
+       width="27.270422"
+       height="7.4459572"
+       x="41.209717"
+       y="34.282871" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;line-height:3.175px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="8.0071344"
+       y="40.308422"
+       id="text379-4"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';stroke-width:0.264583px"
+         x="8.0071344"
+         y="40.308422"
+         id="tspan1666">He spoke quickly</tspan></text>
+    <rect
+       style="color:#000000;overflow:visible;fill:#ffe680;stroke:#000000;stroke-width:0.249745;stroke-dasharray:none;stop-color:#000000"
+       id="rect163-7"
+       width="38.030407"
+       height="9.2489109"
+       x="28.085243"
+       y="3.8154354" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:3.30729px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="65.461609"
+       y="8.3793364"
+       id="text5516"><tspan
+         sodipodi:role="line"
+         id="tspan5514"
+         style="font-size:4.23333px;text-align:end;text-anchor:end;stroke-width:0.264583px"
+         x="65.461609"
+         y="8.3793364">dependency: adverbial </tspan><tspan
+         sodipodi:role="line"
+         style="font-size:4.23333px;text-align:end;text-anchor:end;stroke-width:0.264583px"
+         x="65.461609"
+         y="11.686627"
+         id="tspan5346">modifier</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2)"
+       d="m 45.306737,12.899758 -0.223,3.426175 -12.00989,0.273327 -2.19184,0.03512 0.17028,9.510984 -0.0884,3.642481"
+       id="path4467"
+       sodipodi:nodetypes="cccccc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 44.918977,16.409365 12.99762,-0.120352 0.31748,9.68053 -0.05688,8.541121"
+       id="path4497"
+       sodipodi:nodetypes="cccc" />
+  </g>
+</svg>

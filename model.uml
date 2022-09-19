@@ -110,7 +110,7 @@ class MultiSelector {
     <i>Combines selectors</i>
 }
 
-class DirectedSelector {
+class DirectionalSelector {
     selectors: [Selector+]
     --
     <i>Expresses a direction between two or more selectors,</i>
@@ -122,7 +122,7 @@ Selector <|-[#green]- ResourceSelector
 Selector <|-[#green]- DataSetSelector
 Selector <|-[#green]- AnnotationSelector
 Selector <|-[#green]- MultiSelector
-Selector <|-[#green]- DirectedSelector
+Selector <|-[#green]- DirectionalSelector
 
 
 
@@ -200,7 +200,7 @@ DataKey "1" .[#red].> "+" AnnotationData : > _referenced_by
 DataKey "1" .[#red].> "1" AnnotationDataSet : > _part_of_set
 
 MultiSelector "1" --> "*" Selector : > selectors
-DirectedSelector "1" --> "*" Selector : > selectors
+DirectionalSelector "1" --> "*" Selector : > selectors
 TextSelector "1" --> "2" Cursor : > offsets
 AnnotationSelector "1" --> "2" Cursor : > offsets
 DataSetSelector "1" --> "*" Selector : > annotationset

@@ -37,6 +37,12 @@ annotation data set. The JSON serialisation uses inline annotations.
 * [text resource](explicit_containment.txt)
 * [STAM JSON](explicit_containment.json)
 
+Explicit containment with relative offsets can always be automatically
+converted to implicit containment and absolute offsets, the reverse is
+also possible *except* when two annotations overlap
+precisely. Extra information about hierarchy would then be needed to resolve
+the situation.
+
 ## RDF constraints
 
 This example builds on the previous one and shows how to make a STAM model
@@ -48,4 +54,31 @@ specific:
 
 * [text resource](explicit_containment.txt)
 * [STAM JSON](explicit_containment_rdf.json)
+
+## Multiselector
+
+This example shows how the ``MultiSelector`` can be used. Here we use a ``MultiSelector`` that has two ``TextSelectors`` to
+select and annotate a non-contiguous part of the text:
+
+![Multiselector (overview)](multiselector.svg)
+
+## Multiselector for multiple resources
+
+A `MultiSelector` is not constrained to have only `TextSelector`s, nor are the
+`TextSelector`s constrained to point to the same resource. consider the
+following example where we have three text resources in different languages and
+single annotation that marks a translation relation of a certain part in all of them:
+
+![Multiselector for translation (overview)](multiselector_translation.svg)
+
+In this example we also show that the annotation data need not always consist of a key/value pair, it may choose either and leave the other empty.
+
+## Directional selector
+
+This example shows how the ``DirectionalSelector`` can be used. Here we use a
+``DirectionalSelector`` that has two ``TextSelectors``, the first points to the
+word *quickly* and the second points to the word *spoke*. The annotation marks
+a dependency relation (adverbial modifier).
+
+![Directional Selector (overview)](directionalselector.svg)
 

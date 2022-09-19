@@ -12,7 +12,7 @@ After working this out in the STAM annotation model, we obtain the schema
 below. Note that two annotations share the same data, illustrating how the
 model leads to more memory efficiency.
 
-![Example A](example_a.svg)
+![Example A](example_a.png)
 
 ## Implicit containment
 

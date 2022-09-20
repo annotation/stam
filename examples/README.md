@@ -90,7 +90,7 @@ a dependency relation (adverbial modifier).
 
 ![Directional Selector (overview)](directionalselector.svg)
 
-## Multiselector and grouping annotations
+## Multiselector and explicit containment (grouping annotations)
 
 This illustrates a similar annotation scenario as above, but here we do without
 the directional selector and show how you can use higher-order annotations and
@@ -98,6 +98,28 @@ a multiselector to group multiple annotations:
 
 ![Multiselector and higher order annotation](higher_order_annotation.svg)
 
-(This mirrors the way paradigms such as FoLiA handle dependency relations)
+Let's now consider a following variant of our earlier example [explicit
+containment and relative offsets](#explicit_contaiment_and_relative_offsets).
+Where we had a sentence annotation and on top of that we had word annotation(s)
+which referenced the sentence via relative offsets. We can also model this the
+other way around: first we have word annotations and then we model the sentence
+on top of words with a `MultiSelector` consisting of `AnnotationSelector`s. The words come first, referencing the
+text, and the sentence now explicitly links to all the words that are contained
+within it. The sentence either may not refer to the text at all anymore, or we add a `TextSelector` to the `MultiSelector` to point to the sentence (the green arrow).
+
+![Multiselector and explicit containment](explicit_containment_multiselector.svg)
+
+Note that in this scenario, there are no relative offsets anymore. We show
+these multiple variants to illustrate that STAM is capable of expressing
+various annotation paradigms. It's up to users to determine what model fits
+best for their use case.
+
+
+
+
+
+
+
+
 
 

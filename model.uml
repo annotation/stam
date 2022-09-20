@@ -186,28 +186,41 @@ enum Cursor {
 }
 
 class TextSelectionSet <<functional>> {
-    selections: [&TextSelection]
+    selections: [TextSelection]
     --
     <i>Arbitrary grouping of TextSelections</i>
     <i>(i.e. results of multiple TextSelectors)</i>
 }
 
 enum TextSelectionOperator <<functional>> {
-    Equals
-    Precedes(mindistance: int?, maxdistance: int?)
-    Succeeds(mindistance: int?, maxdistance: int?)
-    Overlaps
-    Embeds
-    LeftAdjacent(spacing: bool, punct: bool)
-    RightAdjacent(spacing: bool, punct: bool)
-    SameBegin
-    SameEnd
-    SameRange
+    Equals(other: TextSelectionSet)
+    Precedes(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
+    Succeeds(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
+    Overlaps(other: TextSelectionSet)
+    Embeds(other: TextSelectionSet)
+    LeftAdjacent(other: TextSelectionSet,spacing: bool, punct: bool)
+    RightAdjacent(other: TextSelectionSet,spacing: bool, punct: bool)
+    SameBegin(other: TextSelectionSet)
+    SameEnd(other: TextSelectionSet)
+    SameRange(other: TextSelectionSet)
     Not(TextSelectionOperator)
     --
     <i>Operators to compare text selections</i>
 }
 
+enum DataOperator <<functional>> {
+    Equals(other: AnnotationData)
+    GreaterThan(other: AnnotationData)
+    LessThan(other: AnnotationData)
+    GreaterThanOrEqual(other: AnnotationData)
+    LessThanOrEqual(other: AnnotationData)
+    HasElement(other: AnnotationData)
+    Has(key: str)
+    UsesSet(set: str)
+    Not(DataOperator)
+    --
+    <i>Operators to match annotation data</i>
+}
 
 AnnotationStore "1" *--> "*" AnnotationDataSet : > annotationsets
 AnnotationStore "1" *--> "*" TextResource : > resources
@@ -242,8 +255,15 @@ TextResource "1" *..> "*" TextSelection : > _index
 TextSelection "1" .[#red].> "*" Annotation : > _referenced_by
 TextSelection "1" .[#red].> "*" TextResource : > _part_of
 
-TextSelectionSet "1" o.[#red].> TextSelection : > selections
+TextSelectionSet "1" *..> TextSelection : > selections
 
+TextSelectionOperator *--> TextSelectionSet : > other
 TextSelectionOperator -[#blue]-> TextSelectionSet : > <<used with>>
+TextSelectionOperator *--> TextSelectionSet : > Not
+
+DataOperator -[#blue]-> AnnotationData : > <<used with>>
+DataOperator -[#blue]-> Annotation : > <<used with>>
+DataOperator *--> AnnotationData : > other
+DataOperator *--> DataOperator : > Not
 
 @enduml

@@ -710,6 +710,7 @@ Moreover, the following are *RECOMMENDED*, a STAM implementation:
 
 * *SHOULD* implement reverse index via `TextSelection` 
 * *SHOULD* implement indices at the `DataKey` level
+* *SHOULD* offer an interface to redact text resources (i.e. add/edit/remove text at any point), and *MUST* subsequently update all affected `TextSelector`s.
 
 If these recommendations are also met, we speak of a *full* STAM implementation.
 

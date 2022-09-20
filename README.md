@@ -678,6 +678,8 @@ A core STAM implementation adheres to the following requirements:
 * *MUST* offer an interface to search annotations:
     * *MUST* offer an interface to find annotations given a `DataKey` and optionally a value
     * *MUST* offer an interface to iterate over all annotations
+    * *MUST* offer an interface to iterate over all annotations that reference a given annotation
+    * *MUST* offer an interface to iterate over all annotations that reference a text selection 
     * *MUST* offer an interface to iterate over all annotation data sets
     * *MUST* offer an interface to iterate over all annotation data in an annotation data set
     * *MUST* offer an interface to iterate over all data keys in an annotation data set

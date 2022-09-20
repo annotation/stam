@@ -114,6 +114,11 @@ these multiple variants to illustrate that STAM is capable of expressing
 various annotation paradigms. It's up to users to determine what model fits
 best for their use case.
 
+At this point I also want to emphasise that the simplified schemas drawn here
+do not show the space-conserving features of the STAM model. In this example we
+saw seven annotations, but behind that are only three `AnnotationData`
+instances and only one `DataKey` (type).
+
 
 
 

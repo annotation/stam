@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="145mm"
+   height="64mm"
+   viewBox="0 0 145 64"
+   version="1.1"
+   id="svg5638"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
+   sodipodi:docname="multiselector_xlit.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview5640"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2.1707325"
+     inkscape:cx="206.61228"
+     inkscape:cy="153.40444"
+     inkscape:window-width="3840"
+     inkscape:window-height="2127"
+     inkscape:window-x="2160"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs5635">
+    <marker
+       style="overflow:visible"
+       id="marker7633"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow2"
+       markerWidth="7.6999998"
+       markerHeight="5.5999999"
+       viewBox="0 0 7.7 5.6"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path7631" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow2"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow2"
+       markerWidth="7.6999998"
+       markerHeight="5.5999999"
+       viewBox="0 0 7.7 5.6"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="arrow2L" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker7683"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow2"
+       markerWidth="7.6999998"
+       markerHeight="5.5999999"
+       viewBox="0 0 7.7 5.6"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path7681" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="color:#000000;overflow:visible;fill:#ddafe9;stroke:none;stroke-width:0.139907;stroke-dasharray:none;stop-color:#000000"
+       id="rect1663-36-3-6-1"
+       width="18.933981"
+       height="7.4459572"
+       x="54.08482"
+       y="11.919293" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;line-height:3.175px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="37.552086"
+       y="18.072996"
+       id="text379-4"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';stroke-width:0.264583px"
+         x="37.552086"
+         y="18.072996"
+         id="tspan1666">السلام عليكم</tspan></text>
+    <rect
+       style="color:#000000;overflow:visible;fill:#ffe680;stroke:#000000;stroke-width:0.249745;stroke-dasharray:none;stop-color:#000000"
+       id="rect163-7"
+       width="38.030407"
+       height="9.2489109"
+       x="103.79035"
+       y="23.130947" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:3.30729px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="134.57654"
+       y="29.301308"
+       id="text5516"><tspan
+         sodipodi:role="line"
+         style="font-size:4.23333px;text-align:end;text-anchor:end;stroke-width:0.264583px"
+         x="134.57654"
+         y="29.301308"
+         id="tspan5346">transliteration</tspan></text>
+    <rect
+       style="color:#000000;overflow:visible;fill:none;stroke:#818d83;stroke-width:0.499999;stroke-opacity:1;stop-color:#000000"
+       id="rect6191"
+       width="76.873688"
+       height="12.369869"
+       x="6.3419533"
+       y="10.314294" />
+    <rect
+       style="color:#000000;overflow:visible;fill:#ddafe9;stroke:none;stroke-width:0.18148;stroke-dasharray:none;stop-color:#000000"
+       id="rect1663-36-3-6-1-7"
+       width="31.858219"
+       height="7.4459572"
+       x="10.940079"
+       y="30.557951" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;line-height:3.175px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="11.660427"
+       y="36.020443"
+       id="text379-4-9"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';stroke-width:0.264583px"
+         x="11.660427"
+         y="36.020443"
+         id="tspan1666-2">as-salām alaykum</tspan></text>
+    <rect
+       style="color:#000000;overflow:visible;fill:none;stroke:#818d83;stroke-width:0.534165;stroke-opacity:1;stop-color:#000000"
+       id="rect6191-0"
+       width="87.981453"
+       height="12.335704"
+       x="5.4736671"
+       y="28.406975" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:2.11666px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#b3b3b3;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="6.0903363"
+       y="8.2725735"
+       id="text7435"><tspan
+         sodipodi:role="line"
+         id="tspan7433"
+         style="font-size:4.23333px;fill:#b3b3b3;stroke-width:0.264583px"
+         x="6.0903363"
+         y="8.2725735">original.txt</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:2.11666px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#b3b3b3;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="5.7229519"
+       y="26.833771"
+       id="text7435-2"><tspan
+         sodipodi:role="line"
+         id="tspan7433-3"
+         style="font-size:4.23333px;fill:#b3b3b3;stroke-width:0.264583px"
+         x="5.7229519"
+         y="26.833771">transliteration.txt</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2)"
+       d="m 103.58822,27.610223 h -3.40938 V 15.546724 l -21.677614,0.121887 1.605238,-0.243827 -4.532422,0.121374"
+       id="path7545"
+       sodipodi:nodetypes="cccccc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7633)"
+       d="m 100.15902,27.405184 v 6.905821 h -4.306472 l -2.277965,-0.151749"
+       id="path7629" />
+    <rect
+       style="color:#000000;overflow:visible;fill:#ddafe9;stroke:none;stroke-width:0.139907;stroke-dasharray:none;stop-color:#000000"
+       id="rect1663-36-3-6-1-8"
+       width="18.933981"
+       height="7.4459572"
+       x="53.722965"
+       y="48.953754" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;line-height:3.175px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="37.190235"
+       y="55.10746"
+       id="text379-4-4"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';stroke-width:0.264583px"
+         x="37.190235"
+         y="55.10746"
+         id="tspan1666-5">ٱلسَّلَامُ عَلَيْكُمْ</tspan></text>
+    <rect
+       style="color:#000000;overflow:visible;fill:none;stroke:#818d83;stroke-width:0.499999;stroke-opacity:1;stop-color:#000000"
+       id="rect6191-03"
+       width="76.873688"
+       height="12.369869"
+       x="5.9801006"
+       y="47.348755" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:2.11666px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#b3b3b3;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="6.0229931"
+       y="45.583408"
+       id="text7435-6"><tspan
+         sodipodi:role="line"
+         id="tspan7433-1"
+         style="font-size:4.23333px;fill:#b3b3b3;stroke-width:0.264583px"
+         x="6.0229931"
+         y="45.583408">vocalised.txt</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7683)"
+       d="m 100.13197,34.401114 v 18.319972 l -9.388608,0.204151 -13.380451,0.128372"
+       id="path7679"
+       sodipodi:nodetypes="cccc" />
+  </g>
+</svg>

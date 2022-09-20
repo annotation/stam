@@ -70,7 +70,7 @@ select and annotate a non-contiguous part of the text:
 
 ![Multiselector (overview)](multiselector.svg)
 
-## Multiselector for multiple resources
+## Multiselector for multiple resources (1)
 
 A `MultiSelector` is not constrained to have only `TextSelector`s, nor are the
 `TextSelector`s constrained to point to the same resource. consider the
@@ -80,6 +80,12 @@ single annotation that marks a translation relation of a certain part in all of 
 ![Multiselector for translation (overview)](multiselector_translation.svg)
 
 In this example we also show that the annotation data need not always consist of a key/value pair, it may choose either and leave the other empty.
+
+## Multiselector for multiple resources (2)
+
+This example shows an analogous annotation to the above, and relates multiple variants of the same text together (in different resources):
+
+![Multiselector for translation (overview)](multiselector_xlit.svg)
 
 ## Directional selector
 

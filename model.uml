@@ -1,5 +1,13 @@
 @startuml
+hide stereotype
 
+skinparam class {
+    BackgroundColor Linen
+    ArrowColor Black
+    BorderColor Navy
+
+    BackgroundColor<<functional>> LightSteelBlue
+}
 skinparam groupInheritance 2
 
 title "STAM: Stand-off Text Annotation Model"
@@ -16,9 +24,10 @@ class TextResource {
     <i>(and the reverse index)</i>
 }
 
-class TextSelection {
+class TextSelection <<functional>> {
     offset: (begin: int, end: int)
     referenced_by: [&Annotation+]
+    _part_of: [&TextResource]
     --
     <i>Links text positions to annotations</i>
     <i>Used by the reverse index</i>
@@ -176,6 +185,30 @@ enum Cursor {
     <i>(not bytes!), zero-indexed</i>
 }
 
+class TextSelectionSet <<functional>> {
+    selections: [&TextSelection]
+    --
+    <i>Arbitrary grouping of TextSelections</i>
+    <i>(i.e. results of multiple TextSelectors)</i>
+}
+
+enum TextSelectionOperator <<functional>> {
+    Equals
+    Precedes(mindistance: int?, maxdistance: int?)
+    Succeeds(mindistance: int?, maxdistance: int?)
+    Overlaps
+    Embeds
+    LeftAdjacent(spacing: bool, punct: bool)
+    RightAdjacent(spacing: bool, punct: bool)
+    SameBegin
+    SameEnd
+    SameRange
+    Not(TextSelectionOperator)
+    --
+    <i>Operators to compare text selections</i>
+}
+
+
 AnnotationStore "1" *--> "*" AnnotationDataSet : > annotationsets
 AnnotationStore "1" *--> "*" TextResource : > resources
 AnnotationStore "1" *--> "*" Annotation : > annotations
@@ -205,7 +238,12 @@ TextSelector "1" --> "2" Cursor : > offsets
 AnnotationSelector "1" --> "2" Cursor : > offsets
 DataSetSelector "1" --> "*" Selector : > annotationset
 
-TextResource "1" ..> "*" TextSelection : > _index
+TextResource "1" *..> "*" TextSelection : > _index
 TextSelection "1" .[#red].> "*" Annotation : > _referenced_by
+TextSelection "1" .[#red].> "*" TextResource : > _part_of
+
+TextSelectionSet "1" o.[#red].> TextSelection : > selections
+
+TextSelectionOperator -[#blue]-> TextSelectionSet : > <<used with>>
 
 @enduml

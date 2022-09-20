@@ -259,7 +259,7 @@ TextSelectionSet "1" *..> TextSelection : > selections
 
 TextSelectionOperator *--> TextSelectionSet : > other
 TextSelectionOperator -[#blue]-> TextSelectionSet : > <<used with>>
-TextSelectionOperator *--> TextSelectionSet : > Not
+TextSelectionOperator *--> TextSelectionOperator : > Not
 
 DataOperator -[#blue]-> AnnotationData : > <<used with>>
 DataOperator -[#blue]-> Annotation : > <<used with>>

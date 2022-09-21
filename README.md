@@ -130,6 +130,7 @@ Some notes to interpret the diagram, as it may quickly become overwhelming:
 *  ``[]`` represents a collection (a list/vector/array/set, specifics are left to the implementation)
     *  The ``*`` suffix inside a list represents zero or more items of the preceding type
     *  The ``+`` suffix inside a list represents one or more items of the preceding type
+    *  The ``++`` suffix inside a list represents two or more items of the preceding type
 * Properties starting with an underscore are *NOT REQUIRED* but *RECOMMENDED* for implementation to facilitate quick lookups, they suggest a memory model. Implementations could implement them as private properties.
 
 ### Identifiers

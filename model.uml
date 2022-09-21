@@ -114,13 +114,13 @@ class AnnotationSelector {
 
 
 class MultiSelector {
-    selectors: [Selector+]
+    selectors: [Selector++]
     --
     <i>Combines selectors</i>
 }
 
 class DirectionalSelector {
-    selectors: [Selector+]
+    selectors: [Selector++]
     --
     <i>Expresses a direction between two or more selectors,</i>
     <i>in the exact order specified (from -> to)</i>
@@ -231,10 +231,8 @@ enum AnnotationQuery <<functional>> {
     MatchDataSet(dataset: &AnnotationDataSet)
     MatchReferences(query: AnnotationQuery, mindepth: int?, maxdepth: int?)
     MatchReferencedBy(query: AnnotationQuery, mindepth: int?, maxdepth: int?)
-    And(query: AnnotationQuery, query2: AnnotationQuery)
-    Or(query: AnnotationQuery, query2: AnnotationQuery)
-    Not(query: AnnotationQuery)
-    Compose(query: AnnotationQuery, query2: AnnotationQuery)
+    Union(queries: [AnnotationQuery++])
+    Intersection(queries: [AnnotationQuery++])
     --
     <i>Operators to select/filter annotations</i>
 }
@@ -302,7 +300,7 @@ AnnotationQuery *..> TextSelectionOperator : > MatchTextSelection
 AnnotationQuery *..> DataOperator : > MatchData
 AnnotationQuery o.[#red].> TextResource : > resource
 AnnotationQuery o.[#red].> AnnotationDataSet : > dataset
-AnnotationQuery *..> AnnotationQuery : > query/query2
+AnnotationQuery *..> AnnotationQuery : > query/queries
 AnnotationStore .[#blue].> AnnotationSet
 
 @enduml

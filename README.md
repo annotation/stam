@@ -120,12 +120,14 @@ Some notes to interpret the diagram:
 *  A circled A stands for a Abstract class (items listed are properties that must all be satisfied).
 *  A circled E stands for an Enumeration (items listed are options in the enumeration)
    *  Enumerations may be parametrised (this could be expanded to an abstract class and concrete classes).
+* Blue classes/enumerations are part of the extended model, and provide *RECOMMENDATIONS* for implementations in order to provide certain functionality.
 * Dashed edges follow private properties for the recommended memory-model
 * Green edges denote a subclass relationship (for the various Selectors)
 * Red edges point to references in the recommended memory model, black edges indicate ownership
+* Blue edges denote a functional relationship (used with). 
 * The ampersand prefix (``&``) represent a reference/pointer and is merely a *RECOMMENDED* hint for a memory model for implementations.
 * The ``?`` suffix represents optional properties. 
-*  ``[]`` represents a list/vector/array.
+*  ``[]`` represents a collection (a list/vector/array/set, specifics are left to the implementation)
     *  The ``*`` suffix inside a list represents zero or more items of the preceding type
     *  The ``+`` suffix inside a list represents one or more items of the preceding type
 * Properties starting with an underscore are *NOT REQUIRED* but *RECOMMENDED* for implementation to facilitate quick lookups, they suggest a memory model.
@@ -339,6 +341,17 @@ It can be set to one of the following:
 Note that there is no ``Map`` type to associate further nested key/value pairs. If
 you want to express nested relations, you *MUST* use `Annotation`s on
 `Annotation`s (i.e. using `AnnotationSelector`).
+
+## Extended Data Model
+
+The following classes are part of the *extended data model* and are auxiliary
+structures used by implementations to delivered specific functionality rather
+than core structure to model the actual data. These are should be taken
+*RECOMMENDATIONS* and *NOT REQUIREMENTS*. They are typically not part of any
+serialisation. In the UML diagram, they are drawn in blue. Specifications *MAY*
+deviate from these and implement things in another matter. Although STAM does prescribe
+what functionality must be implemented (see the [functionality](#Functionality)
+section), it leaves flexibility to implementations to determine how that should be accomplished.
 
 ### Class: TextSelection
 

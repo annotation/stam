@@ -348,7 +348,7 @@ you want to express nested relations, you *MUST* use `Annotation`s on
 The following classes are part of the *extended data model* and are auxiliary
 structures used by implementations to delivered specific functionality rather
 than core structure to model the actual data. These are should be taken
-*RECOMMENDATIONS* and *NOT REQUIREMENTS*. They are typically not part of any
+as *RECOMMENDATIONS* and *NOT REQUIREMENTS*. They are typically not part of any
 serialisation. In the UML diagram, they are drawn in blue. Specifications *MAY*
 deviate from these and implement things in another matter. Although STAM does prescribe
 what functionality must be implemented (see the [functionality](#Functionality)
@@ -369,6 +369,46 @@ with a TextSelector), a `TextSelection` *SHOULD* added to the reverse index.
 To facilitate search, implementations are *RECOMMENDED* to keep all
 `TextSelection` in the reverse index in sorted order, where the order is based
 on the offsets. We do not prescribe how to implement this.
+
+TextSelections are also used when querying, e.g. when the user specifies a
+particular text range explicitly. Their use in then usually mediated through
+the `TextSelectionSet` as described next:
+
+### Class: TextSelectionSet
+
+When querying relative text positions, rather than operating on a single
+`TextSelectionSet`, we use this intermediate class which contains one or more
+`TextSelection` instances. This allows us to also compute textual relationships
+between non-contingent text parts.
+
+### Enum: TextSelectionOperator
+
+This operator expresses a binary relation between two text selection sets, e.g.
+*A TextSelectionOperator B*. It *MUST* evaluate to a boolean.
+
+We discern the following types, the `B` parameter is a `TextSelectionSet` in all.
+
+* `Equals(B)` -  Both text selection sets are the same, they cover the exact same offsets. Operator is symmetric.
+* `Precedes(B, mindistance: int? , maxdistance: int?)` - All offsets in A precede all offsets in B , there is no overlap  (alternative name: ends before)
+    * The `mindistance`, when set, defines a minimum distance in unicode points (default = 0)
+    * The `maxdistance`, when set, defines a maximum distance in unicode points (default, unset = infinite)
+* `StartsBefore(B, mindistance: int?, maxdistance: int?)` - A starts before B (one of the offsets of A comes before any of the elements in B). There may however be overlap
+* `Succeeds(B, mindistance: int?, maxdistance: int?)` - All offsets in A succeed all offsets in B , there is no overlap (alternative name: start after)
+* `EndsBefore(B, mindistance: int?, maxdistance: int?)` - A ends before B ends (one of the offsets of B goes on after any of the offsets in A). There may however be overlap
+* `Near(B, mindistance: int?, maxdistance: int?) ` - Combination of `Precedes` and `Succeeds`, there is no overlap. Operator is symmetric.
+* `Overlaps(B)` - The offsets of A and B intersect at some point. Operator is symmetric.
+* `Embeds(B)` - All of the offsets of B overlap with A
+* `LeftAdjacent(B, spacing: bool?, punct: bool?)` - A ends just when B begins (need not apply to all elements, one suffices).
+    * The `spacing` parameter, when set to true, allows whitespace between the offsets and still considers the text selection sets adjacent
+    * The `punct` parameter, when set to true, allows punctuation between the offsets and still considers the text selection sets adjacent
+* `RightAdjacent(B, spacing: bool?, punct: bool?)` - A begins just when A ends (need not apply to all elements, one suffices)
+* `SameBegin(B)` - A and B share a begin offset (need not apply to all elements, one suffices). Operator is symmetric.
+* `SameEnd(B)` - A and B share  end offset (need not apply to all elements, one suffices). Operator is symmetric.
+* `SameRange(B)` - Combination of `SameBegin` and `SameEnd`. Operator is symmetric.
+
+Then there is the unary operator `Not` which can invert any of the above.
+Further logical operators are defined on the level of `AnnotationOperator`
+rather than on this one.
 
 ## Serialisation Formats
 

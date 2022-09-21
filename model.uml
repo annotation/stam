@@ -189,13 +189,16 @@ class TextSelectionSet <<functional>> {
     selections: [TextSelection]
     --
     <i>Arbitrary grouping of TextSelections</i>
-    <i>(i.e. results of multiple TextSelectors)</i>
+    <i>(e.g. results of multiple TextSelectors)</i>
 }
 
 enum TextSelectionOperator <<functional>> {
     Equals(other: TextSelectionSet)
     Precedes(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
+    StartsBefore(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
     Succeeds(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
+    EndsBefore(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
+    Near(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
     Overlaps(other: TextSelectionSet)
     Embeds(other: TextSelectionSet)
     LeftAdjacent(other: TextSelectionSet,spacing: bool, punct: bool)
@@ -222,28 +225,53 @@ enum DataOperator <<functional>> {
     <i>Operators to match annotation data</i>
 }
 
-enum AnnotationQuery <<functional>> {
-    MatchText(text: str, regexp: bool)
-    MatchTextSelection(TextSelectionOperator)
-    MatchData(DataOperator)
-    Match(set: AnnotationSet)
-    MatchResource(resource: &TextResource)
-    MatchDataSet(dataset: &AnnotationDataSet)
-    MatchReferences(query: AnnotationQuery, mindepth: int?, maxdepth: int?)
-    MatchReferencedBy(query: AnnotationQuery, mindepth: int?, maxdepth: int?)
-    Union(queries: [AnnotationQuery++])
-    Intersection(queries: [AnnotationQuery++])
+enum AnnotationOperator <<functional>> {
+    HasText(text: str, regexp: bool)
+    HasTextSelection(TextSelectionOperator)
+    HasData(DataOperator)
+    InSet(set: AnnotationSet)
+    HasResource(resource: &TextResource)
+    HasDataSet(dataset: &AnnotationDataSet)
+    References(set: AnnotationSet, mindepth: int?, maxdepth: int?)
+    ReferencedBy(set: AnnotationSet, mindepth: int?, maxdepth: int?)
+    Not(AnnotationOperator)
     --
     <i>Operators to select/filter annotations</i>
 }
 
 class AnnotationSet <<functional>> {
+    id: str?
     annotations: [&Annotation*]
+    --
+    _evaluated: bool
     --
     <i>Arbitrary and temporary grouping</i>
     <i>of one or more annotations</i>
     <i>(e.g. as a result of a query)</i>
 }
+
+class AnnotationQuery <<functional>>  {
+    type: Select/Add/Delete
+    select: [&AnnotationSet+]
+    conditions: [(set: AnnotationSet, operator: AnnotationOperator)*]
+    assignments: [(set: &AnnotationSet, operator: AssignmentOperator)*]
+    --
+    <i>Query on annotations</i>
+}
+
+enum AssignmentOperator <<functional>> {
+    SetData(DataValue)
+    SelectAnnotation(&Annotation, offsets:
+        (&Resource, begin: Cursor, end: Cursor)? )
+    SelectText(&Resource, begin: Cursor, end: Cursor)
+    SelectResource(&Resource)
+    MultiSelect([AssignmentOperator++])
+    DirectionalSelect([AssignmentOperator++])
+    --
+    <i>Operator to modify annotations</i>
+    <i>(further edges omitted for brevity)</i>
+}
+
 
 AnnotationStore "1" *--> "*" AnnotationDataSet : > datasets
 AnnotationStore "1" *--> "*" TextResource : > resources
@@ -293,14 +321,17 @@ DataOperator *..> DataOperator : > Not
 DataOperator o.[#red].> DataKey : > key
 DataOperator o.[#red].> AnnotationDataSet : > set
 
-AnnotationQuery .[#blue].> AnnotationSet : > <<applied to>>
-AnnotationQuery .[#blue].> AnnotationSet : > <<produces>>
-AnnotationQuery *..> AnnotationSet : > set
-AnnotationQuery *..> TextSelectionOperator : > MatchTextSelection
-AnnotationQuery *..> DataOperator : > MatchData
-AnnotationQuery o.[#red].> TextResource : > resource
-AnnotationQuery o.[#red].> AnnotationDataSet : > dataset
-AnnotationQuery *..> AnnotationQuery : > query/queries
+AnnotationQuery "1" *..> "*" AnnotationSet : > set
+AnnotationQuery "1" *..> "*" AnnotationOperator : > operator
+AnnotationQuery "1" *..> "*" AssignmentOperator : > assignments
+
+AnnotationOperator "1" .[#blue].> "+" AnnotationSet : > <<applied to>>
+AnnotationOperator *..> AnnotationSet : > set
+AnnotationOperator *..> TextSelectionOperator : > HasTextSelection
+AnnotationOperator *..> AnnotationOperator : > Not
+AnnotationOperator *..> DataOperator : > HasData
+AnnotationOperator o.[#red].> TextResource : > resource
+AnnotationOperator o.[#red].> AnnotationDataSet : > HasDataSet
 AnnotationStore .[#blue].> AnnotationSet
 
 @enduml

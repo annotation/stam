@@ -226,13 +226,15 @@ enum AnnotationQuery <<functional>> {
     MatchText(text: str, regexp: bool)
     MatchTextSelection(TextSelectionOperator)
     MatchData(DataOperator)
-    MatchReferences(other: &AnnotationSet, mindepth: int?, maxdepth: int?)
-    MatchReferencedBy(other: &AnnotationSet, mindepth: int?, maxdepth: int?)
+    Match(set: AnnotationSet)
     MatchResource(resource: &TextResource)
     MatchDataSet(dataset: &AnnotationDataSet)
-    And(AnnotationQuery, AnnotationQuery)
-    Or(AnnotationQuery, AnnotationQuery)
-    Not(AnnotationQuery)
+    MatchReferences(query: AnnotationQuery, mindepth: int?, maxdepth: int?)
+    MatchReferencedBy(query: AnnotationQuery, mindepth: int?, maxdepth: int?)
+    And(query: AnnotationQuery, query: AnnotationQuery)
+    Or(query: AnnotationQuery, query: AnnotationQuery)
+    Not(query: AnnotationQuery)
+    Compose(query: AnnotationQuery, query: AnnotationQuery)
     --
     <i>Operators to select/filter annotations</i>
 }
@@ -295,12 +297,12 @@ DataOperator o.[#red].> AnnotationDataSet : > set
 
 AnnotationQuery .[#blue].> AnnotationSet : > <<applied to>>
 AnnotationQuery .[#blue].> AnnotationSet : > <<produces>>
-AnnotationQuery o.[#red].> AnnotationSet : > other
+AnnotationQuery *..> AnnotationSet : > set
 AnnotationQuery *..> TextSelectionOperator : > MatchTextSelection
 AnnotationQuery *..> DataOperator : > MatchData
 AnnotationQuery o.[#red].> TextResource : > resource
 AnnotationQuery o.[#red].> AnnotationDataSet : > dataset
-AnnotationQuery *..> AnnotationQuery : > And/Or/Not
+AnnotationQuery *..> AnnotationQuery : > query
 AnnotationStore .[#blue].> AnnotationSet
 
 @enduml

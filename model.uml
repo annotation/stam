@@ -222,7 +222,7 @@ enum DataOperator <<functional>> {
     <i>Operators to match annotation data</i>
 }
 
-enum AnnotationOperator <<functional>> {
+enum AnnotationQuery <<functional>> {
     MatchText(text: str, regexp: bool)
     MatchTextSelection(TextSelectionOperator)
     MatchData(DataOperator)
@@ -230,6 +230,9 @@ enum AnnotationOperator <<functional>> {
     MatchReferencedBy(other: &AnnotationSet, mindepth: int?, maxdepth: int?)
     MatchResource(resource: &TextResource)
     MatchDataSet(dataset: &AnnotationDataSet)
+    And(AnnotationQuery, AnnotationQuery)
+    Or(AnnotationQuery, AnnotationQuery)
+    Not(AnnotationQuery)
     --
     <i>Operators to select/filter annotations</i>
 }
@@ -280,21 +283,24 @@ TextSelection "1" o.[#red].> "*" TextResource : > _part_of
 TextSelectionSet "1" *..> TextSelection : > selections
 
 TextSelectionOperator *..> TextSelectionSet : > other
-TextSelectionOperator .[#blue].> TextSelectionSet : > <<used with>>
+TextSelectionOperator .[#blue].> TextSelectionSet : > <<applied to>>
 TextSelectionOperator *..> TextSelectionOperator : > Not
 
-DataOperator .[#blue].> AnnotationData : > <<used with>>
-DataOperator .[#blue].> Annotation : > <<used with>>
+DataOperator .[#blue].> AnnotationData : > <<applied to>>
+DataOperator .[#blue].> Annotation : > <<applied to>>
 DataOperator *..> AnnotationData : > other
 DataOperator *..> DataOperator : > Not
 DataOperator o.[#red].> DataKey : > key
 DataOperator o.[#red].> AnnotationDataSet : > set
 
-AnnotationOperator .[#blue].> AnnotationSet : > <<used with>>
-AnnotationOperator o.[#red].> AnnotationSet : > other
-AnnotationOperator *..> TextSelectionOperator : > MatchTextSelection
-AnnotationOperator *..> DataOperator : > MatchData
-AnnotationOperator o.[#red].> TextResource : > resource
-AnnotationOperator o.[#red].> AnnotationDataSet : > dataset
+AnnotationQuery .[#blue].> AnnotationSet : > <<applied to>>
+AnnotationQuery .[#blue].> AnnotationSet : > <<produces>>
+AnnotationQuery o.[#red].> AnnotationSet : > other
+AnnotationQuery *..> TextSelectionOperator : > MatchTextSelection
+AnnotationQuery *..> DataOperator : > MatchData
+AnnotationQuery o.[#red].> TextResource : > resource
+AnnotationQuery o.[#red].> AnnotationDataSet : > dataset
+AnnotationQuery *..> AnnotationQuery : > And/Or/Not
+AnnotationStore .[#blue].> AnnotationSet
 
 @enduml

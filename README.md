@@ -114,23 +114,23 @@ The below UML diagram expresses the full data model.
 
 ![UML diagram](model.png)
 
-Some notes to interpret the diagram:
+Some notes to interpret the diagram, as it may quickly become overwhelming:
 
 *  A circled C stands for a Class (items listed are properties that must all be satisfied).
 *  A circled A stands for a Abstract class (items listed are properties that must all be satisfied).
 *  A circled E stands for an Enumeration (items listed are options in the enumeration)
-   *  Enumerations may be parametrised (this could be expanded to an abstract class and concrete classes).
-* Blue classes/enumerations are part of the extended model, and provide *RECOMMENDATIONS* for implementations in order to provide certain functionality.
-* Dashed edges follow private properties for the recommended memory-model
+   *  Enumerations may be parametrised (this could be written more verbosely as an abstract class (A) and concrete classes (C), and vice versa).
+* Blue classes/enumerations are *dependency relations* part of the extended model, and provide *RECOMMENDATIONS* for implementations in order to provide certain functionality. Please ignore it on a first reading.
+* Dashed edges follow private/*RECOMMENDED* properties for the recommended memory-model or come from classes in the extended model. Please ignore it on a first reading.
 * Green edges denote a subclass relationship (for the various Selectors)
-* Red edges point to references in the recommended memory model, black edges indicate ownership
-* Blue edges denote a functional relationship (used with). 
+* Red edges point to references in the recommended memory model, black edges indicate ownership. Please ignore it on a first reading.
+* Blue edges denote a functional relationship (used with).  Please ignore it on a first reading.
 * The ampersand prefix (``&``) represent a reference/pointer and is merely a *RECOMMENDED* hint for a memory model for implementations.
 * The ``?`` suffix represents optional properties. 
 *  ``[]`` represents a collection (a list/vector/array/set, specifics are left to the implementation)
     *  The ``*`` suffix inside a list represents zero or more items of the preceding type
     *  The ``+`` suffix inside a list represents one or more items of the preceding type
-* Properties starting with an underscore are *NOT REQUIRED* but *RECOMMENDED* for implementation to facilitate quick lookups, they suggest a memory model.
+* Properties starting with an underscore are *NOT REQUIRED* but *RECOMMENDED* for implementation to facilitate quick lookups, they suggest a memory model. Implementations could implement them as private properties.
 
 ### Identifiers
 

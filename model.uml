@@ -37,7 +37,7 @@ class TextSelection <<functional>> {
 class AnnotationStore {
     id: str?
     annotations: [Annotation*]
-    sets: [AnnotationDataSet*]
+    datasets: [AnnotationDataSet*]
     resources: [TextResource*]
     --
     <i>Holds the full annotation graph model</i>
@@ -215,14 +215,34 @@ enum DataOperator <<functional>> {
     GreaterThanOrEqual(other: AnnotationData)
     LessThanOrEqual(other: AnnotationData)
     HasElement(other: AnnotationData)
-    Has(key: str)
-    UsesSet(set: str)
+    Has(key: &DataKey)
+    UsesSet(set: &AnnotationDataSet)
     Not(DataOperator)
     --
     <i>Operators to match annotation data</i>
 }
 
-AnnotationStore "1" *--> "*" AnnotationDataSet : > annotationsets
+enum AnnotationOperator <<functional>> {
+    MatchText(text: str, regexp: bool)
+    MatchTextSelection(TextSelectionOperator)
+    MatchData(DataOperator)
+    MatchReferences(other: &Annotation, mindepth: int?, maxdepth: int?)
+    MatchReferencedBy(other: &Annotation, mindepth: int?, maxdepth: int?)
+    MatchResource(resource: &TextResource)
+    MatchDataSet(dataset: &AnnotationDataSet)
+    --
+    <i>Operators to select/filter annotations</i>
+}
+
+class AnnotationSet <<functional>> {
+    annotations: [&Annotation*]
+    --
+    <i>Arbitrary and temporary grouping</i>
+    <i>of one or more annotations</i>
+    <i>(e.g. as a result of a query)</i>
+}
+
+AnnotationStore "1" *--> "*" AnnotationDataSet : > datasets
 AnnotationStore "1" *--> "*" TextResource : > resources
 AnnotationStore "1" *--> "*" Annotation : > annotations
 
@@ -231,19 +251,21 @@ AnnotationDataSet "1" *--> "*" DataKey : > keys
 
 Annotation "1" *--> "+" Selector : > target
 Annotation "1" o-[#red]-> "*" AnnotationData : > data
-Annotation "1" .[#red].> "*" Annotation : > _referenced_by
+Annotation "1" o.[#red].> "*" Annotation : > _referenced_by
 
-AnnotationData "1" .[#red].> "+" Annotation : > _referenced_by
+AnnotationSet "1" o-[#red]-> "*" Annotation : > annotations
+
+AnnotationData "1" o.[#red].> "+" Annotation : > _referenced_by
 AnnotationData "1" *--> "1" DataValue : > value
 AnnotationData "1" *-[#red]-> "1" DataKey : > key
-AnnotationData "1" .[#red].> "1" AnnotationDataSet : > _part_of_set
+AnnotationData "1" o.[#red].> "1" AnnotationDataSet : > _part_of_set
 
-TextSelector "1" -[#red]-> "1" TextResource : > resource
-ResourceSelector "1" -[#red]-> "1" TextResource : > resource
-AnnotationSelector "1" -[#red]-> "1" Annotation : > annotation
+TextSelector "1" o-[#red]-> "1" TextResource : > resource
+ResourceSelector "1" o-[#red]-> "1" TextResource : > resource
+AnnotationSelector "1" o-[#red]-> "1" Annotation : > annotation
 
-DataKey "1" .[#red].> "+" AnnotationData : > _referenced_by
-DataKey "1" .[#red].> "1" AnnotationDataSet : > _part_of_set
+DataKey "1" o.[#red].> "+" AnnotationData : > _referenced_by
+DataKey "1" o.[#red].> "1" AnnotationDataSet : > _part_of_set
 
 MultiSelector "1" --> "*" Selector : > selectors
 DirectionalSelector "1" --> "*" Selector : > selectors
@@ -252,18 +274,27 @@ AnnotationSelector "1" --> "2" Cursor : > offsets
 DataSetSelector "1" --> "*" Selector : > annotationset
 
 TextResource "1" *..> "*" TextSelection : > _index
-TextSelection "1" .[#red].> "*" Annotation : > _referenced_by
-TextSelection "1" .[#red].> "*" TextResource : > _part_of
+TextSelection "1" o.[#red].> "*" Annotation : > _referenced_by
+TextSelection "1" o.[#red].> "*" TextResource : > _part_of
 
 TextSelectionSet "1" *..> TextSelection : > selections
 
-TextSelectionOperator *--> TextSelectionSet : > other
-TextSelectionOperator -[#blue]-> TextSelectionSet : > <<used with>>
-TextSelectionOperator *--> TextSelectionOperator : > Not
+TextSelectionOperator *..> TextSelectionSet : > other
+TextSelectionOperator .[#blue].> TextSelectionSet : > <<used with>>
+TextSelectionOperator *..> TextSelectionOperator : > Not
 
-DataOperator -[#blue]-> AnnotationData : > <<used with>>
-DataOperator -[#blue]-> Annotation : > <<used with>>
-DataOperator *--> AnnotationData : > other
-DataOperator *--> DataOperator : > Not
+DataOperator .[#blue].> AnnotationData : > <<used with>>
+DataOperator .[#blue].> Annotation : > <<used with>>
+DataOperator *..> AnnotationData : > other
+DataOperator *..> DataOperator : > Not
+DataOperator o.[#red].> DataKey : > key
+DataOperator o.[#red].> AnnotationDataSet : > set
+
+AnnotationOperator .[#blue].> AnnotationSet : > <<used with>>
+AnnotationOperator o.[#red].> AnnotationSet : > other
+AnnotationOperator *..> TextSelectionOperator : > MatchTextSelection
+AnnotationOperator *..> DataOperator : > MatchData
+AnnotationOperator o.[#red].> TextResource : > resource
+AnnotationOperator o.[#red].> AnnotationDataSet : > dataset
 
 @enduml

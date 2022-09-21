@@ -231,10 +231,10 @@ enum AnnotationQuery <<functional>> {
     MatchDataSet(dataset: &AnnotationDataSet)
     MatchReferences(query: AnnotationQuery, mindepth: int?, maxdepth: int?)
     MatchReferencedBy(query: AnnotationQuery, mindepth: int?, maxdepth: int?)
-    And(query: AnnotationQuery, query: AnnotationQuery)
-    Or(query: AnnotationQuery, query: AnnotationQuery)
+    And(query: AnnotationQuery, query2: AnnotationQuery)
+    Or(query: AnnotationQuery, query2: AnnotationQuery)
     Not(query: AnnotationQuery)
-    Compose(query: AnnotationQuery, query: AnnotationQuery)
+    Compose(query: AnnotationQuery, query2: AnnotationQuery)
     --
     <i>Operators to select/filter annotations</i>
 }
@@ -302,7 +302,7 @@ AnnotationQuery *..> TextSelectionOperator : > MatchTextSelection
 AnnotationQuery *..> DataOperator : > MatchData
 AnnotationQuery o.[#red].> TextResource : > resource
 AnnotationQuery o.[#red].> AnnotationDataSet : > dataset
-AnnotationQuery *..> AnnotationQuery : > query
+AnnotationQuery *..> AnnotationQuery : > query/query2
 AnnotationStore .[#blue].> AnnotationSet
 
 @enduml

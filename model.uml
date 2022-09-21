@@ -226,8 +226,8 @@ enum AnnotationOperator <<functional>> {
     MatchText(text: str, regexp: bool)
     MatchTextSelection(TextSelectionOperator)
     MatchData(DataOperator)
-    MatchReferences(other: &Annotation, mindepth: int?, maxdepth: int?)
-    MatchReferencedBy(other: &Annotation, mindepth: int?, maxdepth: int?)
+    MatchReferences(other: &AnnotationSet, mindepth: int?, maxdepth: int?)
+    MatchReferencedBy(other: &AnnotationSet, mindepth: int?, maxdepth: int?)
     MatchResource(resource: &TextResource)
     MatchDataSet(dataset: &AnnotationDataSet)
     --

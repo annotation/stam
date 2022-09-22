@@ -268,11 +268,10 @@ A `Selector` identifies the target of an annotation and the part of the
 target that the annotation applies to. Selectors can be considered the labelled edges of the graph model, tying all nodes together.
 There are multiple types of selectors:
 
-* ``TextSelector`` - Selects a target resource and a text span within it. The text span *MAY* be noncontiguous. The span
-    is specified through one or more offset pairs consisting of a ``begin`` and ``end``.
+* ``TextSelector`` - Selects a target resource and a text span within it. The text-span *MUST*  be contiguous and is is specified through an offset pairs consisting of a ``begin`` and ``end``.
   These ``begin`` and ``end`` attributes *MUST* describe the character position in NFC-normalised unicode
   points, in text of the resources that is being pointed at. Indexing *MUST* be zero-based and the end offset *MUST* be
-  non-inclusive.
+  non-inclusive. Non-contiguous spans are expressed via multiple `TextSelector`s under a `MultiSelector`.
 * ``ResourceSelector``  - A selector point to a resource as whole. These type
   of annotation can be interpreted as *metadata*.
 * ``AnnotationSelector``  - A selector pointing to one or more other annotations. This we call higher-order annotation is very common in STAM models. If the annotation that is being targeted eventually refers to a text (`TextSelector`), then offsets **MAY** be specified that select a subpart of this text. These offsets are now *relative* to the annotation. Internally, the implementation can always efficiently resolve these to absolute offsets on the resource. The use of `AnnotationSelector` has one important constraint: the graph of all annotations referring to other annotations  *MUST* be acyclic; i.e. it can't end up in a recursive loop of annotations referencing each-other. Implementations *SHOULD* check this.

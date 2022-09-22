@@ -230,7 +230,7 @@ enum AnnotationOperator <<functional>> {
     HasTextSelection(TextSelectionOperator)
     HasData(DataOperator)
     InSet(set: AnnotationSet)
-    HasResource(resource: &TextResource)
+    HasResource(resource: &TextResource, maxdepth: int?)
     HasDataSet(dataset: &AnnotationDataSet)
     References(set: AnnotationSet, mindepth: int?, maxdepth: int?)
     ReferencedBy(set: AnnotationSet, mindepth: int?, maxdepth: int?)

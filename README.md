@@ -384,7 +384,11 @@ between non-contingent text parts.
 ### Enum: TextSelectionOperator
 
 This operator expresses a binary relation between two text selection sets, e.g.
-*A TextSelectionOperator B*. It *MUST* evaluate to a boolean.
+*A TextSelectionOperator B*. It *MUST* evaluate to a boolean. The way we define
+this and other operators in the extended STAM model, is more like currying, as
+the right part is included, effectively turning a binary operator into a unary
+one. This follows a certain implementation logic, but implementations *MAY*
+choose to implement this differently.
 
 We discern the following types, the `B` parameter is a `TextSelectionSet` in all.
 
@@ -409,6 +413,64 @@ We discern the following types, the `B` parameter is a `TextSelectionSet` in all
 Then there is the unary operator `Not` which can invert any of the above.
 Further logical operators are defined on the level of `AnnotationOperator`
 rather than on this one.
+
+### Enum: DataOperator
+
+This binary operator is used on `AnnotationData` instances to test the
+key/value, e.g. `A DataOperator B`, where `A` is often the data in the model,
+and `B` some value the user wants to test for. The operator *MUST* evaluate to
+a boolean. It can also be used on `Annotation` (in which case it is simply
+applied to all `AnnotationData` instances in data. It *MUST* then returns true
+if *any* of the data matches, except if `Not` is used, then *all* *MUST* match.
+
+We discern the following types:
+
+ * `Equals(other: AnnotationData)` - Test whether two values are equal
+ * `GreaterThan(other: AnnotationData)`
+ * `LessThan(other: AnnotationData)`
+ * `GreaterThanOrEqual(other: AnnotationData)`
+ * `LessThanOrEqual(other: AnnotationData)`
+ * `HasElement(other: AnnotationData)` - Applies only when applied to annotation data with `DataValue::List()` , tests if the element is in the list.
+ * `Has(key: &DataKey)` - Tests if a particular key exists
+ * `UsesSet(set: &AnnotationDataSet)`
+ * `Not(DataOperator)` - Unary operator that inverts the logic.
+
+Further logical operators are defined on the level of `AnnotationOperator`
+rather than on this one.
+
+## Enum: AnnotationOperator
+
+This operator applies on the level of annotations, or to be more precise on
+sets of annotations (aka `AnnotationSet`, more about that in the next section).
+It also encapsulates the two earlier mentioned operators. Like the others, it
+*MUST* evaluate to a boolean.
+
+ * `HasText(text: str, regexp: bool)` - Tests if the annotation references the (continuous) text, which *MAY* be a regular expression by setting the parameter. This evaluates a `TextSelector` (possibly at the end of a chain of higher-order annotations) and tests its value with the provided string reference.
+ * `HasTextSelection(TextSelectionOperator)` - Applies a `TextSelectionOperator`, a *STAM* implementation *MUST* provides the means to get `TextSelectionSet`s from `AnnotationSets`.
+ * `HasData(DataOperator)` - Applies a `DataOperator` to test the data of the annotation.
+ * `InSet(set: AnnotationSet)` - Tests if the annotation is part of a specific annotation set.
+ * `HasResource(resource: &TextResource, maxdepth: int?)` - Tests if the annotation is on a particular `TextResource`, either directly but also indirectly if `maxdepth` is set to a value greater than zero (default is unset = infinite, set to 0 for a stricter check).
+ * `HasDataSet(dataset: &AnnotationDataSet)` - Tests if the annotation uses vocabulary from the specified data set.
+ * `References(B: AnnotationSet, mindepth: int?, maxdepth: int?)` - Tests if *all* annotations in A reference an annotation in B (possibly indirectly). 
+ * `ReferencedBy(B: AnnotationSet, mindepth: int?, maxdepth: int?)`- Tests if *all* annotations in B reference an annotation in A (possibly indirectly). Evaluates to true if *any* of them passes.
+ * `Not(AnnotationOperator)`
+
+### Class: AnnotationSet
+
+An `AnnotationSet` is a fairly arbitrary grouping of one or more `Annotation`
+instances. The above `AnnotationOperator` is always mediated through this
+class. Do not confuse this class with `AnnotationDataSet`, which relates to
+the notion of a vocabulary set and is agnostic of the actual annotations.
+
+The `AnnotationSet` is used in searching, where it is also an output. Querying
+a model produces one or more `AnnotationSet`s with the resulting annotations
+that were found (zero or more).
+
+An `AnnotationSet` may carry an ID, which is bound to the name it was given by
+the `AnnotationQuery`. See the next section.
+
+### Class: AnnotationQuery
+
 
 ## Serialisation Formats
 

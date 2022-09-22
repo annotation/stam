@@ -131,14 +131,14 @@ Some notes to interpret the diagram:
 
 ### Identifiers
 
-Many of the items carry two identifiers. The first is a *private identifier*, an internal numeric identifier (starting
-with an underscore) which serves for particular implementations but should not be used outside of the context of a
-particular implementation.
-
-The second main identifier is an actual *public identifier* intended to be persistent and usable for data exchange, this
+Many of the items carry two identifiers. The first is an actual *public identifier* intended to be persistent and usable for data exchange, this
 is an arbitrary string and is *OPTIONAL*.
 
-Both identifiers, by definition, *MUST* be unique.
+The second is a *private identifier*, an internal numeric identifier (starting
+with an underscore) which serves for particular implementations but should not be used outside of the context of a
+particular implementation. It is part of the *extended model* rather than the *core model*.
+
+Both identifiers, by definition, *MUST* be unique, though the private identifiers need only be unique within a certain implementation context.
 
 The following overriding constraints apply only for compatibility RDF:
 
@@ -289,7 +289,7 @@ This class holds the actual content of an annotation; a key/value pair. (the
 term *feature* is regularly seen for this in certain annotation paradigms).
 Annotation Data is deliberately decoupled from the actual ``Annotation``
 instances so multiple annotation instances can point to the same content
-without causing any overhead in memory. Moreover, it facilitates indexing and
+without causing any overhead in storage. Moreover, it facilitates indexing and
 searching. The annotation data is part of an `AnnotationDataSet`, which
 effectively defines a certain user-defined vocabulary.
 
@@ -305,8 +305,10 @@ An `Annotation` instance *MAY* reference multiple `AnnotationData` with the same
 The ``value`` property is a ``DataValue`` instance that holds the
 actual value along with its data type. 
 
-The ``_referenced_by`` attribute of ``AnnotationData`` links back to all annotations that
-instantiate this exact same content, this is effectively a reverse index to facilitate search. It is *OPTIONAL*.
+*Extended model:* The ``_referenced_by`` attribute of ``AnnotationData`` links back to all
+annotations that instantiate this exact same content, this is effectively a
+reverse index to facilitate search. It is *RECOMMENDED* for implementations to
+do efficient querying.
 
 ### Class: DataKey
 
@@ -487,7 +489,7 @@ It also encapsulates the two earlier mentioned operators. Like the others, it
 
 An `AnnotationSet` is a fairly arbitrary grouping of one or more `Annotation`
 instances. The above `AnnotationOperator` is always mediated through this
-class. Do not confuse this class with `AnnotationDataSet`, which relates to
+class. *Do not confuse* this class with `AnnotationDataSet`, which relates to
 the notion of a vocabulary set and is agnostic of the actual annotations.
 
 The `AnnotationSet` is used in searching, where it is also an output. Querying
@@ -498,6 +500,50 @@ An `AnnotationSet` may carry an ID, which is bound to the name it was given by
 the `AnnotationQuery`. See the next section.
 
 ### Class: AnnotationQuery
+
+The AnnotationQuery class represents a full query on the data or any subset
+thereof. It is applied to an `AnnotationSet` which *MAY* be (and often is
+initially) the set of all annotation in the `AnnotationStore`.
+
+We distinguish three types of queries, the `type`:
+
+* `Select` - A read-only query that retrieves annotations
+* `Add` - A query that adds annotations
+* `Delete` - A query that deletes annotations
+
+There is no special type to update an annotation, as they *SHOULD* be
+considered fairly immutable once made. You can always delete one and add
+another.
+
+The `AnnotationQuery` class has two properties:
+
+* `constraints` -  This is a list of tuples (`[(set: AnnotationSet, operator:
+  AnnotationOperator)*]`) that puts constraints (or filters if you will) to
+  select on. In simpler terms, it determines what is being selected. The tuples
+  consist of a *subject* (an AnnotationSet) and an *operator
+  *(`AnnotationOperator`), the *object* is already contained within the
+  `AnnotationOperator` in our model and its type depends on the actual operator. This essentially formulates a constraint how how an AnnotationSets relates to something else, for instance we can put the constraint that some set X has operator `AnnotationOperator::HasText("hallå")` or that all instances in annotation set X should reference annotation in set Y: `References(Y)` . How exactly this will be used in querying is explain in the next section.
+* `assignments` - This is a list of tuples (`[(set: &AnnotationSet, operator: AssignmentOperator)*]` ) to add/modify/delete things in the model, as determined by the exact `AssignmnetOperator` used.
+
+### Querying 
+
+Querying is a complex but vital aspect of STAM. We have seen that the extended
+data model primarily defines classes used in querying, but the fashion in which
+implementations can use these to implement querying may still be unclear at
+this stage. 
+
+In this section we will explain how these classes are used in querying.
+
+The best way to explain this is by first formulating some pseudo query
+language, loosely inspired on SPARQL. This is non-normative and just an
+example. Definition of an actual query languages is up to STAM extensions.
+
+```
+SELECT ?w wHERE ?w SetData(key: type, value: word)
+                ?w SelectText("hello.txt", 0, 5)
+```
+
+(TODO: finish section)
 
 
 ## Serialisation Formats

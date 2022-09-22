@@ -158,7 +158,7 @@ This translates to the following Web Annotation (JSON-LD):
 ```
 
 The coordinate system for `stam:TextSelector` and `oa:TextPositionSelector` are
-identical (unicode points, NFC). In the mapping, however,  any `stam:EndAlignedCursor` *MUST* first
+identical (unicode points). In the mapping, however,  any `stam:EndAlignedCursor` *MUST* first
 be resolved to its absolute (begin-aligned) position.
 
 If multiple web annotations reference the exact same body, then implementations *MAY*

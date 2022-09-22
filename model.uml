@@ -253,7 +253,7 @@ class AnnotationSet <<functional>> {
 class AnnotationQuery <<functional>>  {
     type: Select/Add/Delete
     select: [&AnnotationSet+]
-    conditions: [(set: AnnotationSet, operator: AnnotationOperator)*]
+    constraints: [(set: AnnotationSet, operator: AnnotationOperator)*]
     assignments: [(set: &AnnotationSet, operator: AssignmentOperator)*]
     --
     <i>Query on annotations</i>

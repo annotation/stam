@@ -8,7 +8,7 @@ skinparam class {
 }
 skinparam groupInheritance 2
 
-title "STAM: Stand-off Text Annotation Model - Core Model"
+title "STAM: Stand-off Text Annotation Model -- Core Model"
 
 class TextResource {
     --

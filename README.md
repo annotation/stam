@@ -105,33 +105,29 @@ implementations:
 Please read the [Functionality](#Functionality) section further down to see a
 specification of requirements for implementations.
 
-## Data Model
+## Core Data Model
 
 In this section, we will describe the STAM data model, note that the data model is detached from any specific
 serialisation format, those will be discussed in a later section.
 
-The below UML diagram expresses the full data model.
+The below UML diagram expresses the core data model.
 
-![UML diagram](model.png)
+![UML diagram](coremodel.png)
 
-Some notes to interpret the diagram, as it may quickly become overwhelming:
+Some notes to interpret the diagram:
 
 *  A circled C stands for a Class (items listed are properties that must all be satisfied).
 *  A circled A stands for a Abstract class (items listed are properties that must all be satisfied).
 *  A circled E stands for an Enumeration (items listed are options in the enumeration)
    *  Enumerations may be parametrised (this could be written more verbosely as an abstract class (A) and concrete classes (C), and vice versa).
-* Blue classes/enumerations are *dependency relations* part of the extended model, and provide *RECOMMENDATIONS* for implementations in order to provide certain functionality. Please ignore it on a first reading.
-* Dashed edges follow private/*RECOMMENDED* properties for the recommended memory-model or come from classes in the extended model. Please ignore it on a first reading.
 * Green edges denote a subclass relationship (for the various Selectors)
 * Red edges point to references in the recommended memory model, black edges indicate ownership. Please ignore it on a first reading.
-* Blue edges denote a functional relationship (used with).  Please ignore it on a first reading.
 * The ampersand prefix (``&``) represent a reference/pointer and is merely a *RECOMMENDED* hint for a memory model for implementations.
 * The ``?`` suffix represents optional properties. 
 *  ``[]`` represents a collection (a list/vector/array/set, specifics are left to the implementation)
     *  The ``*`` suffix inside a list represents zero or more items of the preceding type
     *  The ``+`` suffix inside a list represents one or more items of the preceding type
     *  The ``++`` suffix inside a list represents two or more items of the preceding type
-* Properties starting with an underscore are *NOT REQUIRED* but *RECOMMENDED* for implementation to facilitate quick lookups, they suggest a memory model. Implementations could implement them as private properties.
 
 ### Identifiers
 
@@ -348,14 +344,39 @@ you want to express nested relations, you *MUST* use `Annotation`s on
 
 ## Extended Data Model
 
-The following classes are part of the *extended data model* and are auxiliary
+The classes in this next section are all part of the *extended data model* and are auxiliary
 structures used by implementations to delivered specific functionality rather
 than core structure to model the actual data. These are should be taken
 as *RECOMMENDATIONS* and *NOT REQUIREMENTS*. They are typically not part of any
-serialisation. In the UML diagram, they are drawn in blue. Specifications *MAY*
+serialisation. 
+
+In the UML diagram, they are drawn in blue. Specifications *MAY*
 deviate from these and implement things in another matter. Although STAM does prescribe
 what functionality must be implemented (see the [functionality](#Functionality)
 section), it leaves flexibility to implementations to determine how that should be accomplished.
+
+The below UML diagram expresses the extended data model, it includes and builds upon all of the core model:
+
+![UML diagram - STAM Extended Data Model](model.png)
+
+Some notes to interpret the diagram, as it may quickly become overwhelming:
+
+*  A circled C stands for a Class (items listed are properties that must all be satisfied).
+*  A circled A stands for a Abstract class (items listed are properties that must all be satisfied).
+*  A circled E stands for an Enumeration (items listed are options in the enumeration)
+   *  Enumerations may be parametrised (this could be written more verbosely as an abstract class (A) and concrete classes (C), and vice versa).
+* Blue classes/enumerations are *dependency relations* part of the extended model, and provide *RECOMMENDATIONS* for implementations in order to provide certain functionality. Please ignore it on a first reading.
+* Dashed edges follow private/*RECOMMENDED* properties for the recommended memory-model or come from classes in the extended model. Please ignore it on a first reading.
+* Green edges denote a subclass relationship (for the various Selectors)
+* Red edges point to references in the recommended memory model, black edges indicate ownership. Please ignore it on a first reading.
+* Blue edges denote a functional relationship (used with).  Please ignore it on a first reading.
+* The ampersand prefix (``&``) represent a reference/pointer and is merely a *RECOMMENDED* hint for a memory model for implementations.
+* The ``?`` suffix represents optional properties. 
+*  ``[]`` represents a collection (a list/vector/array/set, specifics are left to the implementation)
+    *  The ``*`` suffix inside a list represents zero or more items of the preceding type
+    *  The ``+`` suffix inside a list represents one or more items of the preceding type
+    *  The ``++`` suffix inside a list represents two or more items of the preceding type
+* Properties starting with an underscore are *NOT REQUIRED* but *RECOMMENDED* for implementation to facilitate quick lookups, they suggest a memory model. Implementations could implement them as private properties.
 
 ### Class: TextSelection
 

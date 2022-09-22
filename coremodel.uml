@@ -1,0 +1,186 @@
+@startuml
+hide stereotype
+
+skinparam class {
+    BackgroundColor Linen
+    ArrowColor Black
+    BorderColor Navy
+}
+skinparam groupInheritance 2
+
+title "STAM: Stand-off Text Annotation Model - Core Model"
+
+class TextResource {
+    --
+    id : str
+    text: str
+    --
+    <i>Holds the text</i>
+    <i>(and the reverse index)</i>
+}
+
+class AnnotationStore {
+    id: str?
+    annotations: [Annotation*]
+    datasets: [AnnotationDataSet*]
+    resources: [TextResource*]
+    --
+    <i>Holds the full annotation graph model</i>
+    <i>(entry-point)</i>
+}
+
+class AnnotationDataSet {
+    id: str?
+    keys: [DataKey*]
+    data: [AnnotationData*]
+    --
+    <i>An annotation dataset holds</i>
+    <i>the actual data associated with annotations</i>
+    <i>and defines the vocabulary (the keys), it does</i>
+    <i>not hold the annotations themselves</i>
+}
+
+class Annotation {
+    id: str?
+    data: [&AnnotationData+]
+    target: Selector
+    --
+    <i>An instance of an annotation</i>
+    <i>Core concept, i.e. nodes in the graph,
+    <i>binds everything together</i>
+}
+
+abstract class Selector {
+    --
+    <i>Selects the target</i>
+    <i>(or source) of annotation</i>
+}
+
+class TextSelector {
+    resource: &TextResource,
+    offsets: (begin: Cursor, end: Cursor)
+    ---
+    <i>Selects a single part of the text,</i>
+    <i>Offsets are unicode codepoints relative</i>
+    <i>to the text, zero-indexed, </i>
+    <i>end is non-inclusive,</i>
+
+}
+
+class ResourceSelector {
+    resource: &TextResource
+    ---
+    <i>Selects a resource as a whole</i>
+    <i>(i.e. annotation is metadata)</i>
+}
+
+class DataSetSelector {
+    annotationset: &AnnotationDataSet
+    --
+    <i>Selects an annotation data set as</i>
+    <i>a whole (i.e. annotation is metadata)</i>
+}
+
+class AnnotationSelector {
+    annotation: &Annotation
+    offsets: (begin: Cursor, end: Cursor)?
+    --
+    <i>Selects an annotation. May optionally</i>
+    <i>select a only part of the annotation's target</i>
+    <i>Offsets are relative</i>
+    <i>to the targeted annotation, </i>
+    <i>end is non-inclusive.</i>
+}
+
+
+class MultiSelector {
+    selectors: [Selector++]
+    --
+    <i>Combines selectors</i>
+}
+
+class DirectionalSelector {
+    selectors: [Selector++]
+    --
+    <i>Expresses a direction between two or more selectors,</i>
+    <i>in the exact order specified (from -> to)</i>
+}
+
+Selector <|-[#green]- TextSelector
+Selector <|-[#green]- ResourceSelector
+Selector <|-[#green]- DataSetSelector
+Selector <|-[#green]- AnnotationSelector
+Selector <|-[#green]- MultiSelector
+Selector <|-[#green]- DirectionalSelector
+
+
+
+
+
+class AnnotationData {
+    id: str?
+    key: &DataKey
+    value: DataValue
+    --
+    <i>The value of the annotation</i>
+}
+
+class DataKey {
+    id: str
+    indexed: bool
+    --
+    <i>The key of an annotation</i>
+}
+
+enum DataValue {
+    Null
+    Id(value: str)
+    String(value: str)
+    Bool(value: bool)
+    Int(value: int)
+    Float(value: float)
+    Datetime(value: datetime)
+    Set(value: [DataValue])
+    List(value: [DataValue])
+    --
+    <i>Encapsulates a data value</i>
+    <i>along with its type</i>
+}
+' There is no Map() in DataValue, a Map should be expressed as an Annotation on an Annotation
+
+enum Cursor {
+    BeginAlignedCursor(value: int)
+    EndAlignedCursor(value: int)
+    --
+    <i>Used to select offsets</i>
+    <i>Units are unicode codepoints,</i>
+    <i>(not bytes!), zero-indexed</i>
+}
+
+
+AnnotationStore "1" *--> "*" AnnotationDataSet : > datasets
+AnnotationStore "1" *--> "*" TextResource : > resources
+AnnotationStore "1" *--> "*" Annotation : > annotations
+
+AnnotationDataSet "1" *--> "*" AnnotationData : > data
+AnnotationDataSet "1" *--> "*" DataKey : > keys
+
+Annotation "1" *--> "+" Selector : > target
+Annotation "1" o-[#red]-> "*" AnnotationData : > data
+
+AnnotationData "1" *--> "1" DataValue : > value
+AnnotationData "1" *-[#red]-> "1" DataKey : > key
+
+TextSelector "1" o-[#red]-> "1" TextResource : > resource
+ResourceSelector "1" o-[#red]-> "1" TextResource : > resource
+AnnotationSelector "1" o-[#red]-> "1" Annotation : > annotation
+
+
+MultiSelector "1" --> "*" Selector : > selectors
+DirectionalSelector "1" --> "*" Selector : > selectors
+TextSelector "1" --> "2" Cursor : > offsets
+AnnotationSelector "1" --> "2" Cursor : > offsets
+DataSetSelector "1" --> "*" Selector : > annotationset
+
+
+@enduml

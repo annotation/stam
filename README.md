@@ -234,13 +234,14 @@ with the same label (multiple annotations may share the same annotation data).
 Moreover, an Annotation can have multiple annotation data associated. The result is that multiple annotations with the exact same content require less storage
 space, and searching and indexing is facilitated.  
 
-Through the `data` property, multiple instances of `AnnotationData` *MAY* be associated with an
-`Annotation`, when this is the case, a strong dependency relation between the
-data *MUST* be assumed in the interpretation. The data is also assumed to be
-complete, you *SHOULD NOT* add data to existing annotations at a later point.
-If these conditions are not fulfilled, you *SHOULD* use
-multiple `Annotation`s instead, including possibly an `Annotation` on the
-original `Annotation` (i.e. a higher-order annotation via `AnnotationSelector`).
+Through the `data` property, multiple instances of `AnnotationData` *MAY* be
+associated with an `Annotation`, when this is the case, a strong dependency
+relation between the data *MUST* be assumed in the interpretation. Like
+`AnnotationData` itself, the data is also assumed to be complete and immutable;
+you *SHOULD NOT* add data to existing annotations at a later point. If these
+conditions are not fulfilled, you *SHOULD* use multiple `Annotation`s instead,
+including possibly an `Annotation` on the original `Annotation` (i.e. a
+higher-order annotation via `AnnotationSelector`).
 
 The `data` property and the `AnnotationData` instances can for example be used to express things like (non-normative!):
 
@@ -292,11 +293,12 @@ without causing any overhead in memory. Moreover, it facilitates indexing and
 searching. The annotation data is part of an `AnnotationDataSet`, which
 effectively defines a certain user-defined vocabulary.
 
-Annotation data consists of a single key/value pair. A ``key`` *MUST* be
-globally unique (to prevent clashes you can include a namespace component in
-the key, but STAM does not prescribe any syntax). They key is encapsulated in a
-separate ``DataKey`` type for performance reasons, these too are held by the
-`AnnotationDataSet`.
+Annotation data consists of a single key/value pair that *SHOULD* be immutable
+(i.e. it shouldn't change after being set, just delete it and add another if
+need be). A ``key`` *MUST* be globally unique (to prevent clashes you can
+include a namespace component in the key, but STAM does not prescribe any
+syntax). They key is encapsulated in a separate ``DataKey`` type for
+performance reasons, these too are held by the `AnnotationDataSet`.
 
 An `Annotation` instance *MAY* reference multiple `AnnotationData` with the same `key`.
 

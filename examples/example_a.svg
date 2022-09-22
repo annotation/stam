@@ -9,6 +9,9 @@
    id="svg5"
    sodipodi:docname="example_a.svg"
    inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
+   inkscape:export-filename="example_a.png"
+   inkscape:export-xdpi="131.46727"
+   inkscape:export-ydpi="131.46727"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -27,12 +30,12 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.9224607"
-     inkscape:cx="282.71059"
-     inkscape:cy="370.09859"
-     inkscape:window-width="3830"
-     inkscape:window-height="2117"
-     inkscape:window-x="2165"
-     inkscape:window-y="5"
+     inkscape:cx="282.97067"
+     inkscape:cy="369.83851"
+     inkscape:window-width="3840"
+     inkscape:window-height="2127"
+     inkscape:window-x="2160"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
@@ -689,7 +692,7 @@
          id="tspan710-7-0-3"
          style="font-size:3.91225px;stroke-width:0.244515px"
          x="99.178596"
-         y="97.467064">begin: BeginAligned(0)</tspan><tspan
+         y="97.467064">begin: BeginAligned(6)</tspan><tspan
          sodipodi:role="line"
          style="font-size:3.91225px;stroke-width:0.244515px"
          x="99.178596"

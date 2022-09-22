@@ -210,7 +210,9 @@ database backed, etc).
 
 ### Class: TextResource
 
-This holds the textual resource to be annotated. The text *MUST* be in [Unicode Normalization Form C (NFC)](https://www.unicode.org/reports/tr15/).
+This holds the textual resource to be annotated. The text *SHOULD* be in
+[Unicode Normalization Form C (NFC)](https://www.unicode.org/reports/tr15/) but
+*MAY* be in another unicode normalization forms.
 
 ### Class: Annotation Data Set
 
@@ -269,8 +271,8 @@ target that the annotation applies to. Selectors can be considered the labelled 
 There are multiple types of selectors:
 
 * ``TextSelector`` - Selects a target resource and a text span within it. The text-span *MUST*  be contiguous and is is specified through an offset pairs consisting of a ``begin`` and ``end``.
-  These ``begin`` and ``end`` attributes *MUST* describe the character position in NFC-normalised unicode
-  points, in text of the resources that is being pointed at. Indexing *MUST* be zero-based and the end offset *MUST* be
+  These ``begin`` and ``end`` attributes *MUST* describe the character position in unicode
+  points in text of the resources that is being pointed at. Indexing *MUST* be zero-based and the end offset *MUST* be
   non-inclusive. Non-contiguous spans are expressed via multiple `TextSelector`s under a `MultiSelector`.
 * ``ResourceSelector``  - A selector point to a resource as whole. These type
   of annotation can be interpreted as *metadata*.

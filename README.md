@@ -202,7 +202,11 @@ annotation data sets. It can be seen as the *root* of the *graph model* and the 
 that holds everything together.
 
 Implementations themselves decide how to implement this (in memory, on disk,
-database backed, etc).
+database backed, etc). Being the class that holds the entire graph, this
+typically means that implementations only have a single Annotation Store,
+multiple annotations and resources can be loaded into it and *SHOULD* be
+distinguished from eachother by other means (e.g. by the resource they are
+referencing or any higher-order annotations that group things together).
 
 ### Class: TextResource
 

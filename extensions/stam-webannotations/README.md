@@ -22,8 +22,8 @@ W3C Web Annotations builds on RDF. This means that for interoperability to
 work, all the RDF constraints posed in the core STAM specification *MUST* be adhered
 to. This mostly entails that all identifiers should be URIs.
 
-This extension does not specify and extensions to the STAM data model itself,
-the core model suffices, instead it defines some data annotation sets and
+This extension does not specify any extensions to the STAM data model itself -
+the core model suffices - instead, it defines some data annotation sets and
 protocols for conversion.
 
 ## Mapping
@@ -38,7 +38,7 @@ The core STAM data model does not need to be extended to allow using this
 vocabulary, this extension simply offers a STAM Annotation Dataset
 [webannotations.annotationset.json](webannotations.annotationset.json) which defines the
 necessary keys. You *SHOULD* use this set for interoperability with web annotations.
-For example, to express the creator and simple textual value of an annotation using vocabulary compatible with Web Annotations, consider the following STAM JSON snippet:
+For example, to express the creator and a simple textual value of an annotation using vocabulary compatible with Web Annotations, consider the following STAM JSON snippet:
 
 ```json
 {
@@ -169,7 +169,7 @@ resource that is referenced from multiple annotations.
 
 STAM allows formulating annotations relative to the annotations that contain
 them (the `stam:AnnotationSelector` supports selecting text offsets relative to
-the target annotation). Such as words relative to sentences. This we call
+the target annotation), such as words relative to sentences. This we call
 higher-order annotation with relative offsets. 
 
 An example of this can be found [here](../../examples/explicit_containment_rdf.json).
@@ -182,9 +182,9 @@ Converting this to Web Annotations, however, poses a problem. If a
 one of two options for conversion:
 
 1. Translate this to the Web Annotation model in the most direct way possible
-   by having one `oa:annotation` target another, and including a
+   by having one `oa:Annotation` target another, and including a
    `oa:TextPositionSelector` as-if it was a text. This may be a stretching the
-   web annotation model a bit as such higher-order annotations are not
+   web annotation model a bit, as such higher-order annotations are not
    specified by its specification, but it does not violate the specification
    either. This way the relative offset are maintained at the cost of extra complexity.
 2. Resolve the relative annotations to absolute ones and make the webannotation

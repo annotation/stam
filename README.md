@@ -935,7 +935,7 @@ My arguments for this are:
 STAM is more like a lowest common denominator, a pivot model if you will, that
 allows expression of a wide variety of annotation paradigms. Exports of this
 simpler data model to more expressive and established standards like RDF and
-WebAnnotations are encouraged whereever appropriate.
+WebAnnotations are encouraged wherever appropriate.
 
 The best comparisons can be drawn with annotation models such as [Web
 Annotations](https://www.w3.org/TR/annotation-model/),  [Text

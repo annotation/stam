@@ -17,7 +17,7 @@ RFC 2119.
 
 ## Data Model
 
-This extensions adds two properties to ``TextSelector``, using either one of them is *RECOMMENDED* by this extension:
+This extension adds two properties to ``TextSelector``, using either one of them is *RECOMMENDED* by this extension:
 
 * ``text``: The exact text of the annotation that is being pointed to. 
 * ``checksum``: The SHA-1 checksum of the text of the annotation. We use SHA-1 because it is *fast* and *small enough* (40 bytes). It does not offer strong cryptographic security though.

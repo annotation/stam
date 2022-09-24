@@ -536,7 +536,10 @@ In this section we will explain how these classes are used in querying.
 
 The best way to explain this is by first formulating some pseudo query
 language, loosely inspired on SPARQL. This is non-normative and just an
-example. Definition of an actual query languages is up to STAM extensions.
+example. Definition of an actual query languages is up to STAM extensions. In
+our example language, we verbosely refer to all of the classes in the extended
+model that are involved, as our aim is to explain this model. Actual
+user-facing query languages could implement various shortcuts and be more concise.
 
 ```
 SELECT ?w WHERE ?w SetData(key: "type", value: "word")

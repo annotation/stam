@@ -260,7 +260,7 @@ class AnnotationQuery <<functional>>  {
 }
 
 enum AssignmentOperator <<functional>> {
-    SetData(DataValue)
+    SetData(AnnotationData)
     SelectAnnotation(&Annotation, offsets:
         (&Resource, begin: Cursor, end: Cursor)? )
     SelectText(&Resource, begin: Cursor, end: Cursor)

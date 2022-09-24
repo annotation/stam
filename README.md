@@ -519,16 +519,16 @@ The `AnnotationQuery` class has two properties:
 
 * `constraints` -  This is a list of tuples (`[(set: AnnotationSet, operator:
   AnnotationOperator)*]`) that puts constraints (or filters if you will) to
-  select on. In simpler terms, it determines what is being selected. The tuples
+  select on. In simpler terms, it determines the criteria of what annotations to select. The tuples
   consist of a *subject* (an AnnotationSet) and an *operator
   *(`AnnotationOperator`), the *object* is already contained within the
   `AnnotationOperator` in our model and its type depends on the actual operator. This essentially formulates a constraint how how an AnnotationSets relates to something else, for instance we can put the constraint that some set X has operator `AnnotationOperator::HasText("hallå")` or that all instances in annotation set X should reference annotation in set Y: `References(Y)` . How exactly this will be used in querying is explain in the next section.
-* `assignments` - This is a list of tuples (`[(set: &AnnotationSet, operator: AssignmentOperator)*]` ) to add/modify/delete things in the model, as determined by the exact `AssignmnetOperator` used.
+* `assignments` - This is a list of tuples (`[(set: &AnnotationSet, operator: AssignmentOperator)*]` ) to add/modify/delete things in the model, as determined by the exact `AssignmentOperator` used.
 
 ### Querying 
 
 Querying is a complex but vital aspect of STAM. We have seen that the extended
-data model primarily defines classes used in querying, but the fashion in which
+data model defines classes used in querying and indexing, but the fashion in which
 implementations can use these to implement querying may still be unclear at
 this stage. 
 
@@ -539,12 +539,90 @@ language, loosely inspired on SPARQL. This is non-normative and just an
 example. Definition of an actual query languages is up to STAM extensions.
 
 ```
-SELECT ?w wHERE ?w SetData(key: type, value: word)
-                ?w SelectText("hello.txt", 0, 5)
+SELECT ?w WHERE ?w SetData(key: "type", value: "word")
+                ?w HasText("hallå")
 ```
 
-(TODO: finish section)
+This example translates to an `AnnotationQuery` with two constraints.
+Constraints *MUST* be interpreted as a set *Intersection* (in the pseudo query
+language terms it would be a logical *and* operation). Both constraints have as
+subject the `AnnotationSet` with identifier *w* (represented as ``?w`` in the
+query where we express in our psuedo-SPARQL-like syntax that it is a bound
+variable). In this example we are querying for annotations that are have
+`AnnotationData` `"type": "word"` (the vocabulary is fictitious and not
+prescribed by STAM), i.e. we are querying for all the words in the model. The
+second constraint states that the words must have the text *"hallå"*.
 
+When querying, this `AnnotationSet` is initially empty, and it will be filled
+in a matter that satisfies all constraints. If applied to an `AnnotationStore` like shown in Example A (shown
+earlier in this specification), we obtain a single annotation in our `AnnotationSet` *w*.
+
+Let us now consider a more complex example. Assume we have a text with
+annotations marking (via a *type* key) divisions, sentences, words. We let each
+of these embedded annotation reference their parent (via `AnnotationSelector`
+and relative offsets). Divisions carry a *class* key that can specifies whether
+a division is a *chapter*, *section* or *subsection*. We also add a *pos* key
+to this fictitious vocabulary to mark part-of-speech tags.
+
+Now consider this query where we query for words in sentences in divisions of class chapter, and where these words must be nouns (according to their *pos* tag).
+
+```
+SELECT ?w WHERE ?w References(?s)
+                ?w HasData(Equals(key: "type", value: "word"))
+                ?w ReferencedBy(?pos)
+                ?pos HasData(Equals(key: "pos", value: "noun"))
+                ?s HasData(Equals(key: "type", value: "sentence"))
+                ?s References(?div)
+                ?div HasData(Equals(key: "type", value: "division"))
+                ?div HasData(Equals(key: "class", value: "chapter"))
+```
+
+Here we have something that translates to a `AnnotationQuery` with eight constraints and that uses four `AnnotationSet`s, one of which is
+returned as result (Implementations *MUST* also allow for multiple sets to be
+returned, but this is fairly trivial). The order of the constraints in the
+`AnnotationQuery` *MUST NOT* not matter. It is up to the implementation to determine in
+what order the sets can be filled. To this end, implementations *SHOULD*
+compute and evaluate a dependency graph internally. Queries with circular
+dependencies *MUST BE* rejected by the implementation. Moreover,
+when evaluating constraints for one particular `AnnotationSet`, implementations
+*SHOULD* prioritize indexed constraints (i.e. constraints that reference a
+`DataKey` that is indexed) over non-indexed constraints. The indices will
+furthermore convey information on how prevalent a certain `DataKey` is, in
+order to constrain the search as quickly as possible it is recommended to
+prioritize the least prevalent keys first (i.e. narrowing the set more
+dramatically before further constraints are applied).
+
+To further increase performance, implementations *MAY* evaluate constraints that are
+not inter-dependent in parallel.
+
+We can query on text selections, consider another example in our query language:
+
+```
+SELECT ?w WHERE ?w HasData(Equals(key: "type", value: "word"))
+                ?s HasData(Equals(key: "type", value: "sentence"))
+                ?w HasTextSelection(SameBegin(?s))
+```
+
+In a model where sentences and words are annotated, this returns the first word of each sentence.
+
+We have not only `SELECT` queries but also `ADD` and `DELETE` queries. Example: 
+
+```
+ADD ?w WITH ?w SetData(key: "type", value: "word")
+            ?w SelectText("hello.txt", 0, 5)
+```
+
+The above example selects no annotations at all, but adds one like in Example
+A. In our example query language, `WITH` translates to `AssignmentOperator`s on
+our `AnnotationQuery`. The next one example selects all occurrences of the word *"house"*
+and annotates them as a noun (part-of-speech tagging).
+
+```
+ADD ?pos WHERE ?w HasData(Equals(key: type, value: w))
+               ?w HasText("house")
+         WITH  ?pos SetData(key: "pos", value: "noun")
+               ?pos SelectAnnotation(?w)
+```
 
 ## Serialisation Formats
 

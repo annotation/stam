@@ -397,8 +397,9 @@ Whenever an annotation on the text is added (i.e. an annotation with a
 with a TextSelector), a `TextSelection` *SHOULD* added to the reverse index.
 
 To facilitate search, implementations are *RECOMMENDED* to keep all
-`TextSelection` in the reverse index in sorted order, where the order is based
-on the offsets. We do not prescribe how to implement this.
+`TextSelection`s in the reverse index in sorted order, where the order is based
+on the offsets. We do not prescribe how to implement this, but a boundary index
+that independently tracks begin offsets and end offsets would function best.
 
 TextSelections are also used when querying, e.g. when the user specifies a
 particular text range explicitly. Their use in then usually mediated through
@@ -475,6 +476,7 @@ sets of annotations (aka `AnnotationSet`, more about that in the next section).
 It also encapsulates the two earlier mentioned operators. Like the others, it
 *MUST* evaluate to a boolean.
 
+ * `HasId(id: str)` - Select an annotation by ID
  * `HasText(text: str, regexp: bool)` - Tests if the annotation references the (continuous) text, which *MAY* be a regular expression by setting the parameter. This evaluates a `TextSelector` (possibly at the end of a chain of higher-order annotations) and tests its value with the provided string reference.
  * `HasTextSelection(TextSelectionOperator)` - Applies a `TextSelectionOperator`, a *STAM* implementation *MUST* provides the means to get `TextSelectionSet`s from `AnnotationSets`.
  * `HasData(DataOperator)` - Applies a `DataOperator` to test the data of the annotation.
@@ -483,6 +485,8 @@ It also encapsulates the two earlier mentioned operators. Like the others, it
  * `HasDataSet(dataset: &AnnotationDataSet)` - Tests if the annotation uses vocabulary from the specified data set.
  * `References(B: AnnotationSet, mindepth: int?, maxdepth: int?)` - Tests if *all* annotations in A reference an annotation in B (possibly indirectly). 
  * `ReferencedBy(B: AnnotationSet, mindepth: int?, maxdepth: int?)`- Tests if *all* annotations in B reference an annotation in A (possibly indirectly). Evaluates to true if *any* of them passes.
+ * `And([AnnotationOperator++])` - Set intersection, this operator *SHOULD* be avoided as much as possible in favour of multiple constraint clauses in `AnnotationQuery`
+ * `Or([AnnotationOperator++])` - Set union
  * `Not(AnnotationOperator)`
 
 ### Class: AnnotationSet

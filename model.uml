@@ -226,6 +226,7 @@ enum DataOperator <<functional>> {
 }
 
 enum AnnotationOperator <<functional>> {
+    HasId(id: str)
     HasText(text: str, regexp: bool)
     HasTextSelection(TextSelectionOperator)
     HasData(DataOperator)
@@ -234,6 +235,8 @@ enum AnnotationOperator <<functional>> {
     HasDataSet(dataset: &AnnotationDataSet)
     References(set: AnnotationSet, mindepth: int?, maxdepth: int?)
     ReferencedBy(set: AnnotationSet, mindepth: int?, maxdepth: int?)
+    And([AnnotationOperator++])
+    Or([AnnotationOperator++])
     Not(AnnotationOperator)
     --
     <i>Operators to select/filter annotations</i>

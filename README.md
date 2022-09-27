@@ -183,7 +183,7 @@ Also take note of the following constraints:
 ### Example A
 
 Example A below shows an annotation example using this model, it shows a
-textual resource with a small Swedish text *"Hallå världen"* with tree annotations (shown in yellow).
+textual resource with a small Swedish text *"Hallå världen"* with three annotations (shown in yellow).
 
 ![Example A (overview)](examples/example_a_overview.svg)
 

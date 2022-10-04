@@ -22,7 +22,7 @@ STAM does not depend on other more complex data models such as RDF, W3C Web
 Annotations, TEI, FoLiA or whatever, but instead addresses the problem from a
 more functional and pragmatic perspective. We separate pragmatics from
 semantics and define a kind of lowest common denominator upon which further
-solution can be built. The user is free, and in fact encouraged, to use
+solutions can be built. The user is free, and in fact encouraged, to use
 vocabularies that are formalised elsewhere.
 
 STAM is primarily intended as a model for data representation, and less so as a
@@ -83,7 +83,7 @@ NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
 We keep STAM simple and define only the bare minimum. Other functionality is
 included in extensions. Extensions do one or more of the following: they extend
 data model, specify new serialisations, specify mappings/crosswalks to other
-paradigms/formats, specify additional functionality
+paradigms/formats, specify additional functionality.
 
 The following are currently defined:
 
@@ -140,7 +140,7 @@ particular implementation. It is part of the *extended model* rather than the *c
 
 Both identifiers, by definition, *MUST* be unique, though the private identifiers need only be unique within a certain implementation context.
 
-The following overriding constraints apply only for compatibility RDF:
+The following overriding constraints apply only for compatibility with RDF:
 
 *  The public identifier *MUST* be an [IRI](https://datatracker.ietf.org/doc/html/rfc3987)
 *  There *MUST* be a public identifier for each **Annotation**
@@ -175,10 +175,10 @@ swedish):
 
 Also take note of the following constraints:
 
-* The `begin` and `end` offset *MAY* reference the very same point, in which case the length of the selection is ``0`` and the whole selector *SHOULD BE* interpreted as a single cursor rather than a selection.
+* The `begin` and `end` offset *MAY* reference the very same point, in which case the length of the selection is ``0`` and the whole selector *SHOULD BE* interpreted as a single pointer/cursor rather than a selection of text.
 * The `end` offset *MUST NOT* reference a point before the `begin` offset.
 * The `begin` offset *MUST NOT* reference a point before the beginning of the resource's text.
-* The `end` offset *MUST NOT* reference a point after the end of the resource's text.
+* The `end` offset *MUST NOT* reference a point after the end of the resource's text, with the sole exception of first codepoint after the text's end (considering the end is always non-inclusive).
 
 ### Example A
 
@@ -352,11 +352,11 @@ you want to express nested relations, you *MUST* use `Annotation`s on
 
 The classes in this next section are all part of the *extended data model* and are auxiliary
 structures used by implementations to delivered specific functionality rather
-than core structure to model the actual data. These are should be taken
-as *RECOMMENDATIONS* and *NOT REQUIREMENTS*. They are typically not part of any
+than the core structure to model the actual data. These are taken
+as *RECOMMENDED* but *NOT REQUIRED*. They are typically not part of any
 serialisation. 
 
-In the UML diagram, they are drawn in blue. Specifications *MAY*
+In the UML diagram, they are drawn in blue. Implementations *MAY*
 deviate from these and implement things in another matter. Although STAM does prescribe
 what functionality must be implemented (see the [functionality](#Functionality)
 section), it leaves flexibility to implementations to determine how that should be accomplished.
@@ -407,7 +407,7 @@ the `TextSelectionSet` as described next:
 
 ### Class: TextSelectionSet
 
-When querying relative text positions, rather than operating on a single
+When querying relative text positions, rather than operate on a single
 `TextSelectionSet`, we use this intermediate class which contains one or more
 `TextSelection` instances. This allows us to also compute textual relationships
 between non-contingent text parts.

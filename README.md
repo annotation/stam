@@ -134,9 +134,8 @@ Some notes to interpret the diagram:
 Many of the items carry two identifiers. The first is an actual *public identifier* intended to be persistent and usable for data exchange, this
 is an arbitrary string and is *OPTIONAL*.
 
-The second is a *private identifier*, an internal numeric identifier (starting
-with an underscore) which serves for particular implementations but should not be used outside of the context of a
-particular implementation. It is part of the *extended model* rather than the *core model*.
+The second is a *private identifier*, an internal numeric identifier which serves for particular implementations but should not be used outside of the context of a
+particular implementation. We refer to this one as `_id`, starting with an underscore to indicate it's internal. It is part of the *extended model* rather than the *core model*.
 
 Both identifiers, by definition, *MUST* be unique, though the private identifiers need only be unique within a certain implementation context.
 

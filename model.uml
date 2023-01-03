@@ -138,7 +138,6 @@ Selector <|-[#green]- DirectionalSelector
 
 
 class AnnotationData {
-    id: str?
     key: &DataKey
     value: DataValue
     --

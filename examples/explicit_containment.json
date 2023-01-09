@@ -8,6 +8,7 @@
             "@type": "Annotation",
             "@id": "sentence2"
             "data": {
+                "@type": "AnnotationData",
                 "key": {
                     "@type": "DataKey",
                     "@id": "type"
@@ -35,6 +36,7 @@
             "@type": "Annotation",
             "@id": "sentence2word3"
             "data": {
+                "@type": "AnnotationData",
                 "key": {
                     "@type": "DataKey",
                     "@id": "type"

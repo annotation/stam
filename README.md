@@ -137,11 +137,12 @@ is an arbitrary string and is *OPTIONAL*.
 The second is a *private identifier*, an internal numeric identifier which serves for particular implementations but should not be used outside of the context of a
 particular implementation. We refer to this one as `_id`, starting with an underscore to indicate it's internal. It is part of the *extended model* rather than the *core model*.
 
-Both identifiers, by definition, *MUST* be unique, though the private identifiers need only be unique within a certain implementation context.
+Both identifiers, by definition, *MUST* be unique, though the private identifiers need only be unique within a certain local implementation context.
 
 The following overriding constraints apply only for compatibility with RDF:
 
 *  The public identifier *MUST* be an [IRI](https://datatracker.ietf.org/doc/html/rfc3987)
+*  Each public identifier *MUST* be globally unique 
 *  There *MUST* be a public identifier for each **Annotation**
 
 ### Offsets
@@ -223,6 +224,8 @@ vocabulary is not defined by STAM but entirely up to the user.
 The `AnnotationDataSet` does not store the `Annotation`s themselves, those are in
 the `AnnotationStore`.
 
+An `AnnotationDataSet` *MUST* have a public identifier.
+
 ### Class: Annotation
 
 This represents a particular *instance of annotation* and is the central
@@ -294,15 +297,15 @@ effectively defines a certain user-defined vocabulary.
 
 Annotation data consists of a single key/value pair that *SHOULD* be immutable
 (i.e. it shouldn't change after being set, just delete it and add another if
-need be). A ``key`` *MUST* be globally unique (to prevent clashes you can
-include a namespace component in the key, but STAM does not prescribe any
-syntax). They key is encapsulated in a separate ``DataKey`` type for
+need be). A ``key`` *MUST* be unique *within* a dataset (and when using RDF it 
+must be globally unique over all identifiers). The key is encapsulated in a separate ``DataKey`` type for
 performance reasons, these too are held by the `AnnotationDataSet`.
 
-An `Annotation` instance *MAY* reference multiple `AnnotationData` with the same `key`.
+An `Annotation` instance *MAY* reference multiple `AnnotationData` with the same `key` but different values.
 
 The ``value`` property is a ``DataValue`` instance that holds the
-actual value along with its data type. 
+actual value along with its data type. For a given key, value combination, there *SHOULD* be only 
+one matching ``AnnotationData`` in a given set. There *MAY* be multiple only if given different explicit public identifiers, but this is *NOT RECOMMENDED*.
 
 *Extended model:* The ``_referenced_by`` attribute of ``AnnotationData`` links back to all
 annotations that instantiate this exact same content, this is effectively a
@@ -312,12 +315,10 @@ do efficient querying.
 ### Class: DataKey
 
 This ``DataKey`` class encapsulates data keys for AnnotationData. It has an
-``id`` property, which is the actual key and  *MUST* be globally unique. The
+``id`` property, which is the actual key, *MUST* be provided and  *MUST* be unique *within* the set. The
 reason for this separate class is only to enable performant implementation with
-a minimal memory footprint; allowing the full key ID to be stored in memory only once.
-
-If you have trouble keeping your keys unique, considering introducing a
-namespace component. STAM does not prescribe how to do this.
+a minimal memory footprint; allowing the full key ID to be stored in memory only once instead of for
+each instance it is used.
 
 It is *RECOMMENDED* for implementations to support an additional boolean
 property `indexed`, which indicates whether implementations should or should
@@ -326,6 +327,7 @@ not compute an index for this key.
 The following overriding constraints apply only for compatibility with RDF:
 
 *  The public identifier *MUST* be an [IRI](https://datatracker.ietf.org/doc/html/rfc3987) identifying a property.
+*  Each public identifier *MUST* be globally unique.
 
 ### Enum: DataValue
 
@@ -643,7 +645,7 @@ serialisation *MUST* adhere exactly to the property names introduced in this
 document (case sensitive). 
 
 * Private properties (those starting with an underscore) *SHOULD NOT* be serialised (those can be recomputed at parsing). 
-* All STAM classes serialised as JSON objects *MUST* carry a ``@type`` attribute that denotes the STAM class as laid out in this specification. This helps readability prevents errors at the cost of some slight redundancy.
+* All STAM classes serialised as JSON objects *MUST* carry a ``@type`` attribute that denotes the STAM class as laid out in this specification. This helps readability prevents errors at the cost of some slight redundancy. Parser implementations *SHOULD* use this property to validate the data structure.
 * All public IDs are serialised through the ``@id`` attribute.
 
 For a complete serialisation, you *SHOULD* start with `AnnotationStore`, which is the root level. 
@@ -662,6 +664,7 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
     }],
     "annotationsets": [{
         "@type": "AnnotationDataSet",
+        "@id": "exampleset",
         "keys": [
             {
                 "@type": "DataKey",
@@ -695,7 +698,11 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
     }],
     "annotations": [{
             "@type": "Annotation",
-            "data": ["WordType"],
+            "data": {
+                "@type": "AnnotationData",
+                "@id": "WordType",
+                "set": "exampleset",
+            }],
             "target": {
                 "@type": "TextSelector",
                 "resource": "hello.txt",
@@ -769,7 +776,7 @@ identical to before, but `data` and `key` have now been specified in-line:
         {
             "@id": "WordType",
             "@type": "AnnotationData",
-            "_part_of_set": "my-example",
+            "set": "my-example",
             "key": {
                 "@type": "DataKey",
                 "@id": "type",
@@ -788,11 +795,12 @@ identical to before, but `data` and `key` have now been specified in-line:
 
 There are two important points to notice for in-line use:
 
-1. It is *RECOMMENDED* to add an additional `_part_of_set` property to the `AnnotationData` to
+1. It is *RECOMMENDED* to add an additional `set` property to the `AnnotationData` to
    specify what Annotation Data Set is to be used to store the annotation data
    and the keys. Implementations *SHOULD* create the set on-the-fly as part of the `AnnotationStore`.
-   If the `annotationset` property is missing, implementations *SHOULD* 
+   If the `set` property is missing, implementations *SHOULD* 
    just create a single `AnnotationDataSet` and reuse it for all 'orphaned' inline annotation data.
+   In the pictured schemas, this property is named `_part_of_set`.
 2. Inline data leads to redundancy/unnecessary duplication, it *SHOULD* only be
    used in cases where a reference is not needed. However, parser
    implementations *MUST* accept redundancy if and only if there are no
@@ -840,20 +848,43 @@ filename as ID. The filenames for `@include` adhere to the following constraints
 * Relative filenames in `@include` statements are interpreted as
   the implementation sees fit, usually relative to the current working directory
   or some document root directory. 
-* Absolute filenames *MUST* be absolute on the
+* Absolute filenames (stating with a slash) *MUST* be absolute on the
   filesystem but *MAY* be rejected by implementations (for example on security grounds).
 * URLs *MAY* be used, but implementations are *NOT REQUIRED* to
-implement networking logic and *MAY* reject this (it again has security
-implications). Implementations *SHOULD* make clear whether they support
-fetching remote URLs or not. 
+  implement networking logic and *MAY* reject this (it again has security
+  implications). Implementations *SHOULD* make clear whether they support
+  fetching remote URLs or not. 
+* At the same level of the `@include`, an `@id` field is allowed to set or *override*
+  the inferred public identifier. If not set, the public `@id` equals the `@filename` exactly as specified.o
+
+An example of the latter is shown below:
+
+
+```json
+{
+    "@type": "AnnotationStore",
+    "@id": "Example A",
+    "resources":  [{
+        "@id": "https://somewhere.over.the.rainbow/hello.txt",
+        "@include": "hello.txt"
+    }],
+    "annotationsets": [{
+        "@id": "https://somewhere.over.the.rainbow/myannotationset",
+        "@include": "my.annotationset.json"
+    }],
+    "annotations": [{
+        ...
+    }]
+}
+```
 
 The ``@include`` statements can only be used  at the level of the `AnnotationStore` for `resources`, `annotationsets` and
 `annotations`. It *MUST NOT* be used in other place. 
 
-JSON files that are included via `@include` *MAY* also be a JSON list of JSON objects instead of a JSON
-object, implementations *MUST* merge it appropriately. Look at the below
+JSON files that are included via `@include` *MAY* also be a JSON list of JSON objects instead of a single JSON
+object (i.e. multiple annotations, datasets or resources), implementations *MUST* merge it appropriately. Look at the below
 example A3 in which the two included files (assumed to contain a list of
-annotation objects) are neatlessly merged into the `annotations` list with no
+annotation objects) are seamlessly merged into the `annotations` list with no
 trace of the two objects that encapsulate the `@include` statements remaining:
 
 ```json
@@ -885,7 +916,7 @@ defined by STAM extensions.
 
 **Note:** Some readers will notice that the use of ``@type`` and ``@id`` are
 similar to their usage in JSON-LD. It has to be noted though that the default
-JSON serialisation is not proper JSON-LD. However, if certain constraints are
+STAM JSON serialisation is not proper JSON-LD. However, if certain constraints are
 met it can be easily made to be valid JSON-LD, see the next section:
 
 ### JSON-LD / Turtle / RDF
@@ -1034,4 +1065,3 @@ would be user-defined, but it should be possible to reformulate some of these
 data model in terms of STAM.
 
 In designing STAM, inspiration has been drawn from all the above. 
-

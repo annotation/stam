@@ -6,7 +6,7 @@
     "annotations": [
         {
             "@type": "Annotation",
-            "@id": "https://raw.githubusercontent.com/proycon/stam/master/examples/explicit_containment.json#sentence2"
+            "@id": "https://raw.githubusercontent.com/proycon/stam/master/examples/explicit_containment.json#sentence2",
             "data": {
                 "@type": "AnnotationData",
                 "key": {
@@ -17,7 +17,7 @@
                     "@type": "Id",
                     "value": "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#Sentence"
                 },
-                "_part_of_set": "http://www.w3.org/1999/02/22-rdf-syntax-ns"
+                "set": "http://www.w3.org/1999/02/22-rdf-syntax-ns"
             },
             "target": {
                 "@type": "TextSelector"
@@ -54,11 +54,11 @@
                 "offsets": {
                     "begin": {
                         "@type": "BeginAlignedCursor",
-                        "value": 5,
+                        "value": 5
                     },
                     "end": {
                         "@type": "BeginAlignedCursor",
-                        "value": 9,
+                        "value": 9
                     }
                 }
             },

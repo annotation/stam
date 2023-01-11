@@ -6,7 +6,7 @@
     "annotations": [
         {
             "@type": "Annotation",
-            "@id": "sentence2"
+            "@id": "sentence2",
             "data": {
                 "@type": "AnnotationData",
                 "key": {

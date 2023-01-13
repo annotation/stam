@@ -473,41 +473,42 @@ rather than on this one.
 ## Enum: AnnotationOperator
 
 This operator applies on the level of annotations, or to be more precise on
-sets of annotations (aka `AnnotationSet`, more about that in the next section).
+selections/sets of annotations (aka `AnnotationSelectionSet`, more about that in the next section).
 It also encapsulates the two earlier mentioned operators. Like the others, it
 *MUST* evaluate to a boolean.
 
  * `HasId(id: str)` - Select an annotation by ID
  * `HasText(text: str, regexp: bool)` - Tests if the annotation references the (continuous) text, which *MAY* be a regular expression by setting the parameter. This evaluates a `TextSelector` (possibly at the end of a chain of higher-order annotations) and tests its value with the provided string reference.
- * `HasTextSelection(TextSelectionOperator)` - Applies a `TextSelectionOperator`, a *STAM* implementation *MUST* provides the means to get `TextSelectionSet`s from `AnnotationSets`.
+ * `HasTextSelection(TextSelectionOperator)` - Applies a `TextSelectionOperator`, a *STAM* implementation *MUST* provides the means to get `TextSelections` from `AnnotationSelectionSet`.
  * `HasData(DataOperator)` - Applies a `DataOperator` to test the data of the annotation.
- * `InSet(set: AnnotationSet)` - Tests if the annotation is part of a specific annotation set.
+ * `InSelectionSet(set: AnnotationSelectionSet)` - Tests if the annotation is part of a specific annotation selection set.
  * `HasResource(resource: &TextResource, maxdepth: int?)` - Tests if the annotation is on a particular `TextResource`, either directly but also indirectly if `maxdepth` is set to a value greater than zero (default is unset = infinite, set to 0 for a stricter check).
  * `HasDataSet(dataset: &AnnotationDataSet)` - Tests if the annotation uses vocabulary from the specified data set.
- * `References(B: AnnotationSet, mindepth: int?, maxdepth: int?)` - Tests if *all* annotations in A reference an annotation in B (possibly indirectly). 
- * `ReferencedBy(B: AnnotationSet, mindepth: int?, maxdepth: int?)`- Tests if *all* annotations in B reference an annotation in A (possibly indirectly). Evaluates to true if *any* of them passes.
+ * `References(B: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)` - Tests if *all* annotations in A reference an annotation in B (possibly indirectly). 
+ * `ReferencedBy(B: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)`- Tests if *all* annotations in B reference an annotation in A (possibly indirectly). Evaluates to true if *any* of them passes.
  * `And([AnnotationOperator++])` - Set intersection, this operator *SHOULD* be avoided as much as possible in favour of multiple constraint clauses in `AnnotationQuery`
  * `Or([AnnotationOperator++])` - Set union
  * `Not(AnnotationOperator)`
 
-### Class: AnnotationSet
+### Class: AnnotationSelectionSet
 
-An `AnnotationSet` is a fairly arbitrary grouping of one or more `Annotation`
+An `AnnotationSelectionSet` is a fairly arbitrary grouping (a set) of one or more `Annotation`
 instances. The above `AnnotationOperator` is always mediated through this
-class. *Do not confuse* this class with `AnnotationDataSet`, which relates to
-the notion of a vocabulary set and is agnostic of the actual annotations.
+class. 
 
-The `AnnotationSet` is used in searching, where it is also an output. Querying
-a model produces one or more `AnnotationSet`s with the resulting annotations
+The `AnnotationSelectionSet` is used in searching, where it is also an output. Querying
+a model produces one or more `AnnotationSelectionSet`s with the resulting annotations
 that were found (zero or more).
 
-An `AnnotationSet` may carry an ID, which is bound to the name it was given by
+An `AnnotationSelectionSet` may carry an ID, which is bound to the name it was given by
 the `AnnotationQuery`. See the next section.
+
+Do not confuse `AnnotationSelectionSet` with `AnnotationDataSet`, the latter does not contain annotations at all but only their data.
 
 ### Class: AnnotationQuery
 
 The AnnotationQuery class represents a full query on the data or any subset
-thereof. It is applied to an `AnnotationSet` which *MAY* be (and often is
+thereof. It is applied to an `AnnotationSelectionSet` which *MAY* be (and often is
 initially) the set of all annotation in the `AnnotationStore`.
 
 We distinguish three types of queries, the `type`:
@@ -522,13 +523,13 @@ another.
 
 The `AnnotationQuery` class has two properties:
 
-* `constraints` -  This is a list of tuples (`[(set: AnnotationSet, operator:
+* `constraints` -  This is a list of tuples (`[(set: AnnotationSelectionSet, operator:
   AnnotationOperator)*]`) that puts constraints (or filters if you will) to
   select on. In simpler terms, it determines the criteria of what annotations to select. The tuples
-  consist of a *subject* (an AnnotationSet) and an *operator
+  consist of a *subject* (an AnnotationSelectionSet) and an *operator
   *(`AnnotationOperator`), the *object* is already contained within the
-  `AnnotationOperator` in our model and its type depends on the actual operator. This essentially formulates a constraint how how an AnnotationSets relates to something else, for instance we can put the constraint that some set X has operator `AnnotationOperator::HasText("hallå")` or that all instances in annotation set X should reference annotation in set Y: `References(Y)` . How exactly this will be used in querying is explain in the next section.
-* `assignments` - This is a list of tuples (`[(set: &AnnotationSet, operator: AssignmentOperator)*]` ) to add/modify/delete things in the model, as determined by the exact `AssignmentOperator` used.
+  `AnnotationOperator` in our model and its type depends on the actual operator. This essentially formulates a constraint how how an AnnotationSelectionSet relates to something else, for instance we can put the constraint that some set X has operator `AnnotationOperator::HasText("hallå")` or that all instances in annotation set X should reference annotation in set Y: `References(Y)` . How exactly this will be used in querying is explain in the next section.
+* `assignments` - This is a list of tuples (`[(set: &AnnotationSelectionSet, operator: AssignmentOperator)*]` ) to add/modify/delete things in the model, as determined by the exact `AssignmentOperator` used.
 
 ### Querying 
 
@@ -554,16 +555,16 @@ SELECT ?w WHERE ?w SetData(key: "type", value: "word")
 This example translates to an `AnnotationQuery` with two constraints.
 Constraints *MUST* be interpreted as a set *Intersection* (in the pseudo query
 language terms it would be a logical *and* operation). Both constraints have as
-subject the `AnnotationSet` with identifier *w* (represented as ``?w`` in the
+subject the `AnnotationSelectionSet` with identifier *w* (represented as ``?w`` in the
 query where we express in our psuedo-SPARQL-like syntax that it is a bound
 variable). In this example we are querying for annotations that are have
 `AnnotationData` `"type": "word"` (the vocabulary is fictitious and not
 prescribed by STAM), i.e. we are querying for all the words in the model. The
 second constraint states that the words must have the text *"hallå"*.
 
-When querying, this `AnnotationSet` is initially empty, and it will be filled
+When querying, this `AnnotationSelectionSet` is initially empty, and it will be filled
 in a matter that satisfies all constraints. If applied to an `AnnotationStore` like shown in Example A (shown
-earlier in this specification), we obtain a single annotation in our `AnnotationSet` *w*.
+earlier in this specification), we obtain a single annotation in our `AnnotationSelectionSet` *w*.
 
 Let us now consider a more complex example. Assume we have a text with
 annotations marking (via a *type* key) divisions, sentences, words. We let each
@@ -585,14 +586,14 @@ SELECT ?w WHERE ?w References(?s)
                 ?div HasData(Equals(key: "class", value: "chapter"))
 ```
 
-Here we have something that translates to a `AnnotationQuery` with eight constraints and that uses four `AnnotationSet`s, one of which is
+Here we have something that translates to a `AnnotationQuery` with eight constraints and that uses four `AnnotationSelectionSet`s, one of which is
 returned as result (Implementations *MUST* also allow for multiple sets to be
 returned, but this is fairly trivial). The order of the constraints in the
 `AnnotationQuery` *MUST NOT* not matter. It is up to the implementation to determine in
 what order the sets can be filled. To this end, implementations *SHOULD*
 compute and evaluate a dependency graph internally. Queries with circular
 dependencies *MUST BE* rejected by the implementation. Moreover,
-when evaluating constraints for one particular `AnnotationSet`, implementations
+when evaluating constraints for one particular `AnnotationSelectionSet`, implementations
 *SHOULD* prioritize indexed constraints (i.e. constraints that reference a
 `DataKey` that is indexed) over non-indexed constraints. The indices will
 furthermore convey information on how prevalent a certain `DataKey` is, in

@@ -24,7 +24,7 @@ Implementations implementing this extension *MUST* validate whether `AnnotationD
 
 This extension extends the data model for DataKey with several new properties:
 
-* ``vocabularies`` (type: ``[&AnnotationData*]``) - Links to all predefined values for this key.
+* ``vocabulary`` (type: ``[&AnnotationData*]``) - Links to all predefined values for this key.
 * ``typeconstraint`` - Signals that values must be of the specified type. This takes an enum `TypeConstraint` with the following options:
     * ``NoConstraint`` - The default
     * ``StaticConstraint(&AnnotationData)`` - Not just the type is constrained, but the value must be exactly this

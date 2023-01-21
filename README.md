@@ -978,19 +978,21 @@ A core STAM implementation adheres to the following requirements:
 * *MUST* model all the classes of the core specification with the sole exception of `TextSelection`
     * This entails that it *MUST* support all the selectors
 * *MUST* offer an interface to manipulate annotations:
-    * *MUST* offer an interface to add new annotations, annotation data, data keys, and annotation data sets
-    * *MUST* offer an interface to edit existing annotations, annotation data, data keys, and annotation data sets
-    * *MUST* offer an interface to remove annotations, annotation data, data keys, and annotation data sets
-* *MUST* offer an interface to search annotations:
-    * *MUST* offer an interface to find annotations given a `DataKey` and optionally a value
+    * *MUST* offer an interface to add new annotations with new annotation data and data keys
+    * *MUST* offer an interface to add new keys and annotation data to annotation sets
+    * *MUST* offer an interface to remove annotations, annotation data, data keys
+    * Annotations, once made, *SHOULD* be considered immutable. Implementations needn't offer an interface to edit existing annotations. It is instead *RECOMMENDED* to delete the old one (if need be) and make a new one.
+* *MUST* offer an interface to search and retrieve annotations:
     * *MUST* offer an interface to iterate over all annotations
+    * *MUST* offer an interface to find annotations given a `DataKey` and optionally a value
     * *MUST* offer an interface to iterate over all annotations that reference a given annotation
     * *MUST* offer an interface to iterate over all annotations that reference a text selection 
     * *MUST* offer an interface to iterate over all annotation data sets
+    * *MUST* offer an interface to iterate over all resources
     * *MUST* offer an interface to iterate over all annotation data in an annotation data set
     * *MUST* offer an interface to iterate over all data keys in an annotation data set
 * *MUST* offer an interface to retrieve the target text for any annotation
-    * the other way round, it *MUST* also offer an interface to find annotations that span over a certain queried text range
+    * the other way round, it *MUST* also offer an interface to find annotations that span over a certain queried text selection
     * *MUST* offer an interface to translate relative offsets to absolute begin-aligned offsets
     * *MUST* offer an interface to retrieve any queried text ranges (even if there are no annotations)
     * *MUST* offer an interface to retrieve text from the context of any annotation (preceding, succeeding)
@@ -1002,10 +1004,10 @@ A core STAM implementation adheres to the following requirements:
     * *MUST* offer an interface that computes whether an annotation succeeds another in the textual order
     * *MUST* offer an interface that computes whether an annotation precedes another in the textual order
 * *MUST* offer an interface to compute relationships in higher-order annotations:
-    * *MUST* offer an interface that computes whether an annotation is a child of another
-    * *MUST* offer an interface that computes whether an annotation is a parent of another
-    * *MUST* offer an interface that computes whether an annotation is a descendant of another
-    * *MUST* offer an interface that computes whether an annotation is an ancestor of another
+    * *MUST* offer an interface that computes whether an annotation A points to another annotation B (A parent of B)
+    * *MUST* offer an interface that computes whether an annotation A is pointed at by another annotation B (A child of B)
+    * *MUST* offer an interface that computes whether an annotation A points to another annotation B indirectly (A ancestor of B)
+    * *MUST* offer an interface that computes whether an annotation A is pointed at by another annotation B  (A descendant of B)
     * *MUST* offer an interface that computes the common ancestor of two or more annotations (if any)
     * *MUST* offer an interface that computes the depth of higher-order annotation
     * *MUST* ensure that higher-order annotations are acyclic

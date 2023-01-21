@@ -226,13 +226,13 @@ enum DataOperator <<functional>> {
 }
 
 enum AnnotationOperator <<functional>> {
-    HasId(id: str)
-    HasText(text: str, regexp: bool)
-    HasTextSelection(TextSelectionOperator)
-    HasData(DataOperator)
+    Id(id: str)
+    Text(text: str, regexp: bool)
+    TextSelection(TextSelectionOperator)
+    Data(DataOperator)
     InSelectionSet(set: AnnotationSelectionSet)
-    HasResource(resource: &TextResource, maxdepth: int?)
-    HasDataSet(dataset: &AnnotationDataSet)
+    Resource(resource: &TextResource, maxdepth: int?)
+    DataSet(dataset: &AnnotationDataSet)
     References(set: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)
     ReferencedBy(set: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)
     And([AnnotationOperator++])

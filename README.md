@@ -477,13 +477,13 @@ selections/sets of annotations (aka `AnnotationSelectionSet`, more about that in
 It also encapsulates the two earlier mentioned operators. Like the others, it
 *MUST* evaluate to a boolean.
 
- * `HasId(id: str)` - Select an annotation by ID
- * `HasText(text: str, regexp: bool)` - Tests if the annotation references the (continuous) text, which *MAY* be a regular expression by setting the parameter. This evaluates a `TextSelector` (possibly at the end of a chain of higher-order annotations) and tests its value with the provided string reference.
- * `HasTextSelection(TextSelectionOperator)` - Applies a `TextSelectionOperator`, a *STAM* implementation *MUST* provides the means to get `TextSelections` from `AnnotationSelectionSet`.
- * `HasData(DataOperator)` - Applies a `DataOperator` to test the data of the annotation.
+ * `Id(id: str)` - Select an annotation by ID
+ * `Text(text: str, regexp: bool)` - Tests if the annotation references the (continuous) text, which *MAY* be a regular expression by setting the parameter. This evaluates a `TextSelector` (possibly at the end of a chain of higher-order annotations) and tests its value with the provided string reference.
+ * `TextSelection(TextSelectionOperator)` - Applies a `TextSelectionOperator`, a *STAM* implementation *MUST* provides the means to get `TextSelections` from `AnnotationSelectionSet`.
+ * `Data(DataOperator)` - Applies a `DataOperator` to test the data of the annotation.
  * `InSelectionSet(set: AnnotationSelectionSet)` - Tests if the annotation is part of a specific annotation selection set.
- * `HasResource(resource: &TextResource, maxdepth: int?)` - Tests if the annotation is on a particular `TextResource`, either directly but also indirectly if `maxdepth` is set to a value greater than zero (default is unset = infinite, set to 0 for a stricter check).
- * `HasDataSet(dataset: &AnnotationDataSet)` - Tests if the annotation uses vocabulary from the specified data set.
+ * `Resource(resource: &TextResource, maxdepth: int?)` - Tests if the annotation is on a particular `TextResource`, either directly but also indirectly if `maxdepth` is set to a value greater than zero (default is unset = infinite, set to 0 for a stricter check).
+ * `DataSet(dataset: &AnnotationDataSet)` - Tests if the annotation uses vocabulary from the specified data set.
  * `References(B: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)` - Tests if *all* annotations in A reference an annotation in B (possibly indirectly). 
  * `ReferencedBy(B: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)`- Tests if *all* annotations in B reference an annotation in A (possibly indirectly). Evaluates to true if *any* of them passes.
  * `And([AnnotationOperator++])` - Set intersection, this operator *SHOULD* be avoided as much as possible in favour of multiple constraint clauses in `AnnotationQuery`
@@ -528,7 +528,7 @@ The `AnnotationQuery` class has two properties:
   select on. In simpler terms, it determines the criteria of what annotations to select. The tuples
   consist of a *subject* (an AnnotationSelectionSet) and an *operator
   *(`AnnotationOperator`), the *object* is already contained within the
-  `AnnotationOperator` in our model and its type depends on the actual operator. This essentially formulates a constraint how how an AnnotationSelectionSet relates to something else, for instance we can put the constraint that some set X has operator `AnnotationOperator::HasText("hallå")` or that all instances in annotation set X should reference annotation in set Y: `References(Y)` . How exactly this will be used in querying is explain in the next section.
+  `AnnotationOperator` in our model and its type depends on the actual operator. This essentially formulates a constraint how how an AnnotationSelectionSet relates to something else, for instance we can put the constraint that some set X has operator `AnnotationOperator::Text("hallå")` or that all instances in annotation set X should reference annotation in set Y: `References(Y)` . How exactly this will be used in querying is explain in the next section.
 * `assignments` - This is a list of tuples (`[(set: &AnnotationSelectionSet, operator: AssignmentOperator)*]` ) to add/modify/delete things in the model, as determined by the exact `AssignmentOperator` used.
 
 ### Querying 
@@ -548,8 +548,8 @@ model that are involved, as our aim is to explain this model. Actual
 user-facing query languages could implement various shortcuts and be more concise.
 
 ```
-SELECT ?w WHERE ?w SetData(key: "type", value: "word")
-                ?w HasText("hallå")
+SELECT ?w WHERE ?w Data(key: "type", value: "word")
+                ?w Text("hallå")
 ```
 
 This example translates to an `AnnotationQuery` with two constraints.
@@ -577,13 +577,13 @@ Now consider this query where we query for words in sentences in divisions of cl
 
 ```
 SELECT ?w WHERE ?w References(?s)
-                ?w HasData(Equals(key: "type", value: "word"))
+                ?w Data(Equals(key: "type", value: "word"))
                 ?w ReferencedBy(?pos)
-                ?pos HasData(Equals(key: "pos", value: "noun"))
-                ?s HasData(Equals(key: "type", value: "sentence"))
+                ?pos Data(Equals(key: "pos", value: "noun"))
+                ?s Data(Equals(key: "type", value: "sentence"))
                 ?s References(?div)
-                ?div HasData(Equals(key: "type", value: "division"))
-                ?div HasData(Equals(key: "class", value: "chapter"))
+                ?div Data(Equals(key: "type", value: "division"))
+                ?div Data(Equals(key: "class", value: "chapter"))
 ```
 
 Here we have something that translates to a `AnnotationQuery` with eight constraints and that uses four `AnnotationSelectionSet`s, one of which is
@@ -607,9 +607,9 @@ not inter-dependent in parallel.
 We can query on text selections, consider another example in our query language:
 
 ```
-SELECT ?w WHERE ?w HasData(Equals(key: "type", value: "word"))
-                ?s HasData(Equals(key: "type", value: "sentence"))
-                ?w HasTextSelection(SameBegin(?s))
+SELECT ?w WHERE ?w Data(Equals(key: "type", value: "word"))
+                ?s Data(Equals(key: "type", value: "sentence"))
+                ?w TextSelection(SameBegin(?s))
 ```
 
 In a model where sentences and words are annotated, this returns the first word of each sentence.
@@ -627,8 +627,8 @@ our `AnnotationQuery`. The next one example selects all occurrences of the word 
 and annotates them as a noun (part-of-speech tagging).
 
 ```
-ADD ?pos WHERE ?w HasData(Equals(key: type, value: w))
-               ?w HasText("house")
+ADD ?pos WHERE ?w Data(Equals(key: type, value: w))
+               ?w Text("house")
          WITH  ?pos SetData(key: "pos", value: "noun")
                ?pos SelectAnnotation(?w)
 ```

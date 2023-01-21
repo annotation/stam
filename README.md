@@ -975,41 +975,49 @@ prescribed and up to the implementation:
 
 A core STAM implementation adheres to the following requirements:
 
-* *MUST* model all the classes of the core specification with the sole exception of `TextSelection`
-    * This entails that it *MUST* support all the selectors
+* *MUST* model all the classes of the core specification.
+    * This entails that it *MUST* model `AnnotationStore`, `Annotation`, `AnnotationData`, `AnnotationDataSet`, `DataKey`, `DataValue`. 
+    * This entails that it *MUST* support all the selectors (`Selector`)
+    * This entails that it *MUST* support offsets (`Offset`) and cursors (`Cursor`) as prescribed
+    * Implementations are *NOT REQUIRED* to follow an objected-oriented programming paradigm and may model all of these as they see fit.
+ * *MUST* support public identifiers
+    * They *MUST* also support the absence of such identifiers when parsing input and *SHOULD* allow generating IDs automatically when needed (for serialisation).
 * *MUST* offer an interface to manipulate annotations:
-    * *MUST* offer an interface to add new annotations, annotation data, data keys, and annotation data sets
-    * *MUST* offer an interface to edit existing annotations, annotation data, data keys, and annotation data sets
-    * *MUST* offer an interface to remove annotations, annotation data, data keys, and annotation data sets
-* *MUST* offer an interface to search annotations:
-    * *MUST* offer an interface to find annotations given a `DataKey` and optionally a value
-    * *MUST* offer an interface to iterate over all annotations
-    * *MUST* offer an interface to iterate over all annotations that reference a given annotation
-    * *MUST* offer an interface to iterate over all annotations that reference a text selection 
-    * *MUST* offer an interface to iterate over all annotation data sets
-    * *MUST* offer an interface to iterate over all annotation data in an annotation data set
-    * *MUST* offer an interface to iterate over all data keys in an annotation data set
+    * *MUST* offer an interface to add new annotations with new annotation data and data keys
+    * *MUST* offer an interface to add new keys and annotation data to annotation sets
+    * *MUST* offer an interface to remove annotations, annotation data, data keys
+    * Annotations, once made, *SHOULD* be considered immutable. Implementations needn't offer an interface to edit existing annotations. It is instead *RECOMMENDED* to delete the old one (if need be) and make a new one.
+* *MUST* offer an interface to search and retrieve annotations:
+    * *MUST* offer an interface to retrieve all annotations
+    * *MUST* offer an interface to retrieve all annotations with data that uses a specific key (`DataKey`).
+    * *MUST* offer an interface to retrieve all annotations that carry the given data (`AnnotationData`) (entails and extends the previous point).
+    * *MUST* offer an interface to retrieve all annotations that point to a given annotation
+    * *MUST* offer an interface to retrieve all annotations that are pointed at by a given annotation
+    * *MUST* offer an interface to retrieve all annotations that point to a given text selection (in a given resource)
+    * *MUST* offer an interface to retrieve all annotation data sets
+    * *MUST* offer an interface to retrieve all resources
+    * *MUST* offer an interface to retrieve all annotation data in an annotation data set
+    * *MUST* offer an interface to retrieve all data keys in an annotation data set
 * *MUST* offer an interface to retrieve the target text for any annotation
-    * the other way round, it *MUST* also offer an interface to find annotations that span over a certain queried text range
-    * *MUST* offer an interface to translate relative offsets to absolute begin-aligned offsets
-    * *MUST* offer an interface to retrieve any queried text ranges (even if there are no annotations)
-    * *MUST* offer an interface to retrieve text from the context of any annotation (preceding, succeeding)
-* *MUST* offer an interface to compute relationships with regard to text coverage:
-    * *MUST* offer an interface that computes whether an annotation overlaps with another
-    * *MUST* offer an interface that computes whether an annotation contains another
-    * *MUST* offer an interface that computes whether an annotation directly succeeds another in the textual order
-    * *MUST* offer an interface that computes whether an annotation directly precedes another in the textual order
-    * *MUST* offer an interface that computes whether an annotation succeeds another in the textual order
-    * *MUST* offer an interface that computes whether an annotation precedes another in the textual order
-* *MUST* offer an interface to compute relationships in higher-order annotations:
-    * *MUST* offer an interface that computes whether an annotation is a child of another
-    * *MUST* offer an interface that computes whether an annotation is a parent of another
-    * *MUST* offer an interface that computes whether an annotation is a descendant of another
-    * *MUST* offer an interface that computes whether an annotation is an ancestor of another
-    * *MUST* offer an interface that computes the common ancestor of two or more annotations (if any)
-    * *MUST* offer an interface that computes the depth of higher-order annotation
+    * *MUST* offer an interface to retrieve all text selections a given annotation references
+* *MUST* offer an interface to retrieve any arbitrary queried text ranges (even if there are no annotations)
+* *MUST* offer an interface to test/compute relationships with regard to text selections:
+    * *MUST* offer an interface that tests whether text selections overlap with another
+    * *MUST* offer an interface that tests whether text selections embed/contain another
+    * *MUST* offer an interface that tests whether text selections directly succeed another in the textual order
+    * *MUST* offer an interface that tests whether text selections directly precede another in the textual order
+    * *MUST* offer an interface that tests whether text selections succeed another in the textual order
+    * *MUST* offer an interface that tests whether text selections precede another in the textual order
+* *MUST* offer an interface to test/compute relationships in higher-order annotations:
+    * *MUST* offer an interface that tests whether an annotation A points to another annotation B (A parent of B)
+    * *MUST* offer an interface that tests whether an annotation A is pointed at by another annotation B (A child of B)
+    * *MUST* offer an interface that tests whether an annotation A points to another annotation B indirectly (A ancestor of B)
+    * *MUST* offer an interface that tests whether an annotation A is pointed at by another annotation B  (A descendant of B)
+    * *MUST* offer an interface that tests the common ancestor of two or more annotations (if any)
+    * *MUST* offer an interface that tests the depth of higher-order annotation
     * *MUST* ensure that higher-order annotations are acyclic
 * *MUST* be able to parse from STAM JSON
+    * Parser implementations *MUST* also support both the normal stand-off form, as well as the inline form of specifying `AnnotationData` for annotations.
 * *MUST* be able to serialise to STAM JSON
 
 If any of requirements are not met, the implementation is not a *core* STAM implementation but a *partial* one.

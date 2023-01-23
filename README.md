@@ -404,236 +404,66 @@ To facilitate search, implementations are *RECOMMENDED* to keep all
 on the offsets. We do not prescribe how to implement this, but a boundary index
 that independently tracks begin offsets and end offsets would function best.
 
-TextSelections are also used when querying, e.g. when the user specifies a
-particular text range explicitly. Their use in then usually mediated through
-the `TextSelectionSet` as described next:
-
-### Class: TextSelectionSet
-
-When querying relative text positions, rather than operate on a single
-`TextSelectionSet`, we use this intermediate class which contains one or more
-`TextSelection` instances. This allows us to also compute textual relationships
-between non-contingent text parts.
-
 ### Enum: TextSelectionOperator
 
-This operator expresses a binary relation between two text selection sets, e.g.
-*A TextSelectionOperator B*. It *MUST* evaluate to a boolean. The way we define
+This operator expresses a binary relation between two text selections (`A TextSelectionOperator B`, in which `A` and `B` are both a `TextSelection`). The way we define
 this and other operators in the extended STAM model, is more like currying, as
 the right part is included, effectively turning a binary operator into a unary
 one. This follows a certain implementation logic, but implementations *MAY*
 choose to implement this differently.
 
-We discern the following types, the `B` parameter is a `TextSelectionSet` in all.
+We distinguish the following variants for this operator, they are to be considered *RECOMMENDED*:
 
-* `Equals(B)` -  Both text selection sets are the same, they cover the exact same offsets. Operator is symmetric.
-* `Precedes(B, mindistance: int? , maxdistance: int?)` - All offsets in A precede all offsets in B , there is no overlap  (alternative name: ends before)
+* `Equals(B)` - A equals B, both text selections reference the exact same offset (i.e. same begin, same end).
+* `Precedes(B, mindistance: int? , maxdistance: int?)` - A precedes B entirely, there is no overlap (alternative name: *ends before*)
     * The `mindistance`, when set, defines a minimum distance in unicode points (default = 0)
     * The `maxdistance`, when set, defines a maximum distance in unicode points (default, unset = infinite)
-* `StartsBefore(B, mindistance: int?, maxdistance: int?)` - A starts before B (one of the offsets of A comes before any of the elements in B). There may however be overlap
-* `Succeeds(B, mindistance: int?, maxdistance: int?)` - All offsets in A succeed all offsets in B , there is no overlap (alternative name: start after)
-* `EndsBefore(B, mindistance: int?, maxdistance: int?)` - A ends before B ends (one of the offsets of B goes on after any of the offsets in A). There may however be overlap
-* `Near(B, mindistance: int?, maxdistance: int?) ` - Combination of `Precedes` and `Succeeds`, there is no overlap. Operator is symmetric.
-* `Overlaps(B)` - The offsets of A and B intersect at some point. Operator is symmetric.
-* `Embeds(B)` - All of the offsets of B overlap with A
-* `LeftAdjacent(B, spacing: bool?, punct: bool?)` - A ends just when B begins (need not apply to all elements, one suffices).
+* `StartsBefore(B, mindistance: int?, maxdistance: int?)` - A starts before B, there may be overlap in the final part of A.
+* `Succeeds(B, mindistance: int?, maxdistance: int?)` - A comes after B entirely, there is no overlap.
+* `EndsBefore(B, mindistance: int?, maxdistance: int?)` - A ends before B, they may be overlap in the initial part of A. 
+* `Overlaps(B)` - A overlaps with B.
+* `Embeds(B)` - A embeds or contains B. This may sometimes be interpreted as a parent-child relationship. Consider for instance A being a sentence and B a word in that sentence. Also note that `A Equals(B)` entails `A Embeds(B)` (but not the other way round).
+* `LeftAdjacent(B, spacing: bool?, punct: bool?)` - A ends just when B begins
     * The `spacing` parameter, when set to true, allows whitespace between the offsets and still considers the text selection sets adjacent
     * The `punct` parameter, when set to true, allows punctuation between the offsets and still considers the text selection sets adjacent
-* `RightAdjacent(B, spacing: bool?, punct: bool?)` - A begins just when A ends (need not apply to all elements, one suffices)
-* `SameBegin(B)` - A and B share a begin offset (need not apply to all elements, one suffices). Operator is symmetric.
-* `SameEnd(B)` - A and B share  end offset (need not apply to all elements, one suffices). Operator is symmetric.
-* `SameRange(B)` - Combination of `SameBegin` and `SameEnd`. Operator is symmetric.
+* `RightAdjacent(B, spacing: bool?, punct: bool?)` - A begins just when A ends
+* `SameBegin(B)` - A and B have the same begin cursor.
+* `SameEnd(B)` - A and B have the same end cursor.
 
-Then there is the unary operator `Not` which can invert any of the above.
-Further logical operators are defined on the level of `AnnotationOperator`
-rather than on this one.
+We also introduce some logical operators which take other operator(s) (`P`) as parameters:
+
+* `Not(P)` - Inverts any operator
+* `And([P++])` - Logical conjunction. All operators must pass
+* `Or((P++]` - Logical disjunction. One of the operators must pass.
+
+There is already some redundancy in operators as some are the inverse of one or more others. The following even add more redundancy but *MAY* also be implemented as convenient shortcuts:
+
+* `Near(B, mindistance: int?, maxdistance: int?) ` - A `Precedes` B or A `Succeeds` B, there is no overlap
+* `SameRange(B)` - Combination of `SameBegin` and `SameEnd`.
+* `Embedded(B)` - B embeds A (inverse of `Embeds`)
+
+Rather than operate on individual text selections, implementations *MAY* operate on entire *sets* of text selections instead, but this is left to an extension.
 
 ### Enum: DataOperator
 
-This binary operator is used on `AnnotationData` instances to test the
-key/value, e.g. `A DataOperator B`, where `A` is often the data in the model,
+This binary operator is used on `DataValue` instances (i.e. the value of an `AnnotationData` instance)
+to test the value.  Consider `A DataOperator B`, where `A` is often the data in the model,
 and `B` some value the user wants to test for. The operator *MUST* evaluate to
-a boolean. It can also be used on `Annotation` (in which case it is simply
+a boolean. It can also be used `AnnotationData` and even on `Annotation`, in this last case it is simply
 applied to all `AnnotationData` instances in data. It *MUST* then returns true
 if *any* of the data matches, except if `Not` is used, then *all* *MUST* match.
 
-We discern the following types:
+We discern the following variants, they are to be considered *RECOMMENDED*::
 
- * `Equals(other: AnnotationData)` - Test whether two values are equal
- * `GreaterThan(other: AnnotationData)`
- * `LessThan(other: AnnotationData)`
- * `GreaterThanOrEqual(other: AnnotationData)`
- * `LessThanOrEqual(other: AnnotationData)`
- * `HasElement(other: AnnotationData)` - Applies only when applied to annotation data with `DataValue::List()` , tests if the element is in the list.
- * `Has(key: &DataKey)` - Tests if a particular key exists
- * `UsesSet(set: &AnnotationDataSet)`
+ * `Equals(other: DataValue)` - Test whether two values are equal
+ * `GreaterThan(other: DataValue)`
+ * `LessThan(other: DataValue)`
+ * `GreaterThanOrEqual(other: DataValue)`
+ * `LessThanOrEqual(other: DataValue)`
+ * `HasElement(other: DataValue)` - Applies only when applied to annotation data with `DataValue::List()` , tests if the element is in the list.
+ * `And([DataOperator++])` - Conjunction combining multiple tests
+ * `Or([DataOperator++])` - Disjunction combining multiple tests
  * `Not(DataOperator)` - Unary operator that inverts the logic.
-
-Further logical operators are defined on the level of `AnnotationOperator`
-rather than on this one.
-
-## Enum: AnnotationOperator
-
-This operator applies on the level of annotations, or to be more precise on
-selections/sets of annotations (aka `AnnotationSelectionSet`, more about that in the next section).
-It also encapsulates the two earlier mentioned operators. Like the others, it
-*MUST* evaluate to a boolean.
-
- * `Id(id: str)` - Select an annotation by ID
- * `Text(text: str, regexp: bool)` - Tests if the annotation references the (continuous) text, which *MAY* be a regular expression by setting the parameter. This evaluates a `TextSelector` (possibly at the end of a chain of higher-order annotations) and tests its value with the provided string reference.
- * `TextSelection(TextSelectionOperator)` - Applies a `TextSelectionOperator`, a *STAM* implementation *MUST* provides the means to get `TextSelections` from `AnnotationSelectionSet`.
- * `Data(DataOperator)` - Applies a `DataOperator` to test the data of the annotation.
- * `InSelectionSet(set: AnnotationSelectionSet)` - Tests if the annotation is part of a specific annotation selection set.
- * `Resource(resource: &TextResource, maxdepth: int?)` - Tests if the annotation is on a particular `TextResource`, either directly but also indirectly if `maxdepth` is set to a value greater than zero (default is unset = infinite, set to 0 for a stricter check).
- * `DataSet(dataset: &AnnotationDataSet)` - Tests if the annotation uses vocabulary from the specified data set.
- * `References(B: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)` - Tests if *all* annotations in A reference an annotation in B (possibly indirectly). 
- * `ReferencedBy(B: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)`- Tests if *all* annotations in B reference an annotation in A (possibly indirectly). Evaluates to true if *any* of them passes.
- * `And([AnnotationOperator++])` - Set intersection, this operator *SHOULD* be avoided as much as possible in favour of multiple constraint clauses in `AnnotationQuery`
- * `Or([AnnotationOperator++])` - Set union
- * `Not(AnnotationOperator)`
-
-### Class: AnnotationSelectionSet
-
-An `AnnotationSelectionSet` is a fairly arbitrary grouping (a set) of one or more `Annotation`
-instances. The above `AnnotationOperator` is always mediated through this
-class. 
-
-The `AnnotationSelectionSet` is used in searching, where it is also an output. Querying
-a model produces one or more `AnnotationSelectionSet`s with the resulting annotations
-that were found (zero or more).
-
-An `AnnotationSelectionSet` may carry an ID, which is bound to the name it was given by
-the `AnnotationQuery`. See the next section.
-
-Do not confuse `AnnotationSelectionSet` with `AnnotationDataSet`, the latter does not contain annotations at all but only their data.
-
-### Class: AnnotationQuery
-
-The AnnotationQuery class represents a full query on the data or any subset
-thereof. It is applied to an `AnnotationSelectionSet` which *MAY* be (and often is
-initially) the set of all annotation in the `AnnotationStore`.
-
-We distinguish three types of queries, the `type`:
-
-* `Select` - A read-only query that retrieves annotations
-* `Add` - A query that adds annotations
-* `Delete` - A query that deletes annotations
-
-There is no special type to update an annotation, as they *SHOULD* be
-considered fairly immutable once made. You can always delete one and add
-another.
-
-The `AnnotationQuery` class has two properties:
-
-* `constraints` -  This is a list of tuples (`[(set: AnnotationSelectionSet, operator:
-  AnnotationOperator)*]`) that puts constraints (or filters if you will) to
-  select on. In simpler terms, it determines the criteria of what annotations to select. The tuples
-  consist of a *subject* (an AnnotationSelectionSet) and an *operator
-  *(`AnnotationOperator`), the *object* is already contained within the
-  `AnnotationOperator` in our model and its type depends on the actual operator. This essentially formulates a constraint how how an AnnotationSelectionSet relates to something else, for instance we can put the constraint that some set X has operator `AnnotationOperator::Text("hallå")` or that all instances in annotation set X should reference annotation in set Y: `References(Y)` . How exactly this will be used in querying is explain in the next section.
-* `assignments` - This is a list of tuples (`[(set: &AnnotationSelectionSet, operator: AssignmentOperator)*]` ) to add/modify/delete things in the model, as determined by the exact `AssignmentOperator` used.
-
-### Querying 
-
-Querying is a complex but vital aspect of STAM. We have seen that the extended
-data model defines classes used in querying and indexing, but the fashion in which
-implementations can use these to implement querying may still be unclear at
-this stage. 
-
-In this section we will explain how these classes are used in querying.
-
-The best way to explain this is by first formulating some pseudo query
-language, loosely inspired on SPARQL. This is non-normative and just an
-example. Definition of an actual query languages is up to STAM extensions. In
-our example language, we verbosely refer to all of the classes in the extended
-model that are involved, as our aim is to explain this model. Actual
-user-facing query languages could implement various shortcuts and be more concise.
-
-```
-SELECT ?w WHERE ?w Data(key: "type", value: "word")
-                ?w Text("hallå")
-```
-
-This example translates to an `AnnotationQuery` with two constraints.
-Constraints *MUST* be interpreted as a set *Intersection* (in the pseudo query
-language terms it would be a logical *and* operation). Both constraints have as
-subject the `AnnotationSelectionSet` with identifier *w* (represented as ``?w`` in the
-query where we express in our psuedo-SPARQL-like syntax that it is a bound
-variable). In this example we are querying for annotations that are have
-`AnnotationData` `"type": "word"` (the vocabulary is fictitious and not
-prescribed by STAM), i.e. we are querying for all the words in the model. The
-second constraint states that the words must have the text *"hallå"*.
-
-When querying, this `AnnotationSelectionSet` is initially empty, and it will be filled
-in a matter that satisfies all constraints. If applied to an `AnnotationStore` like shown in Example A (shown
-earlier in this specification), we obtain a single annotation in our `AnnotationSelectionSet` *w*.
-
-Let us now consider a more complex example. Assume we have a text with
-annotations marking (via a *type* key) divisions, sentences, words. We let each
-of these embedded annotation reference their parent (via `AnnotationSelector`
-and relative offsets). Divisions carry a *class* key that can specifies whether
-a division is a *chapter*, *section* or *subsection*. We also add a *pos* key
-to this fictitious vocabulary to mark part-of-speech tags.
-
-Now consider this query where we query for words in sentences in divisions of class chapter, and where these words must be nouns (according to their *pos* tag).
-
-```
-SELECT ?w WHERE ?w References(?s)
-                ?w Data(Equals(key: "type", value: "word"))
-                ?w ReferencedBy(?pos)
-                ?pos Data(Equals(key: "pos", value: "noun"))
-                ?s Data(Equals(key: "type", value: "sentence"))
-                ?s References(?div)
-                ?div Data(Equals(key: "type", value: "division"))
-                ?div Data(Equals(key: "class", value: "chapter"))
-```
-
-Here we have something that translates to a `AnnotationQuery` with eight constraints and that uses four `AnnotationSelectionSet`s, one of which is
-returned as result (Implementations *MUST* also allow for multiple sets to be
-returned, but this is fairly trivial). The order of the constraints in the
-`AnnotationQuery` *MUST NOT* not matter. It is up to the implementation to determine in
-what order the sets can be filled. To this end, implementations *SHOULD*
-compute and evaluate a dependency graph internally. Queries with circular
-dependencies *MUST BE* rejected by the implementation. Moreover,
-when evaluating constraints for one particular `AnnotationSelectionSet`, implementations
-*SHOULD* prioritize indexed constraints (i.e. constraints that reference a
-`DataKey` that is indexed) over non-indexed constraints. The indices will
-furthermore convey information on how prevalent a certain `DataKey` is, in
-order to constrain the search as quickly as possible it is recommended to
-prioritize the least prevalent keys first (i.e. narrowing the set more
-dramatically before further constraints are applied).
-
-To further increase performance, implementations *MAY* evaluate constraints that are
-not inter-dependent in parallel.
-
-We can query on text selections, consider another example in our query language:
-
-```
-SELECT ?w WHERE ?w Data(Equals(key: "type", value: "word"))
-                ?s Data(Equals(key: "type", value: "sentence"))
-                ?w TextSelection(SameBegin(?s))
-```
-
-In a model where sentences and words are annotated, this returns the first word of each sentence.
-
-We have not only `SELECT` queries but also `ADD` and `DELETE` queries. Example: 
-
-```
-ADD ?w WITH ?w SetData(key: "type", value: "word")
-            ?w SelectText("hello.txt", 0, 5)
-```
-
-The above example selects no annotations at all, but adds one like in Example
-A. In our example query language, `WITH` translates to `AssignmentOperator`s on
-our `AnnotationQuery`. The next one example selects all occurrences of the word *"house"*
-and annotates them as a noun (part-of-speech tagging).
-
-```
-ADD ?pos WHERE ?w Data(Equals(key: type, value: w))
-               ?w Text("house")
-         WITH  ?pos SetData(key: "pos", value: "noun")
-               ?pos SelectAnnotation(?w)
-```
 
 ## Serialisation Formats
 

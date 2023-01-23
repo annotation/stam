@@ -185,96 +185,42 @@ enum Cursor {
     <i>(not bytes!), zero-indexed</i>
 }
 
-class TextSelectionSet <<functional>> {
-    selections: [TextSelection]
-    --
-    <i>Arbitrary grouping of TextSelections</i>
-    <i>(e.g. results of multiple TextSelectors)</i>
-}
-
 enum TextSelectionOperator <<functional>> {
-    Equals(other: TextSelectionSet)
-    Precedes(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
-    StartsBefore(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
-    Succeeds(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
-    EndsBefore(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
-    Near(other: TextSelectionSet, mindistance: int?, maxdistance: int?)
-    Overlaps(other: TextSelectionSet)
-    Embeds(other: TextSelectionSet)
-    LeftAdjacent(other: TextSelectionSet,spacing: bool, punct: bool)
-    RightAdjacent(other: TextSelectionSet,spacing: bool, punct: bool)
-    SameBegin(other: TextSelectionSet)
-    SameEnd(other: TextSelectionSet)
-    SameRange(other: TextSelectionSet)
+    Equals(other: TextSelection)
+    Precedes(other: TextSelection, mindistance: int?, maxdistance: int?)
+    StartsBefore(other: TextSelection, mindistance: int?, maxdistance: int?)
+    Succeeds(other: TextSelection, mindistance: int?, maxdistance: int?)
+    EndsBefore(other: TextSelection, mindistance: int?, maxdistance: int?)
+    Near(other: TextSelection, mindistance: int?, maxdistance: int?)
+    Overlaps(other: TextSelection)
+    Embeds(other: TextSelection)
+    LeftAdjacent(other: TextSelection,spacing: bool, punct: bool)
+    RightAdjacent(other: TextSelection,spacing: bool, punct: bool)
+    SameBegin(other: TextSelection)
+    SameEnd(other: TextSelection)
+    SameRange(other: TextSelection)
     Not(TextSelectionOperator)
+    And([TextSelectionOperator++])
+    Or([TextSelectionOperator++])
     --
     <i>Operators to compare text selections</i>
 }
 
 enum DataOperator <<functional>> {
-    Equals(other: AnnotationData)
-    GreaterThan(other: AnnotationData)
-    LessThan(other: AnnotationData)
-    GreaterThanOrEqual(other: AnnotationData)
-    LessThanOrEqual(other: AnnotationData)
-    HasElement(other: AnnotationData)
-    Has(key: &DataKey)
-    UsesSet(set: &AnnotationDataSet)
+    Equals(other: DataValue)
+    GreaterThan(other: DataValue)
+    LessThan(other: DataValue)
+    GreaterThanOrEqual(other: DataValue)
+    LessThanOrEqual(other: DataValue)
+    HasElement(other: DataValue)
+    HasElement(key: DataValue)
+    And([DataOperator++])
+    Or([DataOperator++])
     Not(DataOperator)
     --
-    <i>Operators to match annotation data</i>
+    <i>Operators to test the value of</i>
+    <i>annotation data (DataValue)</i>
 }
-
-enum AnnotationOperator <<functional>> {
-    Id(id: str)
-    Text(text: str, regexp: bool)
-    TextSelection(TextSelectionOperator)
-    Data(DataOperator)
-    InSelectionSet(set: AnnotationSelectionSet)
-    Resource(resource: &TextResource, maxdepth: int?)
-    DataSet(dataset: &AnnotationDataSet)
-    References(set: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)
-    ReferencedBy(set: AnnotationSelectionSet, mindepth: int?, maxdepth: int?)
-    And([AnnotationOperator++])
-    Or([AnnotationOperator++])
-    Not(AnnotationOperator)
-    --
-    <i>Operators to select/filter annotations</i>
-}
-
-class AnnotationSelectionSet <<functional>> {
-    id: str?
-    annotations: [&Annotation*]
-    --
-    _evaluated: bool
-    --
-    <i>Arbitrary and temporary grouping</i>
-    <i>of one or more annotations</i>
-    <i>(e.g. as a result of a query)</i>
-}
-
-class AnnotationQuery <<functional>>  {
-    type: Select/Add/Delete
-    select: [&AnnotationSelectionSet+]
-    constraints: [(set: AnnotationSelectionSet, operator: AnnotationOperator)*]
-    assignments: [(set: &AnnotationSelectionSet, operator: AssignmentOperator)*]
-    --
-    <i>Query on annotations</i>
-}
-
-enum AssignmentOperator <<functional>> {
-    SetData(AnnotationData)
-    SelectAnnotation(&Annotation, offsets:
-        (&Resource, begin: Cursor, end: Cursor)? )
-    SelectText(&Resource, begin: Cursor, end: Cursor)
-    SelectResource(&Resource)
-    MultiSelect([AssignmentOperator++])
-    DirectionalSelect([AssignmentOperator++])
-    --
-    <i>Operator to modify annotations</i>
-    <i>(further edges omitted for brevity)</i>
-}
-
 
 AnnotationStore "1" *--> "*" AnnotationDataSet : > datasets
 AnnotationStore "1" *--> "*" TextResource : > resources
@@ -286,8 +232,6 @@ AnnotationDataSet "1" *--> "*" DataKey : > keys
 Annotation "1" *--> "+" Selector : > target
 Annotation "1" o-[#red]-> "*" AnnotationData : > data
 Annotation "1" o.[#red].> "*" Annotation : > _referenced_by
-
-AnnotationSelectionSet "1" o-[#red]-> "*" Annotation : > annotations
 
 AnnotationData "1" o.[#red].> "+" Annotation : > _referenced_by
 AnnotationData "1" *--> "1" DataValue : > value
@@ -311,30 +255,12 @@ TextResource "1" *..> "*" TextSelection : > _index
 TextSelection "1" o.[#red].> "*" Annotation : > _referenced_by
 TextSelection "1" o.[#red].> "*" TextResource : > _part_of
 
-TextSelectionSet "1" *..> TextSelection : > selections
+TextSelectionOperator *..> TextSelection : > other
+TextSelectionOperator .[#blue].> TextSelection : > <<applied to>>
+TextSelectionOperator *..> TextSelectionOperator : > Not/And/Or
 
-TextSelectionOperator *..> TextSelectionSet : > other
-TextSelectionOperator .[#blue].> TextSelectionSet : > <<applied to>>
-TextSelectionOperator *..> TextSelectionOperator : > Not
-
-DataOperator .[#blue].> AnnotationData : > <<applied to>>
-DataOperator .[#blue].> Annotation : > <<applied to>>
-DataOperator *..> AnnotationData : > other
-DataOperator *..> DataOperator : > Not
-DataOperator o.[#red].> DataKey : > key
-DataOperator o.[#red].> AnnotationDataSet : > set
-
-AnnotationQuery "1" *..> "*" AnnotationSelectionSet : > set
-AnnotationQuery "1" *..> "*" AnnotationOperator : > operator
-AnnotationQuery "1" *..> "*" AssignmentOperator : > assignments
-
-AnnotationOperator "1" .[#blue].> "+" AnnotationSelectionSet : > <<applied to>>
-AnnotationOperator *..> AnnotationSelectionSet : > set
-AnnotationOperator *..> TextSelectionOperator : > HasTextSelection
-AnnotationOperator *..> AnnotationOperator : > Not
-AnnotationOperator *..> DataOperator : > HasData
-AnnotationOperator o.[#red].> TextResource : > resource
-AnnotationOperator o.[#red].> AnnotationDataSet : > HasDataSet
-AnnotationStore .[#blue].> AnnotationSelectionSet
+DataOperator .[#blue].> DataValue : > <<applied to>>
+DataOperator *..> DataValue : > other
+DataOperator *..> DataOperator : > Not/And/Or
 
 @enduml

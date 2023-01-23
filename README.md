@@ -100,7 +100,7 @@ implemented in software, although its data model is designed in such a way as
 to facilitate an efficient implementation. We refer to the following
 implementations:
 
-* (None exists yet)
+* [stam-rust](https://github.com/annotation/stam-rust) - A STAM library written in Rust, aims to be a *full STAM implementation* with high performance and *memory-based* storage model.
 
 Please read the [Functionality](#Functionality) section further down to see a
 specification of requirements for implementations.

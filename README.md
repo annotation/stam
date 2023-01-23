@@ -96,7 +96,7 @@ Implementations *SHOULD* explicitly state which extensions they support.
 ## Implementations
 
 This specification does not define precisely how the data model should be
-implemented in software, although its data model is designed in such a way as
+implemented in software, although the data model is designed in such a way as
 to facilitate an efficient implementation. We refer to the following
 implementations:
 
@@ -387,15 +387,17 @@ Some notes to interpret the diagram, as it may quickly become overwhelming:
 
 ### Class: TextSelection
 
-Instances of this class make up the (reverse) index held by `TextResource`, it
-*SHOULD NOT* be serialised to file. The job of the reverse index, is to link
-text offsets, for the given resource, back to annotations. Usage of the reverse
+A `TextSelection` is a precisely defined slice of the text in a given `TextResource`.
+It typically refers to the exact absolute offsets of a text. This structure *SHOULD* be produced
+as the result of a selection (e.g. by an annotation via a `TextSelector`) and *SHOULD*
+be added to a reverse index to facilitate search. Consider `Offset` an input structure, which 
+appears in serialization and may be formulated in a relative fashion, and `TextSelection` an output
+structure, which *MUST NOT* be serialized to file and which is formulated in a absolute fashion.
+
+Instances of `TextSelection` make up the (reverse) for a `TextResource`. The job of the reverse index, is to link
+text offsets back to annotations. Usage of the reverse
 index and this  `TextSelection` class is a *RECOMMENDATION*, implementations
 *MAY* decide to implement this differently.
-
-Whenever an annotation on the text is added (i.e. an annotation with a
-`TextSelector`, or an annotation that indirectly refers to another annotation
-with a TextSelector), a `TextSelection` *SHOULD* added to the reverse index.
 
 To facilitate search, implementations are *RECOMMENDED* to keep all
 `TextSelection`s in the reverse index in sorted order, where the order is based

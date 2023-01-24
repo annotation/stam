@@ -112,11 +112,22 @@ class AnnotationSelector {
     <i>end is non-inclusive.</i>
 }
 
-
 class MultiSelector {
     selectors: [Selector++]
     --
     <i>Combines selectors</i>
+    <i>The annotation applies</i>
+    <i>to each target individually</i>
+    <i>and independently.</i>
+}
+
+class CompositeSelector {
+    selectors: [Selector++]
+    --
+    <i>Combines selectors</i>
+    <i>The annotation applies</i>
+    <i>to all targets combined,</i>
+    <i>they are inter-dependant.</i>
 }
 
 class DirectionalSelector {
@@ -124,6 +135,8 @@ class DirectionalSelector {
     --
     <i>Expresses a direction between two or more selectors,</i>
     <i>in the exact order specified (from -> to)</i>
+    <i>The annotation applies to all targets</i>
+    <i>combined, they are inter-dependant.</i>
 }
 
 Selector <|-[#green]- TextSelector
@@ -131,6 +144,7 @@ Selector <|-[#green]- ResourceSelector
 Selector <|-[#green]- DataSetSelector
 Selector <|-[#green]- AnnotationSelector
 Selector <|-[#green]- MultiSelector
+Selector <|-[#green]- CompositeSelector
 Selector <|-[#green]- DirectionalSelector
 
 
@@ -241,15 +255,16 @@ AnnotationData "1" o.[#red].> "1" AnnotationDataSet : > _part_of_set
 TextSelector "1" o-[#red]-> "1" TextResource : > resource
 ResourceSelector "1" o-[#red]-> "1" TextResource : > resource
 AnnotationSelector "1" o-[#red]-> "1" Annotation : > annotation
+DataSetSelector "1" o-[#red]-> "1" AnnotationDataSet : > annotationset
 
 DataKey "1" o.[#red].> "+" AnnotationData : > _referenced_by
 DataKey "1" o.[#red].> "1" AnnotationDataSet : > _part_of_set
 
 MultiSelector "1" --> "*" Selector : > selectors
+CompositeSelector "1" --> "*" Selector : > selectors
 DirectionalSelector "1" --> "*" Selector : > selectors
 TextSelector "1" --> "2" Cursor : > offsets
 AnnotationSelector "1" --> "2" Cursor : > offsets
-DataSetSelector "1" --> "*" AnnotationDataSet : > annotationset
 
 TextResource "1" *..> "*" TextSelection : > _index
 TextSelection "1" o.[#red].> "*" Annotation : > _referenced_by

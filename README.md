@@ -276,11 +276,15 @@ There are multiple types of selectors:
 * ``TextSelector`` - Selects a target resource and a text span within it. The text-span *MUST*  be contiguous and is is specified through an offset pairs consisting of a ``begin`` and ``end``.
   These ``begin`` and ``end`` attributes *MUST* describe the character position in unicode
   points in text of the resources that is being pointed at. Indexing *MUST* be zero-based and the end offset *MUST* be
-  non-inclusive. Non-contiguous spans are expressed via multiple `TextSelector`s under a `MultiSelector`.
-* ``ResourceSelector``  - A selector point to a resource as whole. These type
+  non-inclusive. Non-contiguous spans are expressed via multiple `TextSelector`s under a `CompositeSelector`.
+* ``ResourceSelector``  - A selector pointing to a resource as whole. These type
+  of annotation can be interpreted as *metadata*.
+* ``DataSetSelector``  - A selector pointing to an annotation data set (`AnnotationDataSet`). These type
   of annotation can be interpreted as *metadata*.
 * ``AnnotationSelector``  - A selector pointing to one or more other annotations. This we call higher-order annotation and is very common in STAM models. If the annotation that is being targeted eventually refers to a text (`TextSelector`), then offsets **MAY** be specified that select a subpart of this text. These offsets are now *relative* to the annotation. Internally, the implementation can always efficiently resolve these to absolute offsets on the resource. The use of `AnnotationSelector` has one important constraint: the graph of all annotations referring to other annotations  *MUST* be acyclic; i.e. it can't end up in a recursive loop of annotations referencing each-other. Implementations *SHOULD* check this.
-* ``MultiSelector``  - A selector that consists of multiple other selectors, used to select more complex targets that transcend the idea of a single simple selection. This *MUST* be interpreted as the annotation applying equally to the conjunction as a whole, its parts being inter-dependent and for any of them it goes that they *MUST NOT* be omitted for the annotation to makes sense. Note that the order of the selectors is not significant. When there is no dependency relation between the selectors, you *MUST* simply use multiple `Annotation`s instead.
+* ``MultiSelector``  - A selector that consists of multiple other selectors to select multiple targets. This *MUST* be interpreted as the annotation applying to each target *individually*, without any relation between the different targets. Leaving one out or adding one *MUST NOT* affect the interpretation of any of the others nor of the whole. This is a way to express multiple annotations 
+as one, a more condensed representation. This selector *SHOULD* be used sparingly in your modelling, as it is generally *RECOMMENDED* to simply use multiple `Annotation`s instead. In STAM, even with multiple annotations, you benefit of the fact that multiple annotations may share the same `AnnotationData`, and can therefore easily retrieve all annotations that share particular data.
+* ``CompositeSelector``  - A selector that consists of multiple other selectors, used to select more complex targets that transcend the idea of a single simple selection. This *MUST* be interpreted as the annotation applying equally to the conjunction as a whole, its parts being inter-dependent and for any of them it goes that they *MUST NOT* be omitted for the annotation to makes sense. Note that the order of the selectors is not significant (use `DirectionalSelector` instead if they are). When there is no dependency relation between the selectors, you *MUST* simply use multiple `Annotation`s or a `MultiSelector` instead. When grouping things into a set, use a `CompositeSelector`, as the set as a whole is considered a composite entity.
 * ``DirectionalSelector``  - Another selector that consists of multiple other
   selectors, but with an explicit direction (from -> to), used to select more
   complex targets that transcend the idea of a single simple selection.
@@ -310,7 +314,7 @@ one matching ``AnnotationData`` in a given set. There *MAY* be multiple only if 
 *Extended model:* The ``_referenced_by`` attribute of ``AnnotationData`` links back to all
 annotations that instantiate this exact same content, this is effectively a
 reverse index to facilitate search. It is *RECOMMENDED* for implementations to
-do efficient querying.
+do efficient querying. Read the section on reverse indices later on.
 
 ### Class: DataKey
 

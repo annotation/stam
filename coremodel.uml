@@ -97,7 +97,20 @@ class MultiSelector {
     selectors: [Selector++]
     --
     <i>Combines selectors</i>
+    <i>The annotation applies</i>
+    <i>to each target individually</i>
+    <i>and independently.</i>
 }
+
+class CompositeSelector {
+    selectors: [Selector++]
+    --
+    <i>Combines selectors</i>
+    <i>The annotation applies</i>
+    <i>to all targets combined,</i>
+    <i>they are inter-dependant.</i>
+}
+
 
 class DirectionalSelector {
     selectors: [Selector++]
@@ -111,6 +124,7 @@ Selector <|-[#green]- ResourceSelector
 Selector <|-[#green]- DataSetSelector
 Selector <|-[#green]- AnnotationSelector
 Selector <|-[#green]- MultiSelector
+Selector <|-[#green]- CompositeSelector
 Selector <|-[#green]- DirectionalSelector
 
 
@@ -174,13 +188,14 @@ AnnotationData "1" *-[#red]-> "1" DataKey : > key
 TextSelector "1" o-[#red]-> "1" TextResource : > resource
 ResourceSelector "1" o-[#red]-> "1" TextResource : > resource
 AnnotationSelector "1" o-[#red]-> "1" Annotation : > annotation
+DataSetSelector "1" o-[#red]-> "1" AnnotationDataSet : > annotationset
 
 
 MultiSelector "1" --> "*" Selector : > selectors
+CompositeSelector "1" --> "*" Selector : > selectors
 DirectionalSelector "1" --> "*" Selector : > selectors
 TextSelector "1" --> "2" Cursor : > offsets
 AnnotationSelector "1" --> "2" Cursor : > offsets
-DataSetSelector "1" --> "*" Selector : > annotationset
 
 
 @enduml

@@ -479,6 +479,7 @@ It may help to enumerate the reverse indices in a more stand-off fashion as foll
     * This would be the reverse index for annotations that use `AnnotationSelector`
 * An index mapping textselections (pertaining to a resource) to all annotations :  `TextResource -> [TextSelection -> [Annotation]]`
     * This would be the reverse index for annotations that use `TextSelector`
+    * It is *RECOMMENDED* to store TextSelections in some kind of ordered map, whereas all the other items in this section need only an unordered map.
 * An index mapping annotation data (pertaining to a set) to all annotations that use that data:   `AnnotationDataSet [AnnotationData -> [Annotation]]`
 * An index mapping resources to all annotations that select that resource:   `TextResource -> [Annotation]`
     * This *MAY* be limited annotations that point at the resource as a whole. This would then be the reverse index for annotations that use `ResourceSelector`.
@@ -858,6 +859,7 @@ A core STAM implementation adheres to the following requirements:
     * *MUST* offer an interface to retrieve all annotations
     * *MUST* offer an interface to retrieve all annotations with data that uses a specific key (`DataKey`).
     * *MUST* offer an interface to retrieve all annotations that carry the given data (`AnnotationData`) (entails and extends the previous point).
+        * *SHOULD* support most or all of the comparison tests as expressed by `DataOperator`
     * *MUST* offer an interface to retrieve all annotations that point to a given annotation
     * *MUST* offer an interface to retrieve all annotations that are pointed at by a given annotation
     * *MUST* offer an interface to retrieve all annotations that point to a given text selection (in a given resource)
@@ -869,12 +871,7 @@ A core STAM implementation adheres to the following requirements:
     * *MUST* offer an interface to retrieve all text selections a given annotation references
 * *MUST* offer an interface to retrieve any arbitrary queried text ranges (even if there are no annotations)
 * *MUST* offer an interface to test/compute relationships with regard to text selections:
-    * *MUST* offer an interface that tests whether text selections overlap with another
-    * *MUST* offer an interface that tests whether text selections embed/contain another
-    * *MUST* offer an interface that tests whether text selections directly succeed another in the textual order
-    * *MUST* offer an interface that tests whether text selections directly precede another in the textual order
-    * *MUST* offer an interface that tests whether text selections succeed another in the textual order
-    * *MUST* offer an interface that tests whether text selections precede another in the textual order
+    * *SHOULD* support most or all of the textual relations as expressed by `TextSelectionOperator`
 * *MUST* offer an interface to test/compute relationships in higher-order annotations:
     * *MUST* offer an interface that tests whether an annotation A points to another annotation B (A parent of B)
     * *MUST* offer an interface that tests whether an annotation A is pointed at by another annotation B (A child of B)
@@ -891,9 +888,8 @@ If any of requirements are not met, the implementation is not a *core* STAM impl
 
 Moreover, the following are *RECOMMENDED*, a STAM implementation:
 
-* *SHOULD* implement reverse index via `TextSelection` 
+* *SHOULD* implement reverse indices as described in the extended model (e.g. via `TextSelection`)
 * *SHOULD* implement indices at the `DataKey` level
-* *SHOULD* offer an interface to redact text resources (i.e. add/edit/remove text at any point), and *MUST* subsequently update all affected `TextSelector`s.
 
 If these recommendations are also met, we speak of a *full* STAM implementation.
 
@@ -901,6 +897,7 @@ Last, some guidelines that are entirely optional but worth mentioning, a STAM im
 
 * *MAY* implement a binary serialisation
 * *MAY* also implement any of the STAM extensions, it *SHOULD* indicate exactly which ones it implements.
+* *MAY* offer an interface to redact text resources (i.e. add/edit/remove text at any point), and *MUST* subsequently update all affected `TextSelector`s.
 
 ## Relation to other data models & motivations
 

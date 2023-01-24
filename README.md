@@ -464,6 +464,42 @@ We discern the following variants, they are to be considered *RECOMMENDED*:
  * `Or([DataOperator++])` - Disjunction combining multiple tests
  * `Not(DataOperator)` - Unary operator that inverts the logic.
 
+### Reverse indices
+
+The extended model defines various relations like `_referenced_by` and
+`_part_of` that point *back* (hence the term 'reverse') at items from which
+nodes are referenced. In the schema these are represented by red dashed lines,
+whereas the solid red lines can be interpreted as the *forward* index.  All of
+these combined (including 'forward' solid black lines indicating ownership)
+constitute the edges of a search graph and enables quick lookups.
+
+It may help to enumerate the reverse indices in a more stand-off fashion as follows:
+
+* An index mapping annotations to all annotations that select it:  `Annotation -> [Annotation]`
+    * This would be the reverse index for annotations that use `AnnotationSelector`
+* An index mapping textselections (pertaining to a resource) to all annotations :  `TextResource -> [TextSelection -> [Annotation]]`
+    * This would be the reverse index for annotations that use `TextSelector`
+* An index mapping annotation data (pertaining to a set) to all annotations that use that data:   `AnnotationDataSet [AnnotationData -> [Annotation]]`
+* An index mapping resources to all annotations that select that resource:   `TextResource -> [Annotation]`
+    * This *MAY* be limited annotations that point at the resource as a whole. This would then be the reverse index for annotations that use `ResourceSelector`.
+* An index mapping annotation data sets to all annotations select the set:   `AnnotationDataSet -> [Annotation]` 
+    * This *MAY* be limited annotations that point at the dataset as a whole. This would then be the reverse index for annotations that use `DataSetSelector`.
+* An index mapping datakeys (pertaining to an annotationset) to annotationdata that makes use of the key
+* An index mapping annotation data sets to all annotations select the set:   `AnnotationDataSet -> [DataKey -> [AnnotationData]]` 
+
+Implementations *SHOULD* implement these or similar indices, facilitating quick lookup in search. 
+
+## Searching
+
+The ability to search or query the data is essential functionality that a STAM
+implementation needs to offer. The *extended data model* described above offers
+the basic building blocks needed to implement efficient low-level search
+functions. This specification does not prescribe an API for these low-level
+functions, that is left up entirely to the implementation.
+
+The formulation of a higher-level query language is not part of the core specification
+either, it is instead left to an extension.
+
 ## Serialisation Formats
 
 ### STAM JSON

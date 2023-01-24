@@ -259,7 +259,7 @@ The `data` property and the `AnnotationData` instances can for example be used t
 
 The italicized part in the above list would correspond to the keys. *None of
 this vocabulary is predefined by STAM though!* It is the user-defined
-`AnnotationDataSet` determines the vocabulary used and you can use whatever
+`AnnotationDataSet` that determines the vocabulary used and you can use whatever
 annotation paradigm you deem fit. 
 
 Each annotation instance *MUST* have a single ``target``. The target is
@@ -279,7 +279,7 @@ There are multiple types of selectors:
   non-inclusive. Non-contiguous spans are expressed via multiple `TextSelector`s under a `MultiSelector`.
 * ``ResourceSelector``  - A selector point to a resource as whole. These type
   of annotation can be interpreted as *metadata*.
-* ``AnnotationSelector``  - A selector pointing to one or more other annotations. This we call higher-order annotation is very common in STAM models. If the annotation that is being targeted eventually refers to a text (`TextSelector`), then offsets **MAY** be specified that select a subpart of this text. These offsets are now *relative* to the annotation. Internally, the implementation can always efficiently resolve these to absolute offsets on the resource. The use of `AnnotationSelector` has one important constraint: the graph of all annotations referring to other annotations  *MUST* be acyclic; i.e. it can't end up in a recursive loop of annotations referencing each-other. Implementations *SHOULD* check this.
+* ``AnnotationSelector``  - A selector pointing to one or more other annotations. This we call higher-order annotation and is very common in STAM models. If the annotation that is being targeted eventually refers to a text (`TextSelector`), then offsets **MAY** be specified that select a subpart of this text. These offsets are now *relative* to the annotation. Internally, the implementation can always efficiently resolve these to absolute offsets on the resource. The use of `AnnotationSelector` has one important constraint: the graph of all annotations referring to other annotations  *MUST* be acyclic; i.e. it can't end up in a recursive loop of annotations referencing each-other. Implementations *SHOULD* check this.
 * ``MultiSelector``  - A selector that consists of multiple other selectors, used to select more complex targets that transcend the idea of a single simple selection. This *MUST* be interpreted as the annotation applying equally to the conjunction as a whole, its parts being inter-dependent and for any of them it goes that they *MUST NOT* be omitted for the annotation to makes sense. Note that the order of the selectors is not significant. When there is no dependency relation between the selectors, you *MUST* simply use multiple `Annotation`s instead.
 * ``DirectionalSelector``  - Another selector that consists of multiple other
   selectors, but with an explicit direction (from -> to), used to select more

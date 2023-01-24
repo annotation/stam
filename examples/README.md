@@ -63,29 +63,29 @@ specific:
 * [text resource](explicit_containment.txt)
 * [STAM JSON](explicit_containment_rdf.json)
 
-## Multiselector
+## CompositeSelector
 
-This example shows how the ``MultiSelector`` can be used. Here we use a ``MultiSelector`` that has two ``TextSelectors`` to
+This example shows how the ``CompositeSelector`` can be used. Here we use a ``CompositeSelector`` that has two ``TextSelectors`` to
 select and annotate a non-contiguous part of the text:
 
-![Multiselector (overview)](multiselector.png)
+![CompositeSelector (overview)](compositeselector.png)
 
-## Multiselector for multiple resources (1)
+## CompositeSelector for multiple resources (1)
 
-A `MultiSelector` is not constrained to have only `TextSelector`s, nor are the
+A `CompositeSelector` is not constrained to have only `TextSelector`s, nor are the
 `TextSelector`s constrained to point to the same resource. consider the
 following example where we have three text resources in different languages and
 single annotation that marks a translation relation of a certain part in all of them:
 
-![Multiselector for translation (overview)](multiselector_translation.png)
+![CompositeSelector for translation (overview)](compositeselector_translation.png)
 
 In this example we also show that the annotation data need not always consist of a key/value pair, it may choose either and leave the other empty.
 
-## Multiselector for multiple resources (2)
+## CompositeSelector for multiple resources (2)
 
 This example shows an analogous annotation to the above, and relates multiple variants of the same text together (in different resources):
 
-![Multiselector for translation (overview)](multiselector_xlit.png)
+![CompositeSelector for translation (overview)](compositeselector_xlit.png)
 
 ## Directional selector
 
@@ -96,24 +96,24 @@ a dependency relation (adverbial modifier).
 
 ![Directional Selector (overview)](directionalselector.png)
 
-## Multiselector and explicit containment (grouping annotations)
+## CompositeSelector and explicit containment (grouping annotations)
 
 This illustrates a similar annotation scenario as above, but here we do without
 the directional selector and show how you can use higher-order annotations and
 a multiselector to group multiple annotations:
 
-![Multiselector and higher order annotation](higher_order_annotation.png)
+![CompositeSelector and higher order annotation](higher_order_annotation.png)
 
 Let's now consider a following variant of our earlier example [explicit
 containment and relative offsets](#explicit_contaiment_and_relative_offsets).
 Where we had a sentence annotation and on top of that we had word annotation(s)
 which referenced the sentence via relative offsets. We can also model this the
 other way around: first we have word annotations and then we model the sentence
-on top of words with a `MultiSelector` consisting of `AnnotationSelector`s. The words come first, referencing the
+on top of words with a `CompositeSelector` consisting of `AnnotationSelector`s. The words come first, referencing the
 text, and the sentence now explicitly links to all the words that are contained
-within it. The sentence either may not refer to the text at all anymore, or we add a `TextSelector` to the `MultiSelector` to point to the sentence (the green arrow).
+within it. The sentence either may not refer to the text at all anymore, or we add a `TextSelector` to the `CompositeSelector` to point to the sentence (the green arrow).
 
-![Multiselector and explicit containment](explicit_containment_multiselector.png)
+![CompositeSelector and explicit containment](explicit_containment_multiselector.png)
 
 Note that in this scenario, there are no relative offsets anymore. We show
 these multiple variants to illustrate that STAM is capable of expressing

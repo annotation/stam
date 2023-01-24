@@ -314,7 +314,7 @@ do efficient querying.
 
 ### Class: DataKey
 
-This ``DataKey`` class encapsulates data keys for AnnotationData. It has an
+This ``DataKey`` class encapsulates data keys for `AnnotationData`. It has an
 ``id`` property, which is the actual key, *MUST* be provided and  *MUST* be unique *within* the set. The
 reason for this separate class is only to enable performant implementation with
 a minimal memory footprint; allowing the full key ID to be stored in memory only once instead of for
@@ -387,12 +387,11 @@ Some notes to interpret the diagram, as it may quickly become overwhelming:
 
 ### Class: TextSelection
 
-A `TextSelection` is a precisely defined slice of the text in a given `TextResource`.
+A `TextSelection` is a precisely defined slice of the text of a given `TextResource`.
 It typically refers to the exact absolute offsets of a text. This structure *SHOULD* be produced
 as the result of a selection (e.g. by an annotation via a `TextSelector`) and *SHOULD*
-be added to a reverse index to facilitate search. Consider `Offset` an input structure, which 
-appears in serialization and may be formulated in a relative fashion, and `TextSelection` an output
-structure, which *MUST NOT* be serialized to file and which is formulated in a absolute fashion.
+be added to a reverse index to facilitate search. A `TextSelection` *MUST NOT* be serialized to file.
+
 
 Instances of `TextSelection` make up the (reverse) for a `TextResource`. The job of the reverse index, is to link
 text offsets back to annotations. Usage of the reverse
@@ -453,7 +452,7 @@ a boolean. It can also be used `AnnotationData` and even on `Annotation`, in thi
 applied to all `AnnotationData` instances in data. It *MUST* then returns true
 if *any* of the data matches, except if `Not` is used, then *all* *MUST* match.
 
-We discern the following variants, they are to be considered *RECOMMENDED*::
+We discern the following variants, they are to be considered *RECOMMENDED*:
 
  * `Equals(other: DataValue)` - Test whether two values are equal
  * `GreaterThan(other: DataValue)`
@@ -591,7 +590,7 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
 }
 ```
 
-Serialisation relies on the availability of identifiers. When identifiers are
+Serialisation relies on the availability of public identifiers. When identifiers are
 not assigned by the user, implementations *MUST* assign arbitrary identifiers if and only
 if the instances are referenced from elsewhere.
 

@@ -249,7 +249,7 @@ MultiSelector "1" --> "*" Selector : > selectors
 DirectionalSelector "1" --> "*" Selector : > selectors
 TextSelector "1" --> "2" Cursor : > offsets
 AnnotationSelector "1" --> "2" Cursor : > offsets
-DataSetSelector "1" --> "*" Selector : > annotationset
+DataSetSelector "1" --> "*" AnnotationDataSet : > annotationset
 
 TextResource "1" *..> "*" TextSelection : > _index
 TextSelection "1" o.[#red].> "*" Annotation : > _referenced_by

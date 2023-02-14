@@ -26,8 +26,10 @@ class TextResource {
 
 class TextSelection <<functional>> {
     offset: (begin: int, end: int)
-    referenced_by: [&Annotation+]
+    --
+    _referenced_by: [&Annotation+]
     _part_of: [&TextResource]
+    _id : int
     --
     <i>Links text positions to annotations</i>
     <i>Used by the reverse index</i>
@@ -79,7 +81,9 @@ abstract class Selector {
 class TextSelector {
     resource: &TextResource,
     offsets: (begin: Cursor, end: Cursor)
-    ---
+    --
+    _textselection: &TextSelection?
+    --
     <i>Selects a single part of the text,</i>
     <i>Offsets are unicode codepoints relative</i>
     <i>to the text, zero-indexed, </i>
@@ -104,6 +108,8 @@ class DataSetSelector {
 class AnnotationSelector {
     annotation: &Annotation
     offsets: (begin: Cursor, end: Cursor)?
+    --
+    _textselection: &TextSelection?
     --
     <i>Selects an annotation. May optionally</i>
     <i>select a only part of the annotation's target</i>
@@ -139,6 +145,17 @@ class DirectionalSelector {
     <i>combined, they are inter-dependant.</i>
 }
 
+class RangedInternalSelector <<functional>> {
+    begin: Selector,
+    end: Selector,
+    --
+    <i>Internal selector to select whole ranges</i>
+    <i>by internal ID. Allows for more compact</i> 
+    <i>representation in memory. Used under</i>
+    <i>DirectonalSelector/CompositeSelector/MultiSelector.</i>
+    <i>(not serialised)</i>
+}
+
 Selector <|-[#green]- TextSelector
 Selector <|-[#green]- ResourceSelector
 Selector <|-[#green]- DataSetSelector
@@ -146,9 +163,7 @@ Selector <|-[#green]- AnnotationSelector
 Selector <|-[#green]- MultiSelector
 Selector <|-[#green]- CompositeSelector
 Selector <|-[#green]- DirectionalSelector
-
-
-
+Selector <|.[#green]. RangedInternalSelector
 
 
 class AnnotationData {
@@ -253,6 +268,8 @@ AnnotationData "1" *-[#red]-> "1" DataKey : > key
 AnnotationData "1" o.[#red].> "1" AnnotationDataSet : > _part_of_set
 
 TextSelector "1" o-[#red]-> "1" TextResource : > resource
+TextSelector "1" o.[#red].> "1" TextSelection : > _textselection
+AnnotationSelector "1" o.[#red].> "1" TextSelection : > _textselection
 ResourceSelector "1" o-[#red]-> "1" TextResource : > resource
 AnnotationSelector "1" o-[#red]-> "1" Annotation : > annotation
 DataSetSelector "1" o-[#red]-> "1" AnnotationDataSet : > annotationset
@@ -263,6 +280,7 @@ DataKey "1" o.[#red].> "1" AnnotationDataSet : > _part_of_set
 MultiSelector "1" --> "*" Selector : > selectors
 CompositeSelector "1" --> "*" Selector : > selectors
 DirectionalSelector "1" --> "*" Selector : > selectors
+RangedInternalSelector "1" --> "1" Selector : > begin/end
 TextSelector "1" --> "2" Cursor : > offsets
 AnnotationSelector "1" --> "2" Cursor : > offsets
 

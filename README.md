@@ -960,3 +960,8 @@ would be user-defined, but it should be possible to reformulate some of these
 data model in terms of STAM.
 
 In designing STAM, inspiration has been drawn from all the above. 
+
+## Acknowledgements
+
+This work is conducted at the [KNAW Humanities Cluster](https://huc.knaw.nl/)'s [Digital Infrastructure department](https://di.huc.knaw.nl/), and funded by the [CLARIAH](https://clariah.nl) project (CLARIAH-PLUS, NWO grant 184.034.023) as part of the FAIR Annotations track.
+

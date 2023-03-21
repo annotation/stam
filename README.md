@@ -717,9 +717,11 @@ external files.
     "@type": "AnnotationStore",
     "@id": "Example A",
     "resources":  [{
+        "@type": "TextResource",
         "@include": "hello.txt"
     }],
     "annotationsets": [{
+        "@type": "AnnotationDataSet",
         "@include": "my.annotationset.json"
     }],
     "annotations": [{
@@ -747,6 +749,7 @@ filename as ID. The filenames for `@include` adhere to the following constraints
   fetching remote URLs or not. 
 * At the same level of the `@include`, an `@id` field is allowed to set or *override*
   the inferred public identifier. If not set, the public `@id` equals the `@filename` exactly as specified.o
+* Consistent with earlier rules, at the same level of the `@include`, there *MUST* be a `@type` field.
 
 An example of the latter is shown below:
 
@@ -756,10 +759,12 @@ An example of the latter is shown below:
     "@type": "AnnotationStore",
     "@id": "Example A",
     "resources":  [{
+        "@type": "TextResource",
         "@id": "https://somewhere.over.the.rainbow/hello.txt",
         "@include": "hello.txt"
     }],
     "annotationsets": [{
+        "@type": "AnnotationDataSet",
         "@id": "https://somewhere.over.the.rainbow/myannotationset",
         "@include": "my.annotationset.json"
     }],

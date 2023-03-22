@@ -1,7 +1,7 @@
 {
     "@type": "AnnotationStore",
     "resources": [{
-        "@file": "explicit_containment.txt",
+        "@include": "explicit_containment.txt",
     }],
     "annotations": [
         {
@@ -20,7 +20,7 @@
             },
             "target": {
                 "@type": "TextSelector"
-                "offsets": {
+                "offset": {
                     "begin": {
                         "@type": "BeginAlignedCursor",
                         "value": 26,
@@ -49,7 +49,7 @@
             "target": {
                 "@type": "AnnotationSelector"
                 "annotation": "sentence2"
-                "offsets": {
+                "offset": {
                     "begin": {
                         "@type": "BeginAlignedCursor",
                         "value": 5,

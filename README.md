@@ -597,13 +597,13 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
             "target": {
                 "@type": "TextSelector",
                 "resource": "hello.txt",
-                "offsets": {
+                "offset": {
                     "begin": {
-                        "@type": "BeginAligned",
+                        "@type": "BeginAlignedCursor",
                         "value": 0 
                     },
                     "end":  {
-                        "@type": "BeginAligned",
+                        "@type": "BeginAlignedCursor",
                         "value": 5 
                     },
                 },
@@ -615,7 +615,7 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
             "target": {
                 "@type": "TextSelector",
                 "resource": "hello.txt",
-                "offsets": {
+                "offset": {
                     "begin": {
                         "@type": "BeginAlignedCursor",
                         "value": 6 
@@ -633,7 +633,7 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
             "target": {
                 "@type": "TextSelector",
                 "resource": "hello.txt",
-                "offsets": {
+                "offset": {
                     "begin": {
                         "@type": "BeginAlignedCursor",
                         "value": 0 
@@ -774,35 +774,29 @@ An example of the latter is shown below:
 }
 ```
 
-The ``@include`` statements can only be used  at the level of the `AnnotationStore` for `resources`, `annotationsets` and
-`annotations`. It *MUST NOT* be used in other place. 
+The ``@include`` statements can only be used  at the level of the
+`AnnotationStore` for `resources` or `annotationsets`. It *MUST NOT* be used in
+other place. Annotations themselves *MUST NOT* not be split from the
+AnnotationStore using separate `@include` statements, as they by definition
+require the context of both resources and annotation sets and can not stand on
+their own. They only make sense within an AnnotationStore context.
 
-JSON files that are included via `@include` *MAY* also be a JSON list of JSON objects instead of a single JSON
-object (i.e. multiple annotations, datasets or resources), implementations *MUST* merge it appropriately. Look at the below
-example A3 in which the two included files (assumed to contain a list of
-annotation objects) are seamlessly merged into the `annotations` list with no
-trace of the two objects that encapsulate the `@include` statements remaining:
+How to deal with annotations across multiple files then? It may be desirable
+not to keep all annotations in one basket, but have multiple. You *MAY* simply
+define multiple annotation stores in multiple STAM JSON files. Implementations
+*SHOULD* be able to load multiple annotation stores, although internally they
+*MAY* likely keep only a single one and effectively merge everything. When data
+is in conflict, e.g. annotation store A defines a text with id X and annotation
+store B defines the same text with ID X *but with a different text* content,
+then an error *SHOULD* be raised.
 
-```json
-{
-    "@type": "AnnotationStore",
-    ...
-    "annotations": [
-        {
-            "@include": "firstbatch.annotations.json"
-        },
-        {
-            "@include": "secondbatch.annotations.json"
-        }
-    ]
-}
-```
-
-Implementations *SHOULD* implement the necessary bookkeeping logic in their
-parsers to serialize to the same separate stand-off files as were parsed.
-Implementations *SHOULD* also serialize in the same order as items were parsed,
-this is for reproducibility purposes, even though order is not significant.
-STAM, however, does not prescribe how either of these should be done.
+For resources, annotation datasets, as well as the merging of multiple
+annotation stores, implementations *SHOULD* implement the necessary bookkeeping
+logic in their parsers to serialize to the same separate stand-off files as
+were parsed. Implementations *SHOULD* also serialize in the same order as items
+were parsed, this is for reproducibility purposes, even though order is not
+significant. STAM, however, does not prescribe how either of these should be
+done.
 
 When parser implementations encounter any JSON keys in the STAM JSON that are
 not defined in this specification, they *SHOULD* issue a warning to the user
@@ -969,4 +963,3 @@ In designing STAM, inspiration has been drawn from all the above.
 ## Acknowledgements
 
 This work is conducted at the [KNAW Humanities Cluster](https://huc.knaw.nl/)'s [Digital Infrastructure department](https://di.huc.knaw.nl/), and funded by the [CLARIAH](https://clariah.nl) project (CLARIAH-PLUS, NWO grant 184.034.023) as part of the FAIR Annotations track.
-

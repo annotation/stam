@@ -1,7 +1,7 @@
 {
     "@type": "AnnotationStore",
     "resources": [{
-        "@file": "https://raw.githubusercontent.com/proycon/stam/master/examples/explicit_constraints.txt",
+        "@include": "https://raw.githubusercontent.com/proycon/stam/master/examples/explicit_constraints.txt",
     }],
     "annotations": [
         {
@@ -21,7 +21,7 @@
             },
             "target": {
                 "@type": "TextSelector"
-                "offsets": {
+                "offset": {
                     "begin": {
                         "@type": "BeginAlignedCursor",
                         "value": 26,
@@ -51,7 +51,7 @@
             "target": {
                 "@type": "AnnotationSelector"
                 "annotation": "https://raw.githubusercontent.com/proycon/stam/master/examples/explicit_containment.json#sentence2"
-                "offsets": {
+                "offset": {
                     "begin": {
                         "@type": "BeginAlignedCursor",
                         "value": 5

@@ -875,7 +875,7 @@ A core STAM implementation adheres to the following requirements:
     * *MUST* offer an interface to add new annotations with new annotation data and data keys
     * *MUST* offer an interface to add new keys and annotation data to annotation sets
     * *MUST* offer an interface to remove annotations, annotation data, data keys
-    * Annotations, once made, *SHOULD* be considered immutable. Implementations needn't offer an interface to edit existing annotations. It is instead *RECOMMENDED* to delete the old one (if need be) and make a new one.
+    * Annotations, once made, *SHOULD* be considered immutable. Implementations needn't offer an interface to edit existing annotations. It is instead *RECOMMENDED* to delete the old one (if need be) and make a new one. (see more in next section on model constraints).
 * *MUST* offer an interface to search and retrieve annotations:
     * *MUST* offer an interface to retrieve all annotations
     * *MUST* offer an interface to retrieve all annotations with data that uses a specific key (`DataKey`).
@@ -900,7 +900,7 @@ A core STAM implementation adheres to the following requirements:
     * *MUST* offer an interface that tests whether an annotation A is pointed at by another annotation B  (A descendant of B)
     * *MUST* offer an interface that tests the common ancestor of two or more annotations (if any)
     * *MUST* offer an interface that tests the depth of higher-order annotation
-    * *MUST* ensure that higher-order annotations are acyclic
+    * *MUST* ensure that higher-order annotations are acyclic (see more in next section on model constraints)
 * *MUST* be able to parse from STAM JSON
     * Parser implementations *MUST* also support both the normal stand-off form, as well as the inline form of specifying `AnnotationData` for annotations.
 * *MUST* be able to serialise to STAM JSON
@@ -919,6 +919,41 @@ Last, some guidelines that are entirely optional but worth mentioning, a STAM im
 * *MAY* implement a binary serialisation
 * *MAY* also implement any of the STAM extensions, it *SHOULD* indicate exactly which ones it implements.
 * *MAY* offer an interface to redact text resources (i.e. add/edit/remove text at any point), and *MUST* subsequently update all affected `TextSelector`s.
+
+
+## Model Constraints
+
+Though STAM is designed in a way that allows researchers and developers to
+model their annotations as they see fit, it does impose some important constraints
+that should be kept in mind:
+
+1. Annotations, including their selectors and their annotation data, *SHOULD* be
+   regarded as *immutable* once created. It is bad practice to edit an existing annotation.
+   If an annotation, its data or its selector is to be changed in any way, the old one *SHOULD* be removed and a new one made, carrying a different identifier (if any).
+2. Higher-order annotations, i.e. annotations that reference other annotations via an `AnnotationSelector`, *MUST*
+   only reference annotations that were chronologically defined before it. It can not make reference to
+   an annotation that does not exist yet. From this follows that:
+    * The order of annotations in the serialisation (e.g. STAM JSON) matters (only) to the extend that an annotation X that is referenced by another annotation Y, *MUST*
+      be defined before Y is. The order of resources, annotation sets, data keys and data in an annotation set is not significant.
+
+This may seem inflexible at first, but there is a good reason for this. From a
+semantic perspective annotations are essentially a commentary about something
+else. You can only comment on something if the thing you comment on already
+exists. Furthermore, if that what you comment on is subject to change,
+possibly unbeknownst to you, then such a change might invalidate your
+comment on it, as it is no longer the same thing as what you based your comment on!
+The STAM model prevents these pitfalls.
+
+Unlike something models like RDF, STAM is specialized in annotations on text, it
+is not a means to express a generic knowledge graph.
+
+From a technical perspective, these constraints reduce the annotation graph to
+an annotation tree: it removes the risk of acyclic references and in doing so 
+it makes a lot of computations easier.
+
+The fact that higher-order annotations only points in one direction does not
+imply you can't follow the links in the reverse direction during search. This is
+accomplished by the various reverse indices in STAM.
 
 ## Relation to other data models & motivations
 

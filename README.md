@@ -948,7 +948,7 @@ Unlike models such as RDF, STAM is specialized in annotations on text, it
 is not a means to express a generic knowledge graph.
 
 From a technical perspective, these constraints reduce the annotation graph to
-an annotation tree: it removes the risk of acyclic references and in doing so 
+an annotation tree: it removes the risk of cyclic references and in doing so 
 it makes a lot of computations easier.
 
 The fact that higher-order annotations only point in one direction does not

@@ -941,10 +941,10 @@ semantic perspective annotations are essentially a commentary about something
 else. You can only comment on something if the thing you comment on already
 exists. Furthermore, if that what you comment on is subject to change,
 possibly unbeknownst to you, then such a change might invalidate your
-comment on it, as it is no longer the same thing as what you based your comment on!
+commentary, as it is no longer the same thing as what you based your comment on!
 The STAM model prevents these pitfalls.
 
-Unlike something models like RDF, STAM is specialized in annotations on text, it
+Unlike models such as RDF, STAM is specialized in annotations on text, it
 is not a means to express a generic knowledge graph.
 
 From a technical perspective, these constraints reduce the annotation graph to

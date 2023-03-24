@@ -951,9 +951,9 @@ From a technical perspective, these constraints reduce the annotation graph to
 an annotation tree: it removes the risk of acyclic references and in doing so 
 it makes a lot of computations easier.
 
-The fact that higher-order annotations only points in one direction does not
+The fact that higher-order annotations only point in one direction does not
 imply you can't follow the links in the reverse direction during search. This is
-accomplished by the various reverse indices in STAM.
+accomplished by the various reverse indices in STAM and a core feature.
 
 ## Relation to other data models & motivations
 

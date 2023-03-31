@@ -90,6 +90,7 @@ The following are currently defined:
 * [STAM-Vocab](extensions/stam-vocab) -  Allows expressing and validating against user-defined vocabularies.
 * [STAM-Webannotations](extensions/stam-webannotations) - Models W3C Web Annotations using STAM and vice versa.
 * [STAM-Textvalidation](extensions/stam-textvalidation) - Adds an extra redundancy layer that helps protecting data integrity and aids readability of serialisations 
+* [STAM-CSV](extensions/stam-csv) - Defines an alternative serialisation format using CSV.
 
 Implementations *SHOULD* explicitly state which extensions they support.
 
@@ -840,14 +841,15 @@ quick reading/writing from/to disk is important. However, such serialisations
 *SHOULD* be considered implementation-specific and *MUST NOT* serve as
 interchange or archiving formats.
 
-### STAM TSV/CSV
+### STAM CSV
 
 Though STAM is a simple minimalistic model, the JSON serialisation still has a
 verbosity and complexity that makes it hard to work with for the less-technical
 researcher.
 
-A lightweight TSV/CSV format will be proposed that can represent a fair subset
+A lightweight CSV format is proposed that can represent a fair subset
 of STAM. It is not part of STAM itself but considered a separate extension.
+See [STAM CSV](extensions/stam-csv/).
 
 ## Examples
 

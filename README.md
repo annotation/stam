@@ -845,10 +845,9 @@ interchange or archiving formats.
 
 Though STAM is a simple minimalistic model, the JSON serialisation still has a
 verbosity and complexity that makes it hard to work with for the less-technical
-researcher.
+researcher or for larger datasets.
 
-A lightweight CSV format is proposed that can represent a fair subset
-of STAM. It is not part of STAM itself but considered a separate extension.
+A CSV format is proposed that can represent all of STAM. It is considered a separate extension so its implementation is *OPTIONAL*.
 See [STAM CSV](extensions/stam-csv/).
 
 ## Examples

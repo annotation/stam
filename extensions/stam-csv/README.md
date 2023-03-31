@@ -82,18 +82,15 @@ The CSV file for the Annotation Store is effectively a small manifest that
 lists what Annotation Datasets and Text Resources are part of the store. The
 annotations themselves are stored in a separate CSV file.
 
-This manifest is the root file from which all others can be found, it is therefore the file that is passed to systems for reading an entire STAM model.
+This manifest is the root file from which all others can be found, it is therefore the file that is passed to systems for reading an entire STAM model. We call this CSV file the `StoreManifest` table.
 
-The store file has the following *REQUIRED* columns. 
+The store manifest table has the following *REQUIRED* columns. 
 
 * **Type** - Defined the type of the item on the row, can be `AnnotationStore`,
   `AnnotationDataSet` or `TextResource`.
 * **Id** - The public Id of the item on the row. It is *REQUIRED* for
   `AnnotationDataSet` and `TextResource`
-* **Filename1**/**Filename2** - There are two filename columns because certain data can not be held in just one file.
-    * For `AnnotationStore`, only `Filename1` is used (if at all), and *MUST*  refer to the file storing the *annotations* for the store.
-    * For `AnnotationDataSet`, `Filename1` (if used) *MUST* refer to the CSV file that stores the keys (or *MAY* refer to a STAM JSON file that represents the entire annotation dataset), and `Filename2` (if used) *MUST* refer to the CSV file that stores the `AnnotationData`. 
-    * For `TextResource`, only `Filename1` is used and refers to a plain-text (or *MAY* refer to a STAM JSON file).
+* **Filename** - The filename to include.
     * The filename is a full filename including extension. 
       A path component *MUST* be allowed, in which case it *MUST* be assumed to be
       relative if it does not start with a slash, and absolute if it does. Implementations may look for relative files
@@ -102,22 +99,20 @@ The store file has the following *REQUIRED* columns.
       networking logic and *MAY* reject this (it has security implications).
       Implementations *SHOULD* make clear whether they support fetching remote URLs
       or not. 
-    * Implementations *MAY* allow mixed formats, in which case the filenames may also refer to STAM JSON files rather than STAM CSV (only `Filename1` is used then).
+    * Implementations *MAY* allow mixed formats, in which case the filenames may also refer to STAM JSON files rather than STAM CSV.
 
-The first row (aside from the mandatory header) *MUST* be the annotation store itself (e.g. with type AnnotationStore). This effectively defines the Id of the store (if any, it *MAY* be empty for this row).
+The first row (aside from the mandatory header) *MUST* be of type `AnnotationStore` and table `Annotation`. It effectively the stand-off file containing the actual annotation as well as the of the Id of the store as a whole.
 
 Example:
 
 ```csv
-Type,Id,Filename1,Filename2
+Type,Id,Filename
 AnnotationStore,mystore,mystore.annotations.stam.csv,
-AnnotationDataSet,myset,myset.keys.stam.csv,mysef,myset.data.stam.csv
-TextResource,myresource,myresource,myresource.txt,
+AnnotationDataSet,myset,myset.dataset.stam.csv
+TextResource,myresource,myresource.txt,
 ```
 
-The annotations pertaining to the store are stored in a separate CSV file .
-This file *MAY* be omitted if there are no annotations in the store yet. It has
-the following columns:
+The annotations pertaining to the store are stored in a separate CSV file. This file is *REQUIRED* even if there are no annotations yet (it *MAY* consist of only a header though). It has the following columns:
 
 * **Id** - The public Id of the annotation (*OPTIONAL*) 
 * **AnnotationData** - The public Id(s) of the `AnnotationData` used for this
@@ -143,23 +138,11 @@ A2,D3,myset,CompositeSelector;TextSelector;TextSelector,;myresource;myresource,,
 
 ### AnnotationDataSet
 
-An AnnotationDataSet is split over two CSV files, one containing the keys (referenced by `Filename1`), and one containing the data (referenced by `filename2`). The former *MAY* be omitted as is can be reconstructed from the latter in the core model.
+An AnnotationDataSet  defines the keys (`DataKey`) and actual data (`AnnotationData`) used by annotations.
 
-The CSV file for keys has only one *REQUIRED* column:
+The CSV file for has the following *REQUIRED* columns:
 
-* **Id** - The public Id of the DataKey
-
-Example:
-
-```csv
-Id
-pos
-lemma
-```
-
-The CSV file for data has the following *REQUIRED* columns:
-
-* **Id** - The public ID of the `AnnotationData` reconstructed
+* **Id** - The public ID of the `AnnotationData` reconstructed.
 * **Key** - The public ID of the `DataKey`
 * **Type** - The type of the `DataValue`. This *SHOULD* be left empty usually as it can be auto-detected. Set it only if you want to force a type.
 * **Value** - The `DataValue`.
@@ -171,3 +154,13 @@ Id,Key,Type,Value
 D1,pos,,noun
 D2,pos,,verb
 ```
+
+The keys are implicitly derived from the data, but they *MAY* also be explicitly defined. In that case the Id, Type and Value columns *MUST* be left empty. The following example defines only a key, without actual data:
+
+```csv
+Id,Key,Type,Value
+,pos,,
+```
+
+Both types of rows may be mixed in a single CSV file.
+

@@ -61,11 +61,12 @@ columns *SHOULD* be ignored, they *MAY* be used by extensions.
 
 STAM CSV *SHOULD* use ``,`` as delimiter and it *SHOULD* use quoting only when
 necessary (i.e. because there is a comma or newline in the value itself).
-Literal quotes in side a quote can be denoted by escaping with a backslash,
-i.e. ``\"`` Newlines in cells *MUST* be permitted and *SHOULD* be unix-style
-(i.e. without carriage return). The first line of each STAM CSV file *MUST* be
-the header defining the columns, exactly as defined in this specification, and
-differing per CSV file.
+Literal quotes inside a quote can be denoted by doubling the quote. Newlines in
+cells *MUST* be permitted and *SHOULD* be unix-style (i.e. without carriage
+return). Records are also delimited by single newlines (which technically
+violates RFC4180). The first line of each STAM CSV file *MUST* be the header
+defining the columns, exactly as defined in this specification, and differing
+per CSV file.
 
 We represent hierarchical information in two ways; first by splitting various
 items over multiple CSV files, and having a STAM public identifier to link
@@ -135,6 +136,8 @@ Id,AnnotationData,AnnotationDataSet,SelectorType,TargetResource,TargetAnnotation
 A1,D1;D2,myset,TextSelector,myresource,,,6,11
 A2,D3,myset,CompositeSelector;TextSelector;TextSelector,;myresource;myresource,,;0;6,;5;11
 ```
+
+Note that when a cell contains an array that holds a relation with an array in another cell, STAM CSV defines a mechanism that they do not necessarily have to be of equal length, removing any redundancy in the output. In such cases, the last element of the array is simply implicitly repeated as long as needed to match the other array. Implementations *MUST* support this behaviour.
 
 ### AnnotationDataSet
 

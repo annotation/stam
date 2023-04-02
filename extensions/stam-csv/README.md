@@ -137,7 +137,17 @@ A1,D1;D2,myset,TextSelector,myresource,,,6,11
 A2,D3,myset,CompositeSelector;TextSelector;TextSelector,;myresource;myresource,,;0;6,;5;11
 ```
 
-Note that when a cell contains an array that holds a relation with an array in another cell, STAM CSV defines a mechanism that they do not necessarily have to be of equal length, removing any redundancy in the output. In such cases, the last element of the array is simply implicitly repeated as long as needed to match the other array. Implementations *MUST* support this behaviour.
+Note that when a cell contains an array that holds a relation with an array in another cell, STAM CSV defines a mechanism that they do not necessarily have to be of equal length, removing any redundancy in the output. In such cases, the last element of the array is simply implicitly repeated as long as needed to match the other array. Implementations *MUST* support this behaviour. Example:
+
+```csv
+Id,AnnotationData,AnnotationDataSet,SelectorType,TargetResource,TargetAnnotation,TargetDataSet,BeginOffset,EndOffset
+A3,D4;D5,myset,MultiSelector;TextSelector,myresource,,,;6;16;26;36,;11;21;31;41
+```
+
+This example defines a Multiselector with four TextSelectors, all referring to
+*myresource* but with four distinct offset pairs (6-11,16-21,26-31,36-41). Due
+to the concise representation, we save three extra mentions of `TextSelector`
+and three extra mentions of *myresource*. 
 
 ### AnnotationDataSet
 

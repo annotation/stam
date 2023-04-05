@@ -592,7 +592,7 @@ In Example A1, shown below, we see the serialisation of the Example A that was s
     }],
     "annotations": [{
             "@type": "Annotation",
-            "data": {
+            "data": [{
                 "@type": "AnnotationData",
                 "@id": "WordType",
                 "set": "exampleset",

@@ -1,3 +1,9 @@
+<p align="center">
+    <img src="https://github.com/annotation/stam/raw/master/logo.png" alt="stam logo" />
+</p>
+
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+
 # STAM: Stand-off Text Annotation Model
 
 ## Introduction

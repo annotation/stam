@@ -161,7 +161,15 @@ STAM design goals regarding interoperability:
 * stam-python API reference - <https://stam-python.readthedocs.io>
 * STAM Tutorial: Standoff Text Annotation for Pythonistas - An extensive tutorial showing how to work with this Python library - <https://github.com/annotation/stam-python/blob/master/tutorial.ipynb>
 
-## Acknowledgements
+## Acknowledgements & Questions
 
 STAM is funded by CLARIAH-PLUS in the scope of the FAIR Annotation track of the Shared Development Roadmap, and 
 CLARIAH WP3's Standoff Text Annotation task.
+
+All reference implementations are fully open source, licensed under the GNU General Public License v3.
+
+Project progression can be followed on the kanban board at <https://github.com/orgs/annotation/projects/3>; issues can be created on the respective issue trackers on GitHub. Contributions welcome!
+
+**Questions?**
+
+

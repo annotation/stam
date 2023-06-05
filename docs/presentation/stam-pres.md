@@ -105,6 +105,22 @@ STAM design goals regarding interoperability:
 * import custom annotation data from e.g. TSV/CSV in a flexible way.
 * implementations may serve as an underlying engine for various applications dealing with annotation
 
+## Functionality
+
+* **Search**
+    * find annotations based on relations like overlap, embedding, adjacency etc
+    * find annotations based on the content of the annotation (AnnotationData)
+    * find annotations based on text (incl regular expressions)
+    * *(a STAM library computes various (reverse) indices)*
+* **Annotation**
+    * Add annotations; tag search results as new annotations
+* **Data transformation**
+    * compute offset information, update changed offsets after changing text
+    * map vocabularies
+    * *import* from simple TSV/CSV/JSON/CONLL files
+    * *import* XML like FoLiA or TEI 
+    * *export* to W3C Web Annotations
+
 ## Use-cases (1/2)
 
 * As a researcher, You want a simple model to express annotation on text

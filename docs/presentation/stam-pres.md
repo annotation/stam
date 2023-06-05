@@ -31,7 +31,7 @@ titlegraphic: logo.png
     * focus on **performance**: efficient usage of computing resources (memory, cpu)
     * focus on **reusability**: implement once, and re-use, core logic needed for annotations on text
     * **standalone**: runs on a wide variety of systems and independent of any wider service infrastructure: it should not depend on any software services.
-    * **accessible**: clean APIs/CLIs and thoroughly documentated
+    * **accessible**: clean APIs/CLIs and thoroughly documented
 
 **Reference implementation**:
 

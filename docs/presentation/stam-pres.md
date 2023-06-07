@@ -19,7 +19,9 @@ titlegraphic: logo.png
 **What is STAM?**
 
 1. A **data model** for **stand-off annotation** on **text**
-    * aims to be **simple and minimal**, additional functionality formulated as **extensions** 
+    * we want to formulate a **basic** model for representing annotation on text
+        * in order to offer a strong **foundation** people working with annotation can build upon
+        * **simple & minimal**: contains only what is necessary, with additional functionality formulated as **extensions** 
     * does not prescribe any **vocabulary** *(separation from semantics)*
     * no **dependencies** on other models
     * documented in a precise technical **specification** *(separation from implementation)*

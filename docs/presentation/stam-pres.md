@@ -81,6 +81,10 @@ STAM should provide a **solid generic foundation** for stand-off text annotation
 
 ![Collections](slide4.png)
 
+--------
+
+![UML schema of entire core Model](../../coremodel.png)
+
 ## Motivation
 
 **Q:** Why a new model? How does this relate to W3C Web Annotations? FoLiA? TEI? LAF? etc?

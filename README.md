@@ -362,7 +362,6 @@ It can be set to one of the following:
 * ``Float(value: float)`` - Fractional number
 * ``Datetime(value: datetime)`` - A date/time representation, compatible with ``xsd:datetime``.
 * The following are recursive collection types:
-    * ``Set(value: [DataValue])`` - An unordered set of multiple ``DataValue`` instances
     * ``List(value: [DataValue])`` - An ordered list of multiple ``DataValue`` instances
 
 Note that there is no ``Map`` type to associate further nested key/value pairs. If

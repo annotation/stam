@@ -197,7 +197,6 @@ enum DataValue {
     Int(value: int)
     Float(value: float)
     Datetime(value: datetime)
-    Set(value: [DataValue])
     List(value: [DataValue])
     --
     <i>Encapsulates a data value</i>

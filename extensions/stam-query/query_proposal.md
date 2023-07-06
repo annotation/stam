@@ -42,35 +42,35 @@ All queries in this section are in executable form (no query optimiser needed):
 
 *select all occurrences of the text "fly"*
 
-```
+```sparql
 SELECT TextSelection ?fly WHERE
     TextString TextOperator::Equals("fly")
 ```
 
 *select all resources that contain the text "fly"*
 
-```
+```sparql
 SELECT TextResource ?resource WHERE
     TextString TextOperator::Contains("fly")
 ```
 
 *select all text selections that have an annotation 'pos' = 'noun' (ad-hoc vocab)
 
-```
+```sparql
 SELECT TextSelection ?noun WHERE
     AnnotationData "someset","pos",DataOperator::Equals("noun")
 ```
 
 *select all text selections that are annotated as a sentence ('type' = 'sentence', ad-hoc vocab)
 
-```
+```sparql
 SELECT TextSelection ?sentence WHERE
     AnnotationData "someset","type",DataOperator::Equals("sentence")
 ```
 
 Adding constraints already allows for more powerful queries: *select all text selections that are annotated as a sentence and which contain the text "fly"*
 
-```
+```sparql
 SELECT TextSelection ?sentence WHERE
     AnnotationData "someset","type",DataOperator::Equals("sentence")
     TextString TextOperator::Contains("fly")
@@ -78,7 +78,7 @@ SELECT TextSelection ?sentence WHERE
 
 But what if we only want sentences with the word "fly" where it was annotated as noun (as opposed to a verb which it can be as well)? Here we need multiple statements:
 
-```
+```sparql
 SELECT TextSelection ?sentence WHERE
     AnnotationData "someset","type",DataOperator::Equals("sentence")
 
@@ -93,7 +93,7 @@ efficient as it will iterate over all sentences (remember, first constraint is
 most important, it determines what is looped over). The following is better, as
 select on instances of the word "fly" first:
 
-```
+```sparql
 SELECT TextSelection ?fly WHERE
     TextString TextOperator::Equals "fly"
     AnnotationData "someset","pos",DataOperator::Equals("noun")
@@ -116,7 +116,7 @@ nn < vb
 
 Here we select a particular noun followed by a verb combination, occurring in a particular context (book, chapter, sentence). We can translate this to a query as follows (details depend a bit on how things are modelled). We assume the books are modelled as separated resources, with annotations naming them:
 
-```
+```sparql
 SELECT TextResource ?book WHERE
     AnnotationData "someset","name" DataOperator::Any(DataOperator::Equals("Genesis"), DataOperator::Equals("Exodus"))
 
@@ -164,7 +164,7 @@ sentence
 /-/
 ```
 
-```
+```sparql
 SELECT TextSelection ?sentence WHERE
     AnnotationData "someset","type" DataOperator::Equals("sentence")
 
@@ -182,7 +182,7 @@ Similarly, there is the `ANY` qualifier doing that makes a constraint weaker, an
 
 Constraints may also be combined with logical operators, `OPTION` for a disjunction (or) and `UNION` for a conjunction (and). 
 
-```
+```sparql
 SELECT Annotation ?x WHERE 
     AnnotationData "someset","pos" DataOperator::Equals("noun")
     OPTION

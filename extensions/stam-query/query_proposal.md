@@ -14,7 +14,7 @@ drawn form existing query languages like SQL, SPARQL and my own FQL (FoLiA Query
   adding/manipulating/deleting data. This can be interpreted similar as in SQL.
 * A `SELECT` statement is made up of:
     * a target type (`TextSelection`,`TextResource`, `Annotation`); determines the type of node that is returned. All of these are existing fundamental concepts in the STAM model.
-    * a variable to bind to (`?x`,`?y`).
+    * a single variable to bind to (e.g. `?x`), each select statement yields a single result for each iteration.
     * the keyword `WHERE` followed by one or more **constraints**  (or zero constraints and without the `WHERE` keyword, but that is rare)
 * The constraints consist of:
     * a constraint type:
@@ -35,6 +35,7 @@ drawn form existing query languages like SQL, SPARQL and my own FQL (FoLiA Query
         * All statements except the first need to have at least one constraint that references a variable from an earlier statement (query has to be complete).
         * Constraints may not reference variables from later statements.
     * *free form* - The order of both the statements and constraints within a statement is free. A **query optimiser** has to parse the query and re-order it (effectively building a dependency tree) so that can be *executed*. I will only implement this in a much later stage as this is another big project to accomplish right.
+* The result of the query as a whole is a sequence in which all of the `SELECT` variables are bound to a result.
 
 ## Query examples
 

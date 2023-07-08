@@ -1,7 +1,8 @@
 # Brainstorming towards a STAM Query language
 
-This is an informal proposal for the query language which I have in mind for querying STAM.
-The actual language syntax should be considered a pseudo-language at this point and may take other form,
+This is an informal proposal and discussion document for the query language
+which I have in mind for querying STAM. The actual language syntax should be
+considered a pseudo-language at this point and may take other form,
 emphasis instead is on the underlying structure.
 
 I'm writing this very much from a practical implementation perspective, so the
@@ -231,7 +232,38 @@ SELECT TextSelection ?vb WHERE
     AnnotationData "someset","number" DataOperator::Equals("plural")
 ```
 
-I agree this is very verbose and we'd want to make this much more concise before exposing it to the user, but will be doable I think after we decide whether the overall structure is good enough.
+I agree this is very verbose and we'd want to make this much more concise
+before exposing it to the user, but will be doable I think after we decide
+whether the overall structure is good enough, here's an attempt at a simpler
+form in which I also move the first constraint (it is the thing that gets
+looped over, in SQL terms it would be a join and an ON statement) in front of
+the `WHERE` clause, because of its special role:
+
+```
+USE someset
+
+SELECT RESOURCE ?book name = genesis|exodus
+
+SELECT TEXT ?chapter IN ?book WHERE
+    type = chapter
+    number = 2
+
+SELECT TEXT ?sentence type = sentence WHERE
+    IN ?chapter
+
+SELECT TEXT ?nn IN ?sentence WHERE
+    type = word
+    pos = noun
+    gender = feminine
+    number = singular
+
+SELECT TEXT ?vb SUCCEEDS ?nn WHERE
+    IN ?sentence
+    type = word
+    pos = verb
+    gender = feminine
+    number = plural 
+```
 
 Execution-wise, this query would translate to something like (Python pseudo code, not all you see here is in the STAM library):
 

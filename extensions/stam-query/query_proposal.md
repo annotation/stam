@@ -193,3 +193,83 @@ SELECT Annotation ?x WHERE
 
 This selects annotations *(pos=noun)* either authored by John Doe or after a certain date (ad-hoc vocab). Note that here we select Annotations instead of Text Selections, that means the data must pertain to a single annotation. If we use `TextSelection` then the constraints may match distinct annotations, which is what we usually want but not in this case.
 
+## Execution and implementation
+
+The biggest question and concern at this point is if the overall query
+structure proposed is powerful enough to express all kinds of queries. With
+query structure I mean division into multiple `SELECT` clauses, each yielding a
+single variable, and each having one or more constraints.
+
+Take again this pseudo language query:
+
+```sparql
+SELECT TextResource ?book WHERE
+    AnnotationData "someset","name" DataOperator::Any(DataOperator::Equals("Genesis"), DataOperator::Equals("Exodus"))
+
+SELECT TextSelection ?chapter WHERE 
+    TextResource ?book
+    AnnotationData "someset","type" DataOperator::Equals("chapter")
+    AnnotationData "someset","number" DataOperator::EqualsInt(2)
+
+SELECT TextSelection ?sentence WHERE 
+    AnnotationData "someset","type" DataOperator::Equals("sentence")
+    TextRelation ?chapter TextSelectionOperator::Embeds
+
+SELECT TextSelection ?nn WHERE
+    TextRelation ?sentence TextSelectionOperator::Embeds
+    AnnotationData "someset","type" DataOperator::Equals("word")
+    AnnotationData "someset","pos" DataOperator::Equals("noun")
+    AnnotationData "someset","gender" DataOperator::Equals("feminine")
+    AnnotationData "someset","number" DataOperator::Equals("singular")
+
+SELECT TextSelection ?vb WHERE
+    TextRelation ?nn TextSelectionOperator::LeftAdjacent
+    TextRelation ?sentence TextSelectionOperator::Embeds
+    AnnotationData "someset","type" DataOperator::Equals("word")
+    AnnotationData "someset","pos" DataOperator::Equals("verb")
+    AnnotationData "someset","gender" DataOperator::Equals("feminine")
+    AnnotationData "someset","number" DataOperator::Equals("plural")
+```
+
+I agree this is very verbose and we'd want to make this much more concise before exposing it to the user, but will be doable I think after we decide whether the overall structure is good enough.
+
+Execution-wise, this query would translate to something like (Python pseudo code, not all you see here is in the STAM library):
+
+```python
+for book in store.resources_by_data("someset","name", DataOperator.Any(DataOperator.Equals("genesis"),DataOperator.Equals("exodus")):
+    for chapter in store.get_textselections_by_resource(book): #fictitious
+        if not chapter.has_data("someset","type", "chapter"): continue
+        if not chapter.has_data("someset","number",2): continue
+        for sentence in chapter.get_textselections_by_data(set="someset",type="sentence"): #fictitious
+            if not chapter.textselections().test(Embeds, sentence): continue
+            for nn in sentence.find_textselections(Embeds):
+                if not nn.has_data("someset","type","word"): continue
+                if not nn.has_data("someset","pos", "noun"): continue
+                if not nn.has_data("someset","gender","feminine"): continue
+                if not nn.has_data("someset","number","singular"): continue
+                for vb in nn.find_textselections(LeftAdjacent):
+                    if not sentence.embeds(vb): continue
+                    if not vb.has_data("someset","type","word"): continue
+                    if not vb.has_data("someset","pos", "verb"): continue
+                    if not vb.has_data("someset","gender","feminine"): continue
+                    if not vb.has_data("someset","number","plural"): continue
+                    yield book, chapter, sentence, nn, vb
+```
+
+*(some of the methods in here are fictitious and already higher-level than the actual methods implemented in the STAM library, which is why I came to the conclusion we need a Query Language implementation after all, writing it out in full gets too complicated)*
+
+What I'm effectively doing is chaining together various iterators (each for
+loop) in a depth-first fashion. Each iterator (ideally) follows a path in one
+of the (reverse) indices that have already been built. One of the main
+questions I'd like to ask is if you think this is sufficiently expressive and
+performant enough. The best is probably to come with a counter example; are
+there types of queries which we want but can not express in such a way?
+
+In the actual (Rust) implementation which I started, the whole query will be
+embodied in a single iterator (the query execution engine) which dynamically
+instantiates and invokes the appropriate iterators under the hood (it carries a
+stack of iterators and keeps track of their current 'head' result). So the
+whole thing uses lazy-evaluation throughout and has a minimal memory footprint.
+Getting this right in Rust is not without significant challenges though.
+
+Do we think this is good route to take or should we go in a fundamentally different direction?

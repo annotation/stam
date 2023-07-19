@@ -433,18 +433,16 @@ choose to implement this differently.
 We distinguish the following variants for this operator, they are to be considered *RECOMMENDED*:
 
 * `Equals(B)` - A equals B, both text selections reference the exact same offset (i.e. same begin, same end).
-* `Precedes(B, mindistance: int? , maxdistance: int?)` - A precedes B entirely, there is no overlap (alternative name: *ends before*)
+* `Before(B, mindistance: int? , maxdistance: int?)` - A comes before B entirely, there is no overlap (alternative name: *ends before*)
     * The `mindistance`, when set, defines a minimum distance in unicode points (default = 0)
     * The `maxdistance`, when set, defines a maximum distance in unicode points (default, unset = infinite)
-* `StartsBefore(B, mindistance: int?, maxdistance: int?)` - A starts before B, there may be overlap in the final part of A.
-* `Succeeds(B, mindistance: int?, maxdistance: int?)` - A comes after B entirely, there is no overlap.
-* `EndsBefore(B, mindistance: int?, maxdistance: int?)` - A ends before B, they may be overlap in the initial part of A. 
+* `After(B, mindistance: int?, maxdistance: int?)` - A comes after B entirely, there is no overlap.
 * `Overlaps(B)` - A overlaps with B.
 * `Embeds(B)` - A embeds or contains B. This may sometimes be interpreted as a parent-child relationship. Consider for instance A being a sentence and B a word in that sentence. Also note that `A Equals(B)` entails `A Embeds(B)` (but not the other way round).
-* `LeftAdjacent(B, spacing: bool?, punct: bool?)` - A ends just when B begins
+* `Precedes(B, spacing: bool?, punct: bool?)` - A comes right before B, it ends just when B begins
     * The `spacing` parameter, when set to true, allows whitespace between the offsets and still considers the text selection sets adjacent
     * The `punct` parameter, when set to true, allows punctuation between the offsets and still considers the text selection sets adjacent
-* `RightAdjacent(B, spacing: bool?, punct: bool?)` - A begins just when A ends
+* `Succeeds(B, spacing: bool?, punct: bool?)` - A comes right after B< it begins just when A ends
 * `SameBegin(B)` - A and B have the same begin cursor.
 * `SameEnd(B)` - A and B have the same end cursor.
 

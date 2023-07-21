@@ -1,6 +1,6 @@
 # STAM API
 
-This document describes the high-level STAM API. It does not cover the internal low-level implementation.
+This document describes the high-level STAM API, it is not normative and any implementation may decide to do things completely different. This document also does not cover the internal low-level implementation.
 
 ## Names and conventions
 

@@ -100,9 +100,10 @@ Which returns annotations *about* that target. TextResource has two more specifi
 
 This method is implemented for `Annotation` only, if follows annotations that are targeted via an `AnnotationSelector` (possibly via complex selectors):
 
-```
-annotations_in_targets() -> [Annotation]
-```
+* `annotations_in_targets(recursive?, track_ancestors?) -> [Annotation]`
+    * `recursive?` - Apply recursively
+    * `track_ancestors?` - Return the full path of ancestor annotations for each result
+    * (this method returns an extra wrapper layer around the annotion to accommodate possible extra information)
 
 ### Key
 
@@ -205,7 +206,8 @@ Implemented for:
 * DataKey, where it is constrained to data in the set that references the key
  
 ```
-data(datasearchpattern) -> [AnnotationData]
+data() -> [AnnotationData]
+find_data(datasearchpattern) -> [AnnotationData]
 test_data(datasearchpattern) -> bool
 ```
 
@@ -214,8 +216,9 @@ test_data(datasearchpattern) -> bool
 Then there are the following implemented for all *targetable nodes*: Annotation, TextSelection, AnnotationDataSet, TextResource, or aggregates thereof (ResultItemSet, TextSelectionSet):
 
 ```
+data_about() -> [(AnnotationData, Annotation)]
 annotations_by_data(datasearchpattern, textual_order?, include_self?) -> [Annotation]
-data_about(datasearchpattern, include_self?) -> [(AnnotationData, Annotation)]
+find_data_about(datasearchpattern, include_self?) -> [(AnnotationData, Annotation)]
 test_data_about(datasearchpattern, include_self?) -> bool
 ```
 
@@ -230,7 +233,7 @@ Implemented for Annotation only, and only produces results if there are Annotati
 
 ```
 annotations_by_data_in_targets(datasearchpattern, textual_order?) -> [Annotation]
-data_in_targets(datasearchpattern, include_self?) -> [(AnnotationData, Annotation)]
+find_data_in_targets(datasearchpattern, include_self?) -> [(AnnotationData, Annotation)]
 test_data_in_targets(datasearchpattern) -> bool
 ```
 

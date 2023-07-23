@@ -4,22 +4,17 @@ This document describes the high-level STAM API, it is not normative and any imp
 
 ## Names and conventions
 
-* All methods that return multiple items (such as `find_*`) return iterators (though for Python those will be consumed to lists before returning). In this document such return types are just denoted as `[T]`.
-* The name of the function should give a fair indication of what is returned.
-* Some of the longer named functions `find_annotations_by_*` are needed as auxiliary functions anyway and may just as well be exposed in the public API. They're typically less used than the shorter variants.
+* All methods that return multiple items return iterators (though for Python those will be consumed to lists before returning). In this document such return types are just denoted as `[T]`.
+* The name of the function should give a fair indication of what is returned and what is passed.
 * In the Rust implementation, almost all return types are wrapped in `ResultItem<>`. Wherever I mention an implementation for `T` here or a result type `T` here, I mean `ResultItem<T>`. This distinguishes the high-level API from the low-level one. `TextSelection` needs special treatment and is wrapped as `ResultTextSelection` instead.
 
 ## Identifiers
-
-### trait PublicIdentifier
 
 Implemented on all types that *may* have a public identifier (implemented for `ResultItem<T>`):
 
 ```
 id() -> Option<str>
 ```
-
-### trait PrivateIdentifier
 
 Implemented on all types that have an internal identifier (implemented for `ResultItem<T>`):
 
@@ -34,7 +29,9 @@ In the Rust implementation, we don't really return int but wrapped ints like Ann
 
 ## Basic retrieval
 
-### trait GetResource
+### Resource 
+
+implemented for AnnotationStore:
 
 ```
 resource(handle_or_id) -> Option<TextResource>
@@ -42,7 +39,7 @@ resource(handle_or_id) -> Option<TextResource>
 
 TextSelection also has a `resource()` method (without parameters and outside of this trait), that returns the resource it belongs to.
 
-### trait GetResources
+### Resources 
 
 implemented for AnnotationStore, Annotation:
 
@@ -50,7 +47,7 @@ implemented for AnnotationStore, Annotation:
 resources() -> [TextResource]
 ```
 
-### trait GetDataSet
+### Dataset
 
 implemented for AnnotationStore:
 
@@ -58,7 +55,7 @@ implemented for AnnotationStore:
 dataset(handle_or_id) -> Option<AnnotationDataSet>
 ```
 
-### trait GetDataSets
+### Datasets 
 
 implemented for AnnotationStore, Annotation:
 
@@ -66,7 +63,7 @@ implemented for AnnotationStore, Annotation:
 datasets() -> [AnnotationDataSets]
 ```
 
-### trait GetAnnotation
+### Annotation 
 
 Implemented for AnnotationStore:
 
@@ -74,7 +71,7 @@ Implemented for AnnotationStore:
 annotation(handle_or_id) -> Option<Annotation>
 ```
 
-### trait GetAnnotations
+### Annotations
 
 Implemented for AnnotationStore, but also for AnnotationDataSet, DataKey and AnnotationData where it is constrained to annotations found via the appropriate reverse indices:
 
@@ -84,7 +81,7 @@ annotations(textual_order?) -> [Annotation]
 
 Enabling `textual_order` has an extra performance cost here.
 
-### trait GetKey
+### Key
 
 implemented for AnnotationDataSet:
 
@@ -94,7 +91,7 @@ key(handle_or_id) -> Option<DataKey>
 
 AnnotationData also has a `key()` method (without parameters and outside of this trait), that returns the key it belongs to.
 
-### trait GetKeys
+### Keys 
 
 implemented for AnnotationDataSet, Annotation, TextSelection:
 
@@ -102,16 +99,13 @@ implemented for AnnotationDataSet, Annotation, TextSelection:
 keys() -> [DataKey]
 ```
 
-### trait GetData
+### AnnotationData
 
-implemented for AnnotationDataSet and Annotation:
+implemented for AnnotationDataSet:
 
 ```
 annotationdata(handle_or_id) -> Option<AnnotationData>
-data() -> [AnnotationData]
 ```
-
-(we have a bit of a naming issues here because we use the word data for both singular and plural)
 
 ### trait GetTextSelections
 
@@ -168,73 +162,68 @@ values will then simply not yield any results.
 
 Contains various comparison and logical operators to test values (equals, greater than, and, or, etc etc..). The test value is embedded as part of the operator.
 
-### trait FindByData
+### Find by data (entry methods)
 
 There are high level entry methods implemented for AnnotationStore to search by data methods:
 
 ```
-find_resources_by_data(datasearchpattern) -> [TextResource]
-find_annotations_by_data(datasearchpattern, textual_order?) -> [Annotation]
-find_annotationsets_by_data(datasearchpattern) -> [AnnotationDataSet]
-find_text_by_data(datasearchpattern, textual_order?) -> [TextSelection]
+resources_by_data(datasearchpattern) -> [TextResource]
+annotations_by_data(datasearchpattern, textual_order?) -> [Annotation]
+annotationsets_by_data(datasearchpattern) -> [AnnotationDataSet]
+text_by_data(datasearchpattern, textual_order?) -> [TextSelection]
 ```
 
-### trait FindData
+### Find by data (owned data)
 
 Implemented for:
 
 * Annotation, where considers only the data directly owned by the annotations
 * AnnotationDataSet, where it covers only the data directly owned by the set, completely independent of any annotations:
-* DataKey, where it is constrained to data by the key
+* DataKey, where it is constrained to data in the set that references the key
  
 ```
-find_data(datasearchpattern) -> [AnnotationData]
+data(datasearchpattern) -> [AnnotationData]
 test_data(datasearchpattern) -> bool
 ```
 
-### trait FindDataAboutSelf
+### Find by data (about self)
 
-implemented for all *targetable nodes*: Annotation, TextSelection, AnnotationDataSet, TextResource, or aggregates thereof (ResultItemSet, TextSelectionSet):
+Then there are the following implemented for all *targetable nodes*: Annotation, TextSelection, AnnotationDataSet, TextResource, or aggregates thereof (ResultItemSet, TextSelectionSet):
 
 ```
-find_data_about(datasearchpattern, include_self?) -> [(AnnotationData, Annotation)]
+annotations_by_data(datasearchpattern, textual_order?, include_self?) -> [Annotation]
+data_about(datasearchpattern, include_self?) -> [(AnnotationData, Annotation)]
 test_data_about(datasearchpattern, include_self?) -> bool
-find_annotations_by_data_about(datasearchpattern, textual_order?, include_self?) -> [Annotation]
 ```
 
-In the first method, in addition to returning the actual data, the annotations that hold the data are also returned.
+In the second method, in addition to returning the actual data, the annotations that hold the data are also returned (calls `annotations_by_data()` internally).
 
-For Annotation, the `find_data()` from the `FindData` trait and the above methods do **NOT** overlap in their results unless `include_self` is set.
+For Annotation, the data returned by `data_about()` does **NOT** overlap in their with `data()` unless `include_self` is set.
 
-  
-### trait FindDataInTargets
+
+### Find by Data (in targets)
 
 Implemented for Annotation only, and only produces results if there are AnnotationSelectors:
 
 ```
-find_data_in_targets(datasearchpattern) -> [(AnnotationData, Annotation)]
+annotations_by_data_in_targets(datasearchpattern, textual_order?) -> [Annotation]
+data_in_targets(datasearchpattern, include_self?) -> [(AnnotationData, Annotation)]
 test_data_in_targets(datasearchpattern) -> bool
-find_annotations_by_data_in_targets(datasearchpattern, textual_order?) -> [Annotation]
 ```
 
-For Annotation, the `find_data()` from the `FindData` trait and the above methods do **NOT** overlap in their results unless `include_self` is set.
-
+For Annotation, the `data_in_targets()` from the `FindData` trait and the above methods do **NOT** overlap in their results unless `include_self` is set.
 
 ## Search by Text Relations
-
-### trait FindRelatedTextSelections
 
 Implemented on all types that can be reduced to TextSelection (or set thereof): TextSelectionSet, Annotation
 
 ```
-find_related_text(TextSelectionOperator, textual_order?)  -> [TextSelection]
+related_text(TextSelectionOperator, textual_order?)  -> [TextSelection]
 test_related_text(TextSelectionOperator, other)  -> bool
-find_annotations_by_related_text(TextSelectionOperator, textual_order?)  -> [Annotation]
+annotations_by_related_text(TextSelectionOperator, textual_order?)  -> [Annotation]
 ```
 
 ## Search by Textual Content
-
-### trait FindText
 
 Implemented on all types that hold text (directly or indirectly): TextSelection, TextResource, Annotation (with TextSelectors somwhere)
 
@@ -242,15 +231,14 @@ Implemented on all types that hold text (directly or indirectly): TextSelection,
 find_text_regex(expressions) -> [TextSelection]
 find_text(textfragment, case_sensitive) -> [TextSelection]
 find_text_sequence([textfragment], skip_chars, case_sensitive) -> [TextSelection]
-find_annotations_by_text(fragment, case_sensitive) -> [Annotation]
+annotations_by_text(fragment, case_sensitive) -> [Annotation]
 ```
-### trait FindByText
 
 There are high-level entry methods implemented for AnnotationStore to search by text:
 
 ```
-find_resources_by_text(textoperator, textfragment) -> [TextResource]
-find_annotations_by_text(textoperator, textfragment) -> [Annotation]
+resources_by_text(textoperator, textfragment) -> [TextResource]
+annotations_by_text(textoperator, textfragment) -> [Annotation]
 ```
 
 Textoperator can be Equals or Contains.

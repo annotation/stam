@@ -4,7 +4,8 @@ This document describes the high-level STAM API, it is not normative and any imp
 
 ## Names and conventions
 
-* All methods that return multiple items return iterators (though for Python those will be consumed to lists before returning). In this document such return types are just denoted as `[T]`.
+* All methods that return multiple items return iterators whenever they can; if some kind of buffering is needed they may return a set. For Python however, iterators are consumed before returning so both will be just lists. 
+In this document such return types are just denoted as `[T]`.
 * The name of the function should give a fair indication of what is returned and what is passed.
 * In the Rust implementation, almost all return types are wrapped in `ResultItem<>`. Wherever I mention an implementation for `T` here or a result type `T` here, I mean `ResultItem<T>`. This distinguishes the high-level API from the low-level one. `TextSelection` needs special treatment and is wrapped as `ResultTextSelection` instead.
 
@@ -191,11 +192,15 @@ Contains various comparison and logical operators to test values (equals, greate
 There are high level entry methods implemented for AnnotationStore to search by data methods:
 
 ```
-resources_by_data(datasearchpattern) -> [TextResource]
-annotations_by_data(datasearchpattern, textual_order?) -> [Annotation]
-datasets_by_data(datasearchpattern) -> [AnnotationDataSet]
-text_by_data(datasearchpattern, textual_order?) -> [TextSelection]
+find_data(set, key, value_test) -> [AnnotationData]
+resources_by_metadata(set, key, value_test) -> [(TextResource,AnnotationData)]
+annotations_by_data(set, key, value_test, textual_order?) -> [(Annotation,AnnotationData)]
+datasets_by_metadata(set, key, value_test) -> [(AnnotationDataSet,AnnotationData)]
+text_by_data(set, key, value_test, textual_order?) -> [(TextSelection,AnnotationData)]
+test_data(set, key, value_test) -> bool
 ```
+
+
 
 ### Find by data (owned data)
 
@@ -207,8 +212,8 @@ Implemented for:
  
 ```
 data() -> [AnnotationData]
-find_data(datasearchpattern) -> [AnnotationData]
-test_data(datasearchpattern) -> bool
+find_data(key, value_test) -> [AnnotationData]
+test_data(key, value_test) -> bool
 ```
 
 ### Find by data (about self)
@@ -217,9 +222,8 @@ Then there are the following implemented for all *targetable nodes*: Annotation,
 
 ```
 data_about() -> [(AnnotationData, Annotation)]
-annotations_by_data(datasearchpattern, textual_order?, include_self?) -> [Annotation]
-find_data_about(datasearchpattern, include_self?) -> [(AnnotationData, Annotation)]
-test_data_about(datasearchpattern, include_self?) -> bool
+find_data_about(set, key, value_test, include_self?) -> [(AnnotationData, Annotation)]
+test_data_about(set, key, value_test, include_self?) -> bool
 ```
 
 In the second method, in addition to returning the actual data, the annotations that hold the data are also returned (calls `annotations_by_data()` internally).
@@ -232,12 +236,22 @@ For Annotation, the data returned by `data_about()` does **NOT** overlap in thei
 Implemented for Annotation only, and only produces results if there are AnnotationSelectors:
 
 ```
-annotations_by_data_in_targets(datasearchpattern, textual_order?) -> [Annotation]
-find_data_in_targets(datasearchpattern, include_self?) -> [(AnnotationData, Annotation)]
-test_data_in_targets(datasearchpattern) -> bool
+annotations_by_data_in_targets(set, key, value_test, textual_order?) -> [Annotation]
+find_data_in_targets(set, key, value_test, include_self?) -> [(AnnotationData, Annotation)]
+test_data_in_targets(set, key, value_test) -> bool
 ```
 
 For Annotation, the `data_in_targets()` from the `FindData` trait and the above methods do **NOT** overlap in their results unless `include_self` is set.
+
+### Find given data/keys (reverse methods)
+
+The following are implemented for `AnnotationData` and `DataKey`:
+
+* `annotations() -> [Annotation]` - Returns annotations that make use of this data/key
+* `resources() -> [TextResource]` - Returns text resources that make use of this data/key via annotations (either as metadata or as text)
+* `resources_as_metadata() -> [TextResource]` - Returns resources that make use of this data/key as metadata (via annotation with a ResourceSelector)
+* `resources_on_text() -> [TextResource]` - Returns resources that make use of this data/key for text (via annotations with a TextSelector)
+* `datasets() -> [AnnotationDataSet]` - Returns datasets that annotations reference via a DataSetSelector (i.e. metadata)
 
 ## Search by Text Relations
 

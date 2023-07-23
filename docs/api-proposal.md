@@ -73,13 +73,36 @@ annotation(handle_or_id) -> Option<Annotation>
 
 ### Annotations
 
-Implemented for AnnotationStore, but also for AnnotationDataSet, DataKey and AnnotationData where it is constrained to annotations found via the appropriate reverse indices:
+Implemented for:
+
+* AnnotationStore, 
+* AnnotationDataSet, DataKey and AnnotationData where it is constrained to annotations found via the appropriate reverse indices:
+* All *targetable nodes*: Annotation, TextSelection, AnnotationDataSet, TextResource, or aggregates thereof (ResultItemSet, TextSelectionSet), here it returns annotations *about* the target.
+
 
 ```
-annotations(textual_order?) -> [Annotation]
+annotations() -> [Annotation]
 ```
 
-Enabling `textual_order` has an extra performance cost here.
+The method id Other *targetable nodes* (Annotation, TextSelection, AnnotationDataSet, TextResource, or aggregates thereof (ResultItemSet, TextSelectionSet)) implement the following:
+
+Which returns annotations *about* that target. TextResource has two more specific variants (`annotations()` will return both indiscriminately):
+
+* `annotations_on_text() -> [Annotation]` - Annotations that target a text selection in the resource (follows back through a TextSelector)
+* `annotations_as_metadata() -> [Annotation]` - Annotations that target the resource as a whole (follows back through a ResourceSelector)
+
+`AnnotationDataSet` has a similar distinction (`annotations()` will again return both indiscriminately):
+
+* `annotations_using_set() -> [Annotation]` - Annotations that use the set
+* `annotations_as_metadata() -> [Annotation]` - Annotations that target the set as a whole (follows back through a DataSetSelector)
+
+### Targeted Annotations
+
+This method is implemented for `Annotation` only, if follows annotations that are targeted via an `AnnotationSelector` (possibly via complex selectors):
+
+```
+annotations_in_targets() -> [Annotation]
+```
 
 ### Key
 
@@ -169,7 +192,7 @@ There are high level entry methods implemented for AnnotationStore to search by 
 ```
 resources_by_data(datasearchpattern) -> [TextResource]
 annotations_by_data(datasearchpattern, textual_order?) -> [Annotation]
-annotationsets_by_data(datasearchpattern) -> [AnnotationDataSet]
+datasets_by_data(datasearchpattern) -> [AnnotationDataSet]
 text_by_data(datasearchpattern, textual_order?) -> [TextSelection]
 ```
 

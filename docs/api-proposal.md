@@ -92,11 +92,6 @@ Which returns annotations *about* that target. TextResource has two more specifi
 * `annotations_on_text() -> [Annotation]` - Annotations that target a text selection in the resource (follows back through a TextSelector)
 * `annotations_as_metadata() -> [Annotation]` - Annotations that target the resource as a whole (follows back through a ResourceSelector)
 
-`AnnotationDataSet` has a similar distinction (`annotations()` will again return both indiscriminately):
-
-* `annotations_using_set() -> [Annotation]` - Annotations that use the set
-* `annotations_as_metadata() -> [Annotation]` - Annotations that target the set as a whole (follows back through a DataSetSelector)
-
 ### Targeted Annotations
 
 This method is implemented for `Annotation` only, if follows annotations that are targeted via an `AnnotationSelector` (possibly via complex selectors):

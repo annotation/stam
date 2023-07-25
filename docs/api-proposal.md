@@ -260,9 +260,16 @@ The following are implemented for `AnnotationData` and `DataKey`:
 Implemented on all types that can be reduced to TextSelection (or set thereof): TextSelectionSet, Annotation
 
 ```
-related_text(TextSelectionOperator, textual_order?)  -> [TextSelection]
+related_text(TextSelectionOperator)  -> [TextSelection]
 test_related_text(TextSelectionOperator, other)  -> bool
-annotations_by_related_text(TextSelectionOperator, textual_order?)  -> [Annotation]
+annotations_by_related_text(TextSelectionOperator)  -> [Annotation]
+```
+
+Then there is the following which effectively combined `related_text()` with `find_data_about()`/`test_data_about()` on its results. It is used to search related text that has annotation with specific data about that text.
+
+```
+related_text_with_data(TextSelectionOperator, key, value, value_test)  -> [(TextSelection, [(AnnotationData,Annotation)])]
+related_text_test_data(TextSelectionOperator, key, value, value_test)  -> [TextSelection]
 ```
 
 ## Search by Textual Content

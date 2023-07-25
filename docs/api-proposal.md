@@ -217,13 +217,20 @@ Then there are the following implemented for all *targetable nodes*: Annotation,
 
 ```
 data_about() -> [(AnnotationData, Annotation)]
-find_data_about(set, key, value_test, include_self?) -> [(AnnotationData, Annotation)]
-test_data_about(set, key, value_test, include_self?) -> bool
+find_data_about(set, key, value_test) -> [(AnnotationData, Annotation)]
+test_data_about(set, key, value_test) -> bool
 ```
 
-In the second method, in addition to returning the actual data, the annotations that hold the data are also returned (calls `annotations_by_data()` internally).
+In the second method, in addition to returning the actual data, the annotations that hold the data are also returned.
 
-For Annotation, the data returned by `data_about()` does **NOT** overlap in their with `data()` unless `include_self` is set.
+For Annotation, the data returned by `data_about()` does **NOT** overlap with `data()`.
+
+For TextResource, this function has two specialised variants:
+
+* `find_data_about_text() -> [Annotation]` - Annotations that target a text selection in the resource (follows back through a TextSelector)
+    * `test_data_about_text() -> bool`
+* `find_metadata_about() -> [Annotation]` - Annotations that target the resource as a whole (follows back through a ResourceSelector)
+    * `test_metadata_about() -> bool`
 
 
 ### Find by Data (in targets)

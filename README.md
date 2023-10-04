@@ -65,7 +65,7 @@ Goals/characteristics of STAM are:
   efficient/performant implementations, with regard to processing requirements
   but especially memory consumption. The model should be suitable for big data
   (millions of annotations). We sit at a point where we deem to have an optimal
-  trade-off between simplicity and performance.
+  trade-off between simplicity, flexibility and performance.
 
 * *Import & Export* - Reads/writes a simple JSON format. But also designed with
   export to more complex formats in mind (such as W3C Web Annotations / RDF)

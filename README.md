@@ -13,8 +13,8 @@ is that any information on a text is represented as an *annotation*. We define
 an annotation as any kind of remark, classification/tagging on any particular
 portion(s) of a text, or on the resource or annotation set as a whole, in which
 case we can interpret annotations as *metadata*. Additionally, rather than
-reference the text directly, annotations may point to other annotations
-(higher-order annotation). Examples of annotation may be linguistic annotation,
+referencing the text directly, annotations may point to other annotations
+(higher-order annotations). Examples of annotation may be linguistic annotation,
 structure/layout annotation, editorial annotation, technical annotation, or
 whatever comes to mind. Our model does not define any vocabularies whatsoever.
 
@@ -32,9 +32,9 @@ solutions can be built. The user is free, and in fact encouraged, to use
 vocabularies that are formalised elsewhere.
 
 STAM is primarily intended as a model for data representation, and less so as a
-format for data interchange. It is designed in such as way that an efficient
+format for data interchange. It is designed in such a way that an efficient
 implementation (both speed & memory) is feasible. The form of such an
-implementation either in a relational database, triple store, directly modelled
+implementation either in a relational database, triple store, or directly modelled
 in memory, is left open to the implementation. Our model should also be
 reducible to a more generalised acyclic directed graph model without much
 difficulty.

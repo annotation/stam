@@ -188,6 +188,6 @@ Let us formalize the constraints new constraints we have seen that are used in q
 * `DATA` *?variable* - Constrain data based on a parent query. The referenced parent query *MUST* have type `DATA`.
 * `TEXT` *?variable* - Constrain text based on a parent query. The referenced parent query *MUST* have type `TEXT`.
 * `RELATION` *?variable* *relation* - Constrains based on a textual relationship
-    * *relation* is a keyword of: `EMBEDS`, `OVERLAPS`, `PRECEDES`, `SUCCEEDS`, `BEFORE`, `AFTER`
+    * *relation* is a keyword of: `EMBEDS`, `OVERLAPS`, `PRECEDES`, `SUCCEEDS`, `BEFORE`, `AFTER`, `SAMEBEGIN`, `SAMEEND`, `EQUALS`
       Read this as, for instance: "A embeds B", where A is the variable in the constraint, which comes from a parent query, and B is the variable selected in the current select statement.
 * `RESOURCE` *?variable* - Constrain text based on a resource. The referenced parent query *MUST* have type `RESOURCE`.

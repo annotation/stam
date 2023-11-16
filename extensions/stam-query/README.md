@@ -31,7 +31,7 @@ A select statement has the following syntax
     * The `WHERE` keyword introduces a series of one or more *constraints*. Each constraint *MUST* end with a semicolon.
         * The `WHERE` statement (and constraints) may be omitted entirely if there are no constraints. These are then simply queries for all annotations, data, text or resources in the model.
         * All constraints must be satisfied.
-    * A query *MAY* have one or more *subqueries*, if there are subqueries, then these *MUST* be scoped inside curly braces, if there are no subqueries, the curly braces *MUST* be omitted too.
+    * A query *MAY* have one *subquery*, it *MUST* be scoped inside curly braces, if there is no subquery, the curly braces *MUST* be omitted too.
 
 A constraint start with a *type* keyword which identifies the nature of the constraint. Each constraint type takes a set of parameters, which *MUST* be separated by one or more spaces, newlines or tabs. Double quotes *MUST* be used when you want parameters to span over whitespace, literal double quotes inside that scope *MUST* be escaped by a preceding backslash character. We distinguish the following constraints and parameters:
 
@@ -127,7 +127,7 @@ All example queries in this specification are in *executable form*.
 ## Query composition
 
 A single query is not always expressive enough to retrieve the data you a looking for. STAMQL solves this by allowing
-for a query statement to have *subqueries*. A subquery is evaluated in the context of its parent query. Programatically, 
+for each query statement to have a *subquery*. A subquery is evaluated in the context of its parent query. Programatically, 
 a subquery can be interpreted as a nested `for` loop. When using subqueries, we need the ability to name our query results (which we have hitherto neglected in the examples). Subqueries *MUST* have at least one constraint that links it to its parent.
 
 Consider the following example:

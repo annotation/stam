@@ -35,6 +35,7 @@ A select statement has the following syntax
 
 A constraint start with a *type* keyword which identifies the nature of the constraint. Each constraint type takes a set of parameters, which *MUST* be separated by one or more spaces, newlines or tabs. Double quotes *MUST* be used when you want parameters to span over whitespace, literal double quotes inside that scope *MUST* be escaped by a preceding backslash character. We distinguish the following constraints and parameters:
 
+* `ID` *id* - Constrains the select statement to return only a single item with the specified ID
 * `DATA` *set* *key* *operator* *value* - Constrain based on annotation data.
     * *set* - The annotation dataset which holds the key (next parameter) to test against
     * *key* - The data key to query 
@@ -145,7 +146,22 @@ SELECT TEXT ?sentence WHERE
 
 Here we explicitly select sentences with a particularly annotated text in it. Both named variables *MUST* be explicitly returned in the query's result rows.
 
-The following example shows a complex query where we select a particular noun followed by a verb, the combination occurring in a particular context (book, chapter, sentence). Details depend a bit on how things are modelled. We assume the books are modelled as separated resources, with annotations naming them:
+We can also make use of explicit hierarchical relationships between annotations if these are modelled via an *AnnotationSelector*. The following query illustrates an alternative to the above:
+
+```
+SELECT ANNOTATION ?sentence WHERE
+    DATA "myset" "type" = "sentence"; {
+
+    SELECT ANNOTATION ?word WHERE 
+        ANNOTATION ?sentence;
+        DATA "myset" "type" = "word";
+        DATA "myset" "part-of-speech" = "noun";
+        TEXT "fly";
+
+}
+```
+
+The next example shows a complex query where we select a particular noun followed by a verb, the combination occurring in a particular context (book, chapter, sentence). Details depend a bit on how things are modelled. We assume the books are modelled as separated resources, with annotations naming them:
 
 ```sparql
 SELECT RESOURCE ?book WHERE
@@ -181,9 +197,11 @@ SELECT TEXT ?vb WHERE
 The above needn't be the most efficient way and, as said, it depends on how things
 are modelled exactly, but this one reads easily in a top-down fashion. 
 
+    
+
 ### Constraints in query composition
 
-Let us formalize the constraints new constraints we have seen that are used in query composition:
+Let us formalize the new constraints we have seen that are used in query composition, defining a relationship between a parent query and a subquery:
 
 * `DATA` *?variable* - Constrain data based on a parent query. The referenced parent query *MUST* have type `DATA`.
 * `TEXT` *?variable* - Constrain text based on a parent query. The referenced parent query *MUST* have type `TEXT`.
@@ -191,3 +209,5 @@ Let us formalize the constraints new constraints we have seen that are used in q
     * *relation* is a keyword of: `EMBEDS`, `OVERLAPS`, `PRECEDES`, `SUCCEEDS`, `BEFORE`, `AFTER`, `SAMEBEGIN`, `SAMEEND`, `EQUALS`
       Read this as, for instance: "A embeds B", where A is the variable in the constraint, which comes from a parent query, and B is the variable selected in the current select statement.
 * `RESOURCE` *?variable* - Constrain text based on a resource. The referenced parent query *MUST* have type `RESOURCE`.
+* `ANNOTATION` *?variable* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "A is an annotation on B" or "B is an annotation targeted by A", where A is the variable in the constraint, which comes from a parent query, and B the variable selected in the current select statement. The referenced parent query *MUST* have type `ANNOTATION`.
+

@@ -105,6 +105,20 @@ class DataSetSelector {
     <i>a whole (i.e. annotation is metadata)</i>
 }
 
+class DataKeySelector {
+    key: &DataKey
+    --
+    <i>Selects a data key</i>
+    <i>(i.e. annotation is metadata)</i>
+}
+
+class AnnotationDataSelector {
+    data: &AnnotationData
+    --
+    <i>Selects annotation data</i>
+    <i>(i.e. annotation is metadata)</i>
+}
+
 class AnnotationSelector {
     annotation: &Annotation
     offsets: (begin: Cursor, end: Cursor)?
@@ -159,6 +173,8 @@ class RangedInternalSelector <<functional>> {
 Selector <|-[#green]- TextSelector
 Selector <|-[#green]- ResourceSelector
 Selector <|-[#green]- DataSetSelector
+Selector <|-[#green]- DataKeySelector
+Selector <|-[#green]- AnnotationDataSelector
 Selector <|-[#green]- AnnotationSelector
 Selector <|-[#green]- MultiSelector
 Selector <|-[#green]- CompositeSelector
@@ -172,6 +188,7 @@ class AnnotationData {
     value: DataValue
     --
     _id : int
+    _data_for: [&Annotation*]
     _referenced_by: [&Annotation*]
     _part_of_set: &AnnotationDataSet
     --
@@ -183,7 +200,8 @@ class DataKey {
     indexed: bool
     --
     _id: int
-    _referenced_by: [&AnnotationData*]
+    _key_for: [&AnnotationData*]
+    _referenced_by: [&Annotation*]
     _part_of_set: &AnnotationDataSet
     --
     <i>The key of an annotation</i>
@@ -261,6 +279,7 @@ Annotation "1" *--> "+" Selector : > target
 Annotation "1" o-[#red]-> "*" AnnotationData : > data
 Annotation "1" o.[#red].> "*" Annotation : > _referenced_by
 
+AnnotationData "1" o.[#red].> "+" Annotation : > _data_for
 AnnotationData "1" o.[#red].> "+" Annotation : > _referenced_by
 AnnotationData "1" *--> "1" DataValue : > value
 AnnotationData "1" *-[#red]-> "1" DataKey : > key
@@ -272,7 +291,10 @@ AnnotationSelector "1" o.[#red].> "1" TextSelection : > _textselection
 ResourceSelector "1" o-[#red]-> "1" TextResource : > resource
 AnnotationSelector "1" o-[#red]-> "1" Annotation : > annotation
 DataSetSelector "1" o-[#red]-> "1" AnnotationDataSet : > annotationset
+DataKeySelector "1" o-[#red]-> "1" DataKey : > key
+AnnotationDataSelector "1" o-[#red]-> "1" AnnotationData : > data
 
+DataKey "1" o.[#red].> "+" AnnotationData : > _key_for
 DataKey "1" o.[#red].> "+" AnnotationData : > _referenced_by
 DataKey "1" o.[#red].> "1" AnnotationDataSet : > _part_of_set
 

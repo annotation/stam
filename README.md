@@ -286,9 +286,13 @@ There are multiple types of selectors:
   These ``begin`` and ``end`` attributes *MUST* describe the character position in unicode
   points in text of the resources that is being pointed at. Indexing *MUST* be zero-based and the end offset *MUST* be
   non-inclusive. Non-contiguous spans are expressed via multiple `TextSelector`s under a `CompositeSelector`.
-* ``ResourceSelector``  - A selector pointing to a resource as whole. These type
+* ``ResourceSelector``  - A selector pointing to a resource as whole. This type
   of annotation can be interpreted as *metadata*.
-* ``DataSetSelector``  - A selector pointing to an annotation data set (`AnnotationDataSet`). These type
+* ``DataSetSelector``  - A selector pointing to an annotation data set (`AnnotationDataSet`). This type
+  of annotation can be interpreted as *metadata*.
+* ``DataKeySelector``  - A selector pointing to a data key (`DataKey`). This type
+  of annotation can be interpreted as *metadata*.
+* ``AnnotationDataSelector``  - A selector pointing to an annotation data instance (`AnnotationData`, i.e. a key/value pair). This type
   of annotation can be interpreted as *metadata*.
 * ``AnnotationSelector``  - A selector pointing to another annotation. This we call higher-order annotation and is very common in STAM models. If the annotation that is being targeted eventually refers to a text (`TextSelector`), then offsets **MAY** be specified that select a subpart of this text. These offsets are now *relative* to the annotation. Internally, the implementation can always efficiently resolve these to absolute offsets on the resource. The use of `AnnotationSelector` has one important constraint: the graph of all annotations referring to other annotations  *MUST* be acyclic; i.e. it can't end up in a recursive loop of annotations referencing each-other. Implementations *SHOULD* check this.
 * ``MultiSelector``  - A selector that consists of multiple other selectors (subselectors) to select multiple targets. This *MUST* be interpreted as the annotation applying to each target *individually*, without any relation between the different targets. Leaving one out or adding one *MUST NOT* affect the interpretation of any of the others nor of the whole. This is a way to express multiple annotations 
@@ -298,10 +302,10 @@ as one, a more condensed representation. Do note that in STAM, even if you don't
   selectors, but with an explicit direction (from -> to), used to select more
   complex targets that transcend the idea of a single simple selection. The ordering (and interpretation thereof) is strictly user-determined and implementations *MUST* adhere to this.
 
-The so-called complex selectors (`MultiSelector`, `CompositeSelector` and
+The so-called *complex selectors* (`MultiSelector`, `CompositeSelector` and
 `DirectionalSelector`) *MUST NOT* be nested, you *MUST* use one or more of the
 simple selectors (`TextSelector`,`ResourceSelector`,
-`DataSetSelector`,`AnnotationSelector`)  as subselector (or the internal
+`DataSetSelector`,`DataKeySelector`,`AnnotationDataSelector`,`AnnotationSelector`)  as subselector (or the internal
 `RangedInternalSelector` which will be described later on as part of the
 extended model).
 
@@ -509,11 +513,11 @@ It may help to enumerate the reverse indices in a more stand-off fashion as foll
     * This would be the reverse index for annotations that use `TextSelector`
     * It is *RECOMMENDED* to store TextSelections in some kind of ordered map, whereas all the other items in this section need only an unordered map.
 * An index mapping annotation data (pertaining to a set) to all annotations that use that data:   `AnnotationDataSet [AnnotationData -> [Annotation]]`
-* An index mapping resources to all annotations that select that resource:   `TextResource -> [Annotation]`
-    * This *MAY* be limited annotations that point at the resource as a whole. This would then be the reverse index for annotations that use `ResourceSelector`.
-* An index mapping annotation data sets to all annotations select the set:   `AnnotationDataSet -> [Annotation]` 
-    * This *MAY* be limited annotations that point at the dataset as a whole. This would then be the reverse index for annotations that use `DataSetSelector`.
-* An index mapping datakeys (pertaining to an annotationset) to annotationdata that makes use of the key
+* An index mapping resources to all annotations that select that resource via a `ResourceSelector`:   `TextResource -> [Annotation]`
+* An index mapping annotation data sets to all annotations targeting the set via a `DataSetSelector`:   `AnnotationDataSet -> [Annotation]` 
+* An index mapping data keys to all annotations targeting the key via a `DataKeySelector`:   `DataKey -> [Annotation]` 
+* An index mapping data to all annotations targeting the data via an `AnnotationDataSelector`:   `AnnotationData -> [Annotation]` 
+* An index mapping datakeys (pertaining to an annotationset) to annotationdata that makes use of the key.
 * An index mapping annotation data sets to all annotations select the set:   `AnnotationDataSet -> [DataKey -> [AnnotationData]]` 
 
 Implementations *SHOULD* implement these or similar indices, facilitating quick lookup in search. 

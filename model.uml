@@ -106,6 +106,7 @@ class DataSetSelector {
 }
 
 class DataKeySelector {
+    annotationset: &AnnotationDataSet
     key: &DataKey
     --
     <i>Selects a data key</i>
@@ -113,6 +114,7 @@ class DataKeySelector {
 }
 
 class AnnotationDataSelector {
+    annotationset: &AnnotationDataSet
     data: &AnnotationData
     --
     <i>Selects annotation data</i>
@@ -291,7 +293,9 @@ AnnotationSelector "1" o.[#red].> "1" TextSelection : > _textselection
 ResourceSelector "1" o-[#red]-> "1" TextResource : > resource
 AnnotationSelector "1" o-[#red]-> "1" Annotation : > annotation
 DataSetSelector "1" o-[#red]-> "1" AnnotationDataSet : > annotationset
+DataKeySelector "1" o-[#red]-> "1" AnnotationDataSet : > annotationset
 DataKeySelector "1" o-[#red]-> "1" DataKey : > key
+AnnotationDataSelector "1" o-[#red]-> "1" AnnotationDataSet : > annotationset
 AnnotationDataSelector "1" o-[#red]-> "1" AnnotationData : > data
 
 DataKey "1" o.[#red].> "+" AnnotationData : > _key_for

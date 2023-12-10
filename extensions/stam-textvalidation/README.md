@@ -2,8 +2,7 @@
 
 ## Introduction
 
-This is an extension on top of STAM that adds extra information to STAM serialisations that safeguard the integrity of the data.
-It can also help make serialisations more readable upon introspection, as it adds a layer of redundancy.
+This is an extension for STAM that adds extra redundancy information to a STAM model to safeguard the integrity of the data.
 
 Validation is an important aspect of annotation, it is often too easy to have
 erroneous input pollute the annotation data. Stand-off annotation in particular
@@ -15,27 +14,23 @@ NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
 "OPTIONAL" in this document are to be interpreted as described in
 RFC 2119.
 
-## Data Model
+## Vocabulary
 
-This extension adds two properties to ``TextSelector``, using either one of them is *RECOMMENDED* by this extension:
+This extension defines an annotation dataset with ID `https://w3id.org/stam/extensions/stam-textvalidation/`.
+In this set we define the following keys, using either one of them is *RECOMMENDED* by this extension:
 
-* ``text``: The exact text of the annotation that is being pointed to. 
+* ``text``: The exact text of the current annotation
+* ``delimiter``: The delimiter to use to concatenate text selections in case the current annotation has a complex selector. If this key is not supplied, concatenation *MUST* proceed without delimiter.
 * ``checksum``: The SHA-1 checksum of the text of the annotation. We use SHA-1 because it is *fast* and *small enough* (40 bytes). It does not offer strong cryptographic security though.
 
 The advantage of `text` over `checksum` is that it is directly interpretable
 and facilitates readability of a serialisation. However, for large texts
 the overhead may become a nuisance and a `checksum` may be more appropriate.
 
-It is *NOT REQUIRED* for implementations to keep these properties throughout the lifetime of the model. Implementations *SHOULD* merely consult them at parse-time and *SHOULD* recompute them at serialisation time. 
-
 ## Functionality
 
-Parser implementations, whenever encountering a `text` or `checksum` property,
-*SHOULD* verify if the text of the selector matches the text in the `text`
+Parser implementations, whenever encountering a `text` or `checksum` key in an annotation's data,
+*MUST* verify if the text of the annotation matches the `text`
 property or the SHA-1 checksum in the `checksum` property. If not,
 implementations *SHOULD* raise a hard validation failure. 
-
-
-
-
 

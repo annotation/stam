@@ -81,6 +81,20 @@ class DataSetSelector {
     <i>a whole (i.e. annotation is metadata)</i>
 }
 
+class DataKeySelector {
+    key: &DataKey
+    --
+    <i>Selects a data key</i>
+    <i>(i.e. annotation is metadata)</i>
+}
+
+class AnnotationDataSelector {
+    data: &AnnotationData
+    --
+    <i>Selects annotation data</i>
+    <i>(i.e. annotation is metadata)</i>
+}
+
 class AnnotationSelector {
     annotation: &Annotation
     offsets: (begin: Cursor, end: Cursor)?
@@ -122,6 +136,8 @@ class DirectionalSelector {
 Selector <|-[#green]- TextSelector
 Selector <|-[#green]- ResourceSelector
 Selector <|-[#green]- DataSetSelector
+Selector <|-[#green]- DataKeySelector
+Selector <|-[#green]- AnnotationDataSelector
 Selector <|-[#green]- AnnotationSelector
 Selector <|-[#green]- MultiSelector
 Selector <|-[#green]- CompositeSelector
@@ -188,6 +204,8 @@ TextSelector "1" o-[#red]-> "1" TextResource : > resource
 ResourceSelector "1" o-[#red]-> "1" TextResource : > resource
 AnnotationSelector "1" o-[#red]-> "1" Annotation : > annotation
 DataSetSelector "1" o-[#red]-> "1" AnnotationDataSet : > annotationset
+DataKeySelector "1" o-[#red]-> "1" DataKey : > key
+AnnotationDataSelector "1" o-[#red]-> "1" AnnotationData : > data
 
 
 MultiSelector "1" --> "*" Selector : > selectors

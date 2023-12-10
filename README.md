@@ -88,8 +88,8 @@ NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
 
 We keep STAM simple and define only the bare minimum. Other functionality is
 included in extensions. Extensions do one or more of the following: they extend
-the data model, specify new serialisations, specify mappings/crosswalks to other
-paradigms/formats, specify additional functionality.
+the data model,  specify new serialisations, specify mappings/crosswalks to other
+paradigms/formats, specify additional functionality, define a particular modelling strategy following some vocabulary.
 
 The following are currently defined:
 

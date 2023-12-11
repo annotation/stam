@@ -125,12 +125,13 @@ The result of this transpose operation is a new transposition with two annotatio
 underneath, one pointing at *"know "* and *"and"* in resource C, and the other
 pointing at *"know "* and *"and"* in resource A.
 
-Note that if we were to select the text selection *"and understand"* (blue and purple) in
-resource C, then the transpose function needs to fail if we ask it to map it to
-either resource A or B. Similarly, if we select *"Everything we know"*
-(uncoloured and green) in resource A and ask to transpose it to resource C,
-then that too would fail because "Everything" is not part of the transposition
-that created resource C.
+Note that if we were to select the text selection *"and understand"* (blue and
+purple) in resource C, then the transpose function needs to fail if we ask it
+to map it to only either resource A or B. It can only succeed if we allow it to
+map freely to both resources, which *MUST* be allowed as well by the transpose
+function. Similarly, if we select *"Everything we know"* (uncoloured and green)
+in resource A and ask to transpose it to resource C, then that too would fail
+because "Everything" is not part of the transposition that created resource C.
 
 ## Limitations
 

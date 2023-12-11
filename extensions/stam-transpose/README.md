@@ -48,11 +48,14 @@ the following key in the annotation dataset with identifier
     * use a `DirectionalSelector` or `CompositeSelector`, with underneath an `TextSelector` to target two or more text selections directly. We call this the *simple transposition*. The text selections on either side *MUST* have the exact same *textual content*. 
     * use a `DirectionalSelector` or `CompositeSelector`, with underneath an `AnnotationSelector` to target two or more annotations. We call this this *complex transposition*. The text targeted by the annotations *MUST* be identical on either side.
 
+The full notion of transposition is illustrated in the following schematic, where resource A and B are recombined into a derived resource C:
 
-The use of `DirectionalSelector` vs `CompositeSelector` is a small semantic
+![STAM Transpose: A transposition illustrated schematically](transposition.png)
+
+The use of `DirectionalSelector` vs `CompositeSelector` under the transposition itself is a small semantic
 distinction without real functional implications. Use of `DirectionalSelector`
-implies an explicit source to target ordering so you can distinguish which was
-the original and which the copy.
+here implies an explicit source to target ordering so you can distinguish which was
+the original and which the derived copy.
 
 The complex transposition is called *complex* because the annotations targeted
 by the underlying `AnnotationSelector` *MAY* themselves have a *complex
@@ -75,7 +78,9 @@ mapping between the coordinate spaces.
 
 A **derived resource** is defined as a resource where all text is derived from
 the text of one or more other resources for which the full resource text is
-covered by *a single* (often complex) transposition. To mark a resource as a derived resource, we define the following key in ``https://w3id.org/stam/extensions/stam-transpose/``:
+covered by *a single* (often complex) transposition. To explicitly mark a
+resource as a derived resource, which is *RECOMMENDED*, we define the following
+key in ``https://w3id.org/stam/extensions/stam-transpose/``:
 
 * `DerivedResource` (type: `Null`) - Marks an annotation as defining a derived
   resource. The annotation *MUST* have a `DirectionalSelector` with (in this

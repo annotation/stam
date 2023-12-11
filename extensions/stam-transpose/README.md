@@ -111,7 +111,7 @@ To illustrate the transpose function on the basis of the schema shown earlier, a
 
 We then intend to transpose this selection back to source resource A. The
 transpose function takes the transposition that formed the derived resource as
-a parameter, and based on that information it knows to first maps our single
+a parameter, and based on that information it knows to first map our single
 text selection in resource C to two text selections in the same resource C
 (because there is a colour change in the middle): one picks a slice of the
 green text selection, and one picks a slice of the blue text selection. Because
@@ -121,8 +121,8 @@ there. Note that in resource A these are not directly adjacent (there is a
 square bracket in between), but that does not hinder our ability to map the
 text selection.
 
-The result of this transpose operation is a transposition with two annotations
-underneath, one pointing at *"know "* and "and"* in resource C, and the other
+The result of this transpose operation is a new transposition with two annotations
+underneath, one pointing at *"know "* and *"and"* in resource C, and the other
 pointing at *"know "* and *"and"* in resource A.
 
 Note that if we were to select the text selection *"and understand"* (blue and purple) in

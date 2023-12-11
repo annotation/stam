@@ -105,6 +105,33 @@ STAM implementations implementing this extension *MUST* provide the following fu
     * This function *MUST* itself be able produce a transposition as its output (linking to the above output), this effectively links to two text selections/annotations and is useful at least for keeping provenance information intact. The user *SHOULD* be able to ignore this output if not deemed needed for his/her use-case.
     * Transposing text selections or annotations is not possible if parts of the text selection(s)/annotation(s) is not covered by the transposition. In such cases the transpose function *MUST* reject operation with an error.
 
+To illustrate the transpose function on the basis of the schema shown earlier, assume we select the text selection *"know and"* in the derived resource C, we use red dashed lines to mark this in the next schema:
+
+![STAM Transpose: Transpose function](transposition2.png)
+
+We then intend to transpose this selection back to source resource A. The
+transpose function takes the transposition that formed the derived resource as
+a parameter, and based on that information it knows to first maps our single
+text selection in resource C to two text selections in the same resource C
+(because there is a colour change in the middle): one picks a slice of the
+green text selection, and one picks a slice of the blue text selection. Because
+both text selections are mapped from resource A, the transpose function knows
+it can produce valid output in resource A and will yield two text selections
+there. Note that in resource A these are not directly adjacent (there is a
+square bracket in between), but that does not hinder our ability to map the
+text selection.
+
+The result of this transpose operation is a transposition with two annotations
+underneath, one pointing at *"know "* and "and"* in resource C, and the other
+pointing at *"know "* and *"and"* in resource A.
+
+Note that if we were to select the text selection *"and understand"* (blue and purple) in
+resource C, then the transpose function needs to fail if we ask it to map it to
+either resource A or B. Similarly, if we select *"Everything we know"*
+(uncoloured and green) in resource A and ask to transpose it to resource C,
+then that too would fail because "Everything" is not part of the transposition
+that created resource C.
+
 ## Limitations
 
 Transposition is by definition limited to relating text selections whilst

@@ -47,7 +47,7 @@ A constraint start with a *type* keyword which identifies the nature of the cons
     * *id* - A resource identifier
 * `ANNOTATION` *id* - Constraint based on pertaining to a particular annotation (in case of data, text or resources). When applied to annotations, this constrains based on having specific annotation as annotation. That annotation is a newer/higher annotation in the hierarchy formed by *AnnotationSelector*.
     * *id* - An annotation identifier
-* `ANNOTATIONTARGET` *id* - Only used on annotations, this is the inverse of the above `ANNOTATION` constraint. This constrains annotation based on having a specific annotation as target. That annotation is an older/lower annotation in the hierarchy formed by *AnnotationSelector*.
+* `ANNOTATION AS TARGET` *id* - Only used on annotations, this is the inverse of the above `ANNOTATION` constraint. This constrains annotation based on having a specific annotation as target. That annotation is an older/lower annotation in the hierarchy formed by *AnnotationSelector*.
     * *id* - An annotation identifier
 * `UNION` *constraint* `OR` *constraint* ... - Constrain based on a union of constraints, meaning that only one of the constraints needs to be satisfied (disjunction). You can not just combine any constraints, constraints *MUST* have the same constraint type if they are to be used in a union.
 
@@ -174,7 +174,7 @@ SELECT ANNOTATION ?sentence WHERE
 }
 ```
 
-Given the same model, you can invert the two queries by using `ANNOTATIONTARGET` instead of `ANNOTATION`:
+Given the same model, you can invert the two queries by using `ANNOTATION AS TARGET` instead of `ANNOTATION`:
 
 ```
 
@@ -184,7 +184,7 @@ SELECT ANNOTATION ?word WHERE
     TEXT "fly"; {
 
     SELECT ANNOTATION ?sentence WHERE
-        ANNOTATIONTARGET ?word;
+        ANNOTATION AS TARGET ?word;
         DATA "myset" "type" = "sentence";
 
 }
@@ -239,5 +239,5 @@ Let us formalize the new constraints we have seen that are used in query composi
       Read this as, for instance: "X embeds Y", where X is the explicit variable in the constraint, which comes from a parent query, and Y is (implicitly) the variable selected in the current select statement.
 * `RESOURCE` *?x* - Constrain text based on a resource. The referenced parent query *MUST* have type `RESOURCE`.
 * `ANNOTATION` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation on Y" or "Y annotates X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement. Annotation Y *MUST* have been made before annotation X. The referenced parent query *MUST* have type `ANNOTATION`.
-* `ANNOTATIONTARGET` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation target of Y" or "X annotates Y" or "Y is an annotation on X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement.Annotation X *MUST* have been made before annotation Y. The referenced parent query *MUST* have type `ANNOTATION`.
+* `ANNOTATION AS TARGET` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation target of Y" or "X annotates Y" or "Y is an annotation on X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement.Annotation X *MUST* have been made before annotation Y. The referenced parent query *MUST* have type `ANNOTATION`.
 

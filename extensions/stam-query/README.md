@@ -27,6 +27,7 @@ A select statement has the following syntax
         * `DATA` - query annotation data
         * `TEXT` - query text selections
         * `RESOURCE` - query resources
+        * `KEY` - query data keys
     * *name* is an *OPTIONAL* parameter and associates a variable name to store the query results in. This is needed when you want to refer to the results of a query from a later *subquery*. The name **MUST** start with a `?` (like in SPARQL).
     * The `WHERE` keyword introduces a series of one or more *constraints*. Each constraint *MUST* end with a semicolon.
         * The `WHERE` statement (and constraints) may be omitted entirely if there are no constraints. These are then simply queries for all annotations, data, text or resources in the model.
@@ -36,18 +37,23 @@ A select statement has the following syntax
 A constraint start with a *type* keyword which identifies the nature of the constraint. Each constraint type takes a set of parameters, which *MUST* be separated by one or more spaces, newlines or tabs. Double quotes *MUST* be used when you want parameters to span over whitespace, literal double quotes inside that scope *MUST* be escaped by a preceding backslash character. We distinguish the following constraints and parameters:
 
 * `ID` *id* - Constrain based on a public identifier, this effectively selects a single exact item. It usually occurs as first and only constraint, as any further constraints make little sense in this case.
-* `DATA` *set* *key* *operator* *value* - Constrain based on annotation data.
+* `DATA` *set* *key* *operator* *value* - Constrain based on annotation data. In contexts where this could be ambiguous, it is about annotation that target the text in some way. If you are interested in the other interpretation, use qualifier `AS METADATA` (see next item).
     * *set* - The annotation dataset which holds the key (next parameter) to test against
     * *key* - The data key to query 
     * *operator* - The operator, may be one of `=`, `!=`,`>`,`<`, `>=`,`<=`. The operator and next value parameter are *optional*, if omitted, then all data pertaining to a datakey is selected.
     * *value* - The data value to test against. Numeric values (integers, floats) *MUST NOT* be quoted for them to be recognised as such. Multiple values may be specified and separated by a pipe character. If you want a literal pipe character in a value, you *MUST* escape it with a backslash.
+* `DATA AS METADATA` - Like above, but this constrains data associated with annotations that target the `RESOURCE`,  `KEY` or `DATA` item *as metadata* via respectively a *ResourceSelector*, *DataKeySelector*, or *AnnotationDataSelector*. It does not make sense in other contexts.
+* `KEY` *set* *key*  - Constrain based on a key. In contexts where this could be ambiguous, it is about annotation that target the text in some way. If you are interested in the other interpretation, use qualifier `AS METADATA` (see next item).
+* `KEY AS METADATA` - Like above, but this constrains keys associated with annotations that target the `RESOURCE`,  `KEY` or `DATA` item *as metadata* via respectively a *ResourceSelector*, *DataKeySelector*, or *AnnotationDataSelector*. It does not make sense in other contexts.
 * `TEXT` *text* - Constrain based on textual content
     *  *text* - Literal text to match (case sensitive)
 * `RESOURCE` *id* - Constrain based on the resource
+    * *id* - A resource identifier 
+* `RESOURCE AS METADATA` *id* - Only used with return type `ANNOTATION`. This selects annotations that target the resource via a *ResourceSelector*, i.e. to provide metadata on the resource as a whole.
     * *id* - A resource identifier
 * `ANNOTATION` *id* - Constraint based on pertaining to a particular annotation (in case of data, text or resources). When applied to annotations, this constrains based on having specific annotation as annotation. That annotation is a newer/higher annotation in the hierarchy formed by *AnnotationSelector*.
     * *id* - An annotation identifier
-* `ANNOTATION AS TARGET` *id* - Only used on annotations, this is the inverse of the above `ANNOTATION` constraint. This constrains annotation based on having a specific annotation as target. That annotation is an older/lower annotation in the hierarchy formed by *AnnotationSelector*.
+* `ANNOTATION AS TARGET` *id* - Only used with return type `ANNOTATION`, this is the inverse of the above `ANNOTATION` constraint. This constrains annotation based on having a specific annotation as target. That annotation is an older/lower annotation in the hierarchy formed by *AnnotationSelector*.
     * *id* - An annotation identifier
 * `UNION` *constraint* `OR` *constraint* ... - Constrain based on a union of constraints, meaning that only one of the constraints needs to be satisfied (disjunction). You can not just combine any constraints, constraints *MUST* have the same constraint type if they are to be used in a union.
 
@@ -194,7 +200,7 @@ The next example shows a complex query where we select a particular noun followe
 
 ```sparql
 SELECT RESOURCE ?book WHERE
-    DATA "myset" "name" = "Genesis|Exodus"; {
+    DATA AS METADATA "myset" "name" = "Genesis|Exodus"; {
 
 SELECT TEXT ?chapter WHERE 
     RESOURCE ?book

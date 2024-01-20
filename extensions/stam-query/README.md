@@ -2,7 +2,8 @@
 
 ## Introduction
 
-This STAM extension defines a query language that allows end-users to formulate and subsequently execute searches on a STAM model.
+This STAM extension defines a query language that allows end-users to formulate
+and subsequently execute searches on a STAM model.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
 NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
@@ -11,13 +12,20 @@ RFC 2119.
 
 ## Data Model
 
-Implementation of this extension is *RECOMMENDED* to result in an extra **Query** class that lives alongside the data model. However, this STAMQL specification does not prescribe how this should be implemented.
+Implementation of this extension is *RECOMMENDED* to result in an extra
+**Query** class that lives alongside the data model. However, this STAMQL
+specification does not prescribe how this should be implemented.
 
 ## Language specification
 
-The query language draws inspiration from query languages like SQL, SPARQL, FQL (FoLiA Query Language), and more functionally rather than syntactically, from Text Fabric.
+The query language draws inspiration from query languages like SQL, SPARQL, FQL
+(FoLiA Query Language), and more functionally rather than syntactically, from
+Text Fabric.
 
-A query consists of one or more *statements*, at this stage, each statement is introduced by a *keyword* which *MUST* be in upper-case. Only a single statement exist currently: the `SELECT` statement, but in later versions we envision there will also be statements to modify the STAM model.
+A query consists of one or more *statements*, at this stage, each statement is
+introduced by a *keyword* which *MUST* be in upper-case. Only a single
+statement exist currently: the `SELECT` statement, but in later versions we
+envision there will also be statements to modify the STAM model.
 
 A select statement has the following syntax
 
@@ -34,7 +42,12 @@ A select statement has the following syntax
         * All constraints must be satisfied.
     * A query *MAY* have one *subquery*, it *MUST* be scoped inside curly braces, if there is no subquery, the curly braces *MUST* be omitted too.
 
-A constraint start with a *type* keyword which identifies the nature of the constraint. Each constraint type takes a set of parameters, which *MUST* be separated by one or more spaces, newlines or tabs. Double quotes *MUST* be used when you want parameters to span over whitespace, literal double quotes inside that scope *MUST* be escaped by a preceding backslash character. We distinguish the following constraints and parameters:
+A constraint start with a *type* keyword which identifies the nature of the
+constraint. Each constraint type takes a set of parameters, which *MUST* be
+separated by one or more spaces, newlines or tabs. Double quotes *MUST* be used
+when you want parameters to span over whitespace, literal double quotes inside
+that scope *MUST* be escaped by a preceding backslash character. We distinguish
+the following constraints and parameters:
 
 * `ID` *id* - Constrain based on a public identifier, this effectively selects a single exact item. It usually occurs as first and only constraint, as any further constraints make little sense in this case.
 * `DATA` *set* *key* *operator* *value* - Constrain based on annotation data. In contexts where this could be ambiguous, it is about annotation that target the text in some way. If you are interested in the other interpretation, use qualifier `AS METADATA` (see next item).
@@ -58,7 +71,8 @@ A constraint start with a *type* keyword which identifies the nature of the cons
     * *id* - An annotation identifier
 * `UNION` *constraint* `OR` *constraint* ... - Constrain based on a union of constraints, meaning that only one of the constraints needs to be satisfied (disjunction). You can not just combine any constraints, constraints *MUST* have the same constraint type if they are to be used in a union.
 
-The above was a rather formal specification, let's consider some examples, note that the indentation in the examples is conventional and not normative:
+The above was a rather formal specification, let's consider some examples, note
+that the indentation in the examples is conventional and not normative:
 
 *select all occurrences of the text "fly"*
 
@@ -145,9 +159,13 @@ All example queries in this specification are in *executable form*.
 
 ## Query composition
 
-A single query is not always expressive enough to retrieve the data you a looking for. STAMQL solves this by allowing
-for each query statement to have a *subquery*. A subquery is evaluated in the context of its parent query. Programatically, 
-a subquery can be interpreted as a nested `for` loop. When using subqueries, we need the ability to name our query results (which we have hitherto neglected in the examples). Subqueries *MUST* have at least one constraint that links it to its parent.
+A single query is not always expressive enough to retrieve the data you a
+looking for. STAMQL solves this by allowing for each query statement to have a
+*subquery*. A subquery is evaluated in the context of its parent query.
+Programatically, a subquery can be interpreted as a nested `for` loop. When
+using subqueries, we need the ability to name our query results (which we have
+hitherto neglected in the examples). Subqueries *MUST* have at least one
+constraint that links it to its parent.
 
 Consider the following example:
 
@@ -162,11 +180,16 @@ SELECT TEXT ?sentence WHERE
 }
 ```
 
-Here we explicitly select sentences with a particularly annotated text in it. Both named variables *MUST* be explicitly returned in the query's result rows.
+Here we explicitly select sentences with a particularly annotated text in it.
+Both named variables *MUST* be explicitly returned in the query's result rows.
 
 
 
-We can also make use of explicit hierarchical relationships between annotations if these are modelled via an *AnnotationSelector*. The following query illustrates an alternative to the above if sentences are modelled as an explicit annotation (composite selector with annotation selectors) on words.
+We can also make use of explicit hierarchical relationships between annotations
+if these are modelled via an *AnnotationSelector*. The following query
+    illustrates an alternative to the above if sentences are modelled as an
+    explicit annotation (composite selector with annotation selectors) on
+    words.
 
 ```
 SELECT ANNOTATION ?sentence WHERE
@@ -197,7 +220,10 @@ SELECT ANNOTATION ?word WHERE
 }
 ```
 
-The next example shows a complex query where we select a particular noun followed by a verb, the combination occurring in a particular context (book, chapter, sentence). Details depend a bit on how things are modelled. We assume the books are modelled as separated resources, with annotations naming them:
+The next example shows a complex query where we select a particular noun
+followed by a verb, the combination occurring in a particular context (book,
+chapter, sentence). Details depend a bit on how things are modelled. We assume
+the books are modelled as separated resources, with annotations naming them:
 
 ```sparql
 SELECT RESOURCE ?book WHERE
@@ -230,14 +256,15 @@ SELECT TEXT ?vb WHERE
 }}}}
 ```
 
-The above needn't be the most efficient way and, as said, it depends on how things
-are modelled exactly, but this one reads easily in a top-down fashion. 
+The above needn't be the most efficient way and, as said, it depends on how
+things are modelled exactly, but this one reads easily in a top-down fashion. 
 
     
 
 ### Constraints in query composition
 
-Let us formalize the new constraints we have seen that are used in query composition, defining a relationship between a parent query and a subquery:
+Let us formalize the new constraints we have seen that are used in query
+composition, defining a relationship between a parent query and a subquery:
 
 * `DATA` *?x* - Constrain data based on a parent query. The referenced parent query *MUST* have type `DATA`.
 * `TEXT` *?x* - Constrain text based on a parent query. The referenced parent query *MUST* have type `TEXT`.

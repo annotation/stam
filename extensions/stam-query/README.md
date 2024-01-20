@@ -120,7 +120,8 @@ SELECT TEXT WHERE
     DATA "myset" "annotator" = "John Doe";
 ```
 
-Note: Unlike the previous example, here the two data constraint may be satisfied by different annotations, both targeting the same text selection.
+Note: Unlike the previous example, here the two data constraint may be
+satisfied by different annotations, both targeting the same text selection.
 
 *select all annotations of the text "fly" with data 'part-of-speech' = 'noun' or `verb`*
 
@@ -187,9 +188,9 @@ Both named variables *MUST* be explicitly returned in the query's result rows.
 
 We can also make use of explicit hierarchical relationships between annotations
 if these are modelled via an *AnnotationSelector*. The following query
-    illustrates an alternative to the above if sentences are modelled as an
-    explicit annotation (composite selector with annotation selectors) on
-    words.
+illustrates an alternative to the above if sentences are modelled as an
+explicit annotation (composite selector with annotation selectors) on
+words.
 
 ```
 SELECT ANNOTATION ?sentence WHERE

@@ -42,7 +42,7 @@ A select statement has the following syntax
         * All constraints must be satisfied.
     * A query *MAY* have one *subquery*, it *MUST* be scoped inside curly braces, if there is no subquery, the curly braces *MUST* be omitted too.
 
-A constraint start with a *type* keyword which identifies the nature of the
+A constraint starts with a *type* keyword which identifies the nature of the
 constraint. Each constraint type takes a set of parameters, which *MUST* be
 separated by one or more spaces, newlines or tabs. Double quotes *MUST* be used
 when you want parameters to span over whitespace, literal double quotes inside
@@ -52,7 +52,7 @@ the following constraints and parameters:
 * `ID` *id* - Constrain based on a public identifier, this effectively selects a single exact item. It usually occurs as first and only constraint, as any further constraints make little sense in this case.
 * `DATA` *set* *key* *operator* *value* - Constrain based on annotation data. In contexts where this could be ambiguous, it is about annotation that target the text in some way. If you are interested in the other interpretation, use qualifier `AS METADATA` (see next item).
     * *set* - The annotation dataset which holds the key (next parameter) to test against
-    * *key* - The data key to query 
+    * *key* - The data key to query.
     * *operator* - The operator, may be one of `=`, `!=`,`>`,`<`, `>=`,`<=`. The operator and next value parameter are *optional*, if omitted, then all data pertaining to a datakey is selected.
     * *value* - The data value to test against. Numeric values (integers, floats) *MUST NOT* be quoted for them to be recognised as such. Multiple values may be specified and separated by a pipe character. If you want a literal pipe character in a value, you *MUST* escape it with a backslash.
 * `DATA AS METADATA` - Like above, but this constrains data associated with annotations that target the `RESOURCE`,  `KEY` or `DATA` item *as metadata* via respectively a *ResourceSelector*, *DataKeySelector*, or *AnnotationDataSelector*. It does not make sense in other contexts.
@@ -61,6 +61,10 @@ the following constraints and parameters:
 * `KEY AS METADATA` - Like above, but this constrains keys associated with annotations that target the `RESOURCE`,  `KEY` or `DATA` item *as metadata* via respectively a *ResourceSelector*, *DataKeySelector*, or *AnnotationDataSelector*. It does not make sense in other contexts.
 * `TEXT` *text* - Constrain based on textual content
     *  *text* - Literal text to match (case sensitive)
+* `TEXT AS NOCASE` *text* - Constrain based on textual content
+    *  *text* - Literal text to match (case insensitive)
+* `TEXT AS REGEX` *text* - Constrain based on textual content
+    *  *regex* - Regular expression following [this syntax](https://docs.rs/regex/latest/regex/#syntax). This is not yet normative but it is what current implementations use.
 * `RESOURCE` *id* - Constrain based on the resource
     * *id* - A resource identifier 
 * `RESOURCE AS METADATA` *id* - Only used with return type `ANNOTATION`. This selects annotations that target the resource via a *ResourceSelector*, i.e. to provide metadata on the resource as a whole.
@@ -100,6 +104,13 @@ SELECT ANNOTATION WHERE
 ```sparql
 SELECT ANNOTATION WHERE
     DATA "myset" "part-of-speech" = "noun";
+```
+
+*select all annotations with any 'part-of-speech' tag (ad-hoc vocab!)*
+
+```sparql
+SELECT ANNOTATION WHERE
+    DATA "myset" "part-of-speech";
 ```
 
 *select all annotations with data 'part-of-speech' = 'noun' made by a certain annotator (ad-hoc vocab!)*
@@ -269,6 +280,7 @@ composition, defining a relationship between a parent query and a subquery:
 
 * `DATA` *?x* - Constrain data based on a parent query. The referenced parent query *MUST* have type `DATA`.
 * `TEXT` *?x* - Constrain text based on a parent query. The referenced parent query *MUST* have type `TEXT`.
+* `KEY` *?x* - Constrain text based on a parent query. The referenced parent query *MUST* have type `KEY`.
 * `RELATION` *?x* *relation* - Constrains based on a textual relationship
     * *relation* is a keyword of: `EMBEDS`, `OVERLAPS`, `PRECEDES`, `SUCCEEDS`, `BEFORE`, `AFTER`, `SAMEBEGIN`, `SAMEEND`, `EQUALS`
       Read this as, for instance: "X embeds Y", where X is the explicit variable in the constraint, which comes from a parent query, and Y is (implicitly) the variable selected in the current select statement.

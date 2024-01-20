@@ -50,15 +50,16 @@ that scope *MUST* be escaped by a preceding backslash character. We distinguish
 the following constraints and parameters:
 
 * `ID` *id* - Constrain based on a public identifier, this effectively selects a single exact item. It usually occurs as first and only constraint, as any further constraints make little sense in this case.
+* `DATA` *set* *key* - Constrain based on a key, regardless of its value. In contexts where this could be ambiguous, it is about annotation that target the text in some way. If you are interested in the other interpretation, use qualifier `AS METADATA` (see next item).
+    * *set* - The annotation dataset which holds the key (next parameter) to test against
+    * *key* - The data key to test for.
 * `DATA` *set* *key* *operator* *value* - Constrain based on annotation data. In contexts where this could be ambiguous, it is about annotation that target the text in some way. If you are interested in the other interpretation, use qualifier `AS METADATA` (see next item).
     * *set* - The annotation dataset which holds the key (next parameter) to test against
     * *key* - The data key to query.
-    * *operator* - The operator, may be one of `=`, `!=`,`>`,`<`, `>=`,`<=`. The operator and next value parameter are *optional*, if omitted, then all data pertaining to a datakey is selected.
+    * *operator* - The operator, may be one of `=`, `!=`,`>`,`<`, `>=`,`<=`. The operator and next value parameter are *optional*, if omitted, then all data pertaining to a datakey is selected (as shown in the previous item)
     * *value* - The data value to test against. Numeric values (integers, floats) *MUST NOT* be quoted for them to be recognised as such. Multiple values may be specified and separated by a pipe character. If you want a literal pipe character in a value, you *MUST* escape it with a backslash.
 * `DATA AS METADATA` - Like above, but this constrains data associated with annotations that target the `RESOURCE`,  `KEY` or `DATA` item *as metadata* via respectively a *ResourceSelector*, *DataKeySelector*, or *AnnotationDataSelector*. It does not make sense in other contexts.
-* `VALUE` *operator* *value* - Constraint based on a data test, like `DATA`, but this is used in contexts where the key is already a give, like `SELECT KEY`.
-* `KEY` *set* *key*  - Constrain based on a key. In contexts where this could be ambiguous, it is about annotation that target the text in some way. If you are interested in the other interpretation, use qualifier `AS METADATA` (see next item).
-* `KEY AS METADATA` - Like above, but this constrains keys associated with annotations that target the `RESOURCE`,  `KEY` or `DATA` item *as metadata* via respectively a *ResourceSelector*, *DataKeySelector*, or *AnnotationDataSelector*. It does not make sense in other contexts.
+* `VALUE` *operator* *value* - Constraint based on a data test, like `DATA`, but this is used in contexts where the key is already a given, like `SELECT KEY` queries.
 * `TEXT` *text* - Constrain based on textual content
     *  *text* - Literal text to match (case sensitive)
 * `TEXT AS NOCASE` *text* - Constrain based on textual content
@@ -287,4 +288,3 @@ composition, defining a relationship between a parent query and a subquery:
 * `RESOURCE` *?x* - Constrain text based on a resource. The referenced parent query *MUST* have type `RESOURCE`.
 * `ANNOTATION` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation on Y" or "Y annotates X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement. Annotation Y *MUST* have been made before annotation X. The referenced parent query *MUST* have type `ANNOTATION`.
 * `ANNOTATION AS TARGET` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation target of Y" or "X annotates Y" or "Y is an annotation on X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement.Annotation X *MUST* have been made before annotation Y. The referenced parent query *MUST* have type `ANNOTATION`.
-

@@ -86,13 +86,13 @@ Various constraints can also be used with variables. Variables come from parent 
 
 * `DATA` *?x* - Constrain data based on a parent query. The referenced parent query *MUST* have type `DATA`. The `AS METADATA` qualifier is allowed here too.
 * `TEXT` *?x* - Constrain text based on a parent query. The referenced parent query *MUST* have type `TEXT`.
-* `KEY` *?x* - Constrain text based on a parent query. The referenced parent query *MUST* have type `KEY`. The `AS METADATA` qualifier is allowed here too.
+* `KEY` *?x* - Constrain keys based on a parent query. The referenced parent query *MUST* have type `KEY`. The `AS METADATA` qualifier is allowed here too.
 * `RELATION` *?x* *relation* - Constrains based on a textual relationship
     * *relation* is a keyword of: `EMBEDS`, `OVERLAPS`, `PRECEDES`, `SUCCEEDS`, `BEFORE`, `AFTER`, `SAMEBEGIN`, `SAMEEND`, `EQUALS`
       Read this as, for instance: "X embeds Y", where X is the explicit variable in the constraint, which comes from a parent query, and Y is (implicitly) the variable selected in the current select statement.
-* `RESOURCE` *?x* - Constrain text based on a resource. The referenced parent query *MUST* have type `RESOURCE`.
+* `RESOURCE` *?x* - Constrain resources based on a parent query. The referenced parent query *MUST* have type `RESOURCE`.
 * `ANNOTATION` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation on Y" or "Y annotates X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement. Annotation Y *MUST* have been made before annotation X. The referenced parent query *MUST* have type `ANNOTATION`.
-* `ANNOTATION AS TARGET` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation target of Y" or "X annotates Y" or "Y is an annotation on X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement.Annotation X *MUST* have been made before annotation Y. The referenced parent query *MUST* have type `ANNOTATION`. You can also use `ANNOTAITON AS METADATA` as a synonym here.
+* `ANNOTATION AS TARGET` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation target of Y" or "X annotates Y" or "Y is an annotation on X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement.Annotation X *MUST* have been made before annotation Y. The referenced parent query *MUST* have type `ANNOTATION`. You can also use `ANNOTATION AS METADATA` as a synonym here.
 
 ## Examples
 

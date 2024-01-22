@@ -12,7 +12,7 @@ RFC 2119.
 
 ## Data Model
 
-Implementation of this extension is *RECOMMENDED* to result in an extra
+Implementation of this extension is *RECOMMENDED* to add an extra
 **Query** class that lives alongside the data model. However, this STAMQL
 specification does not prescribe how this should be implemented.
 
@@ -22,7 +22,11 @@ The query language draws inspiration from query languages like SQL, SPARQL, FQL
 (FoLiA Query Language), and more functionally rather than syntactically, from
 Text Fabric.
 
-A query consists of one or more *statements*, at this stage, each statement is
+We start with a formal specification of the query language. In the section
+after we will show some examples to make things clearer. You may skip this
+section and move to that one if you want to just get an impression.
+
+A query consists of one or more *statements*, each statement is
 introduced by a *keyword* which *MUST* be in upper-case. Only a single
 statement exist currently: the `SELECT` statement, but in later versions we
 envision there will also be statements to modify the STAM model.
@@ -30,17 +34,18 @@ envision there will also be statements to modify the STAM model.
 A select statement has the following syntax
 
 * `SELECT` *type* *name* `WHERE` *constraint*`;` `{` *subquery* `}`
-    * *type* denotes what the return type of the query is and is one of the following keywords:
+    * *type* denotes what the result type of the query is, the type of data it returns, and is set by one of the following keywords:
         * `ANNOTATION` - query annotations
         * `DATA` - query annotation data
         * `TEXT` - query text selections
         * `RESOURCE` - query resources
         * `KEY` - query data keys
-    * *name* is an *OPTIONAL* parameter and associates a variable name to store the query results in. This is needed when you want to refer to the results of a query from a later *subquery*. The name **MUST** start with a `?` (like in SPARQL).
+        * `DATASET` - query annotation datasets.
+    * *name* is an *OPTIONAL* parameter and associates a variable name to store the query results in. This is needed when you want to refer to the results of a query from a later *subquery*. The variable name **MUST** start with a `?` (like in SPARQL).
     * The `WHERE` keyword introduces a series of one or more *constraints*. Each constraint *MUST* end with a semicolon.
-        * The `WHERE` statement (and constraints) may be omitted entirely if there are no constraints. These are then simply queries for all annotations, data, text or resources in the model.
-        * All constraints must be satisfied.
-    * A query *MAY* have one *subquery*, it *MUST* be scoped inside curly braces, if there is no subquery, the curly braces *MUST* be omitted too.
+        * The `WHERE` clause (and underlying constraints) may be omitted entirely if there are no constraints. These are then simply queries for all annotations, data, text or resources in the model.
+        * All constraints ain the `WHERE` clause must be satisfied.
+    * A query *MAY* have one *subquery*, it *MUST* be scoped inside curly braces, if there is no subquery, the curly braces *MUST* be omitted as well.
 
 A constraint starts with a *type* keyword which identifies the nature of the
 constraint. Each constraint type takes a set of parameters, which *MUST* be
@@ -72,12 +77,28 @@ the following constraints and parameters:
     * *id* - A resource identifier
 * `ANNOTATION` *id* - Constraint based on pertaining to a particular annotation (in case of data, text or resources). When applied to annotations, this constrains based on having specific annotation as annotation. That annotation is a newer/higher annotation in the hierarchy formed by *AnnotationSelector*.
     * *id* - An annotation identifier
-* `ANNOTATION AS TARGET` *id* - Only used with return type `ANNOTATION`, this is the inverse of the above `ANNOTATION` constraint. This constrains annotation based on having a specific annotation as target. That annotation is an older/lower annotation in the hierarchy formed by *AnnotationSelector*.
+* `ANNOTATION AS TARGET` *id* - Only used with return type `ANNOTATION`, this is the inverse of the above `ANNOTATION` constraint. This constrains annotation based on having a specific annotation as target. That annotation is an older/lower annotation in the hierarchy formed by *AnnotationSelector*. Alternatively, you can use `ANNOTATION AS METADATA` as a synonym.
+    * An extra qualifier `RECURSIVE` can be added (before the identifier), to search recursively in the annotation hierarchy rather than just one level.
     * *id* - An annotation identifier
 * `UNION` *constraint* `OR` *constraint* ... - Constrain based on a union of constraints, meaning that only one of the constraints needs to be satisfied (disjunction). You can not just combine any constraints, constraints *MUST* have the same constraint type if they are to be used in a union.
 
-The above was a rather formal specification, let's consider some examples, note
-that the indentation in the examples is conventional and not normative:
+Various constraints can also be used with variables. Variables come from parent queries (assuming the current query is a subquery), as will be explained layer in the section on query composition, or from context variables that have been injected by other means:
+
+* `DATA` *?x* - Constrain data based on a parent query. The referenced parent query *MUST* have type `DATA`. The `AS METADATA` qualifier is allowed here too.
+* `TEXT` *?x* - Constrain text based on a parent query. The referenced parent query *MUST* have type `TEXT`.
+* `KEY` *?x* - Constrain text based on a parent query. The referenced parent query *MUST* have type `KEY`. The `AS METADATA` qualifier is allowed here too.
+* `RELATION` *?x* *relation* - Constrains based on a textual relationship
+    * *relation* is a keyword of: `EMBEDS`, `OVERLAPS`, `PRECEDES`, `SUCCEEDS`, `BEFORE`, `AFTER`, `SAMEBEGIN`, `SAMEEND`, `EQUALS`
+      Read this as, for instance: "X embeds Y", where X is the explicit variable in the constraint, which comes from a parent query, and Y is (implicitly) the variable selected in the current select statement.
+* `RESOURCE` *?x* - Constrain text based on a resource. The referenced parent query *MUST* have type `RESOURCE`.
+* `ANNOTATION` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation on Y" or "Y annotates X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement. Annotation Y *MUST* have been made before annotation X. The referenced parent query *MUST* have type `ANNOTATION`.
+* `ANNOTATION AS TARGET` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation target of Y" or "X annotates Y" or "Y is an annotation on X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement.Annotation X *MUST* have been made before annotation Y. The referenced parent query *MUST* have type `ANNOTATION`. You can also use `ANNOTAITON AS METADATA` as a synonym here.
+
+## Examples
+
+The above was a formal specification, let's consider some examples to get a
+better grasp of how STAMQL works, note that the indentation in the examples is
+conventional and not normative:
 
 *select all occurrences of the text "fly"*
 
@@ -100,7 +121,7 @@ SELECT ANNOTATION ?noun WHERE
     DATA "myset" "part-of-speech" = "noun";
 ```
 
-*select all annotations with any 'part-of-speech' tag (ad-hoc vocab!)*
+*select all annotations with any 'part-of-speech' tag (ad-hoc vocab!), regardless of the value*
 
 ```sparql
 SELECT ANNOTATION WHERE
@@ -264,20 +285,3 @@ SELECT TEXT ?vb WHERE
 
 The above needn't be the most efficient way and, as said, it depends on how
 things are modelled exactly, but this one reads easily in a top-down fashion. 
-
-    
-
-### Constraints in query composition
-
-Let us formalize the new constraints we have seen that are used in query
-composition, defining a relationship between a parent query and a subquery:
-
-* `DATA` *?x* - Constrain data based on a parent query. The referenced parent query *MUST* have type `DATA`.
-* `TEXT` *?x* - Constrain text based on a parent query. The referenced parent query *MUST* have type `TEXT`.
-* `KEY` *?x* - Constrain text based on a parent query. The referenced parent query *MUST* have type `KEY`.
-* `RELATION` *?x* *relation* - Constrains based on a textual relationship
-    * *relation* is a keyword of: `EMBEDS`, `OVERLAPS`, `PRECEDES`, `SUCCEEDS`, `BEFORE`, `AFTER`, `SAMEBEGIN`, `SAMEEND`, `EQUALS`
-      Read this as, for instance: "X embeds Y", where X is the explicit variable in the constraint, which comes from a parent query, and Y is (implicitly) the variable selected in the current select statement.
-* `RESOURCE` *?x* - Constrain text based on a resource. The referenced parent query *MUST* have type `RESOURCE`.
-* `ANNOTATION` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation on Y" or "Y annotates X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement. Annotation Y *MUST* have been made before annotation X. The referenced parent query *MUST* have type `ANNOTATION`.
-* `ANNOTATION AS TARGET` *?x* - Constrain annotations based on explicit hierarchical relationships between annotations (following `AnnotationSelector`), Read this as "X is an annotation target of Y" or "X annotates Y" or "Y is an annotation on X", where X is the explicit variable in the constraint that comes from a parent query, and Y the variable selected in the current select statement.Annotation X *MUST* have been made before annotation Y. The referenced parent query *MUST* have type `ANNOTATION`.

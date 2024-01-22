@@ -210,8 +210,6 @@ SELECT TEXT ?sentence WHERE
 Here we explicitly select sentences with a particularly annotated text in it.
 Both named variables *MUST* be explicitly returned in the query's result rows.
 
-
-
 We can also make use of explicit hierarchical relationships between annotations
 if these are modelled via an *AnnotationSelector*. The following query
 illustrates an alternative to the above if sentences are modelled as an
@@ -257,7 +255,7 @@ SELECT RESOURCE ?book WHERE
     DATA AS METADATA "myset" "name" = "Genesis|Exodus"; {
 
 SELECT TEXT ?chapter WHERE 
-    RESOURCE ?book
+    RESOURCE ?book;
     DATA "myset" "type" = "chapter";
     DATA "myset" "number" 2; {
 

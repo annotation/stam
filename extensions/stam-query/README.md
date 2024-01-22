@@ -86,24 +86,17 @@ SELECT TEXT WHERE
     TEXT "fly";
 ```
 
-*select all resources that contain the text "fly"*
-
-```sparql
-SELECT RESOURCE WHERE
-    TEXT "fly";
-```
-
-*select all annotations that contain the text "fly"*
+*select all annotations that target the text "fly"*
 
 ```sparql
 SELECT ANNOTATION WHERE
     TEXT "fly";
 ```
 
-*select all annotations with data 'part-of-speech' = 'noun' (ad-hoc vocab!)*
+*select all annotations with data 'part-of-speech' = 'noun' (ad-hoc vocab!), bind the result to a variable (`?noun`)*
 
 ```sparql
-SELECT ANNOTATION WHERE
+SELECT ANNOTATION ?noun WHERE
     DATA "myset" "part-of-speech" = "noun";
 ```
 

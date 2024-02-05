@@ -7,6 +7,8 @@
 
 # STAM: Stand-off Text Annotation Model
 
+**TL;DR:** For a short introduction see the [project website](https://annotation.github.io/stam/).
+
 ## Introduction
 
 STAM is a data model for **stand-off text annotation**. The underlying premise

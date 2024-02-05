@@ -116,7 +116,8 @@ to facilitate an efficient implementation. We refer to the following
 implementations:
 
 * [stam-rust](https://github.com/annotation/stam-rust) - A STAM library written in Rust, aims to be a *full STAM implementation* with high performance and *memory-based* storage model.
-* [stam-python](https://github.com/annotation/stam-python) - A STAM Library for Python. This is not an independent implementation but it is a Python binding to the above Rust library.
+    * [stam-python](https://github.com/annotation/stam-python) - A STAM Library for Python. This is not a full independent implementation but it is a Python binding to the above Rust library.
+    * [stam-tools](https://github.com/annotation/stam-tools) - A set of STAM commmand line tools implement on top of the Rust library. This is not a full independent implementation but adds extra functionality on top of the Rust library and offers a command-line interface.
 
 Please read the [Functionality](#Functionality) section further down to see a
 specification of requirements for implementations.

@@ -211,7 +211,6 @@ class DataKey {
 
 enum DataValue {
     Null
-    Id(value: str)
     String(value: str)
     Bool(value: bool)
     Int(value: int)

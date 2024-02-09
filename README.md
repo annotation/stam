@@ -168,7 +168,7 @@ Both types of identifiers, by definition, *MUST* be unique within their scope:
 The following overriding constraints apply only for compatibility with RDF:
 
 *  The public identifier of annotations, resources, annotation datasets, *MUST* be an [IRI](https://datatracker.ietf.org/doc/html/rfc3987)
-*  The public identifier of keys *MUST* be able to be transformation into an IRI as follows:
+*  The public identifier of keys *MUST* be able to be transformed into an IRI as follows:
     * It it already an IRI by itself (no transformation necessary).
     * It forms an IRI when appended to the public identifier of the annotation data set. If identifier of the annotation data set does not end in `/` or `#`, an extra `/` *SHOULD* be inserted as delimiter in the concatenation.
 *  There *SHOULD* be a public identifier for each `Annotation`

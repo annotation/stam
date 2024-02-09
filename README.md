@@ -148,19 +148,30 @@ Some notes to interpret the diagram:
 
 ### Identifiers
 
-Many of the items carry two identifiers. The first is an actual *public identifier* intended to be persistent and usable for data exchange, this
-is an arbitrary string and is *OPTIONAL*.
+Many of the items carry two identifiers. The first is an actual *public
+identifier* intended to be persistent and usable for data exchange, this is an
+arbitrary string and is *OPTIONAL*.
 
-The second is a *private identifier*, an internal numeric identifier which serves for particular implementations but should not be used outside of the context of a
-particular implementation. We refer to this one as `_id`, starting with an underscore to indicate it's internal. It is part of the *extended model* rather than the *core model*.
+The second is a *private identifier*, an internal numeric identifier which
+serves for particular implementations but should not be used outside of the
+context of a particular implementation. We refer to this one as `_id`, starting
+with an underscore to indicate it's internal. It is part of the *extended
+model* rather than the *core model*.
 
-Both identifiers, by definition, *MUST* be unique, though the private identifiers need only be unique within a certain local implementation context.
+Both types of identifiers, by definition, *MUST* be unique within their scope:
+
+* The scope for the *private identifiers* is a local implementation context. They carry no meaning outside of an implementation.
+* The scope for *public identifiers* of keys (`DataKey`) and annotation data (`AnnotationData`)
+  is the annotation dataset (`AnnotationDataSet`) in which they live. That means that two keys may have the same public identifier as long as they are in different sets. 
+* The scope for *public identifiers* of annotations (`Annotation`), resources (`TextResource`) and annotation data set (`AnnotationDataSet`) is the AnnotationStore. It is *RECOMMENDED* for these identifiers to be globally unique. 
 
 The following overriding constraints apply only for compatibility with RDF:
 
-*  The public identifier *MUST* be an [IRI](https://datatracker.ietf.org/doc/html/rfc3987)
-*  Each public identifier *MUST* be globally unique 
-*  There *MUST* be a public identifier for each **Annotation**
+*  The public identifier of annotations, resources, annotation datasets, *MUST* be an [IRI](https://datatracker.ietf.org/doc/html/rfc3987)
+*  The public identifier of keys *MUST* be able to be transformation into an IRI as follows:
+    * It it already an IRI by itself (no transformation necessary).
+    * It forms an IRI when appended to the public identifier of the annotation data set. If identifier of the annotation data set does not end in `/` or `#`, an extra `/` *SHOULD* be inserted as delimiter in the concatenation.
+*  There *SHOULD* be a public identifier for each `Annotation`
 
 ### Offsets
 
@@ -352,14 +363,10 @@ reason for this separate class is only to enable performant implementation with
 a minimal memory footprint; allowing the full key ID to be stored in memory only once instead of for
 each instance it is used.
 
-It is *RECOMMENDED* for implementations to support an additional boolean
-property `indexed`, which indicates whether implementations should or should
-not compute an index for this key.
-
 The following overriding constraints apply only for compatibility with RDF:
 
-*  The public identifier *MUST* be an [IRI](https://datatracker.ietf.org/doc/html/rfc3987) identifying a property.
-*  Each public identifier *MUST* be globally unique.
+*  The public identifier *MUST* be either be an [IRI](https://datatracker.ietf.org/doc/html/rfc3987) identifying a property, or it can be turned into one by appending it to the identifier of the data set the key is part, following the concatenation rules explained in the identifiers section.
+*  The resulting public identifier *SHOULD* be globally unique.
 
 ### Enum: DataValue
 
@@ -367,7 +374,6 @@ This ``DataValue`` class encapsulates data values along with their data types, a
 It can be set to one of the following:
 
 * ``Null()`` - No value
-* ``Id(value: str)`` - A public identifier (when used with RDF, this *MUST* be an IRI). This *SHOULD NOT* be used to refer to annotations in the STAM model.
 * ``String(value: str)``- String
 * ``Int(value: int)`` - Integer number
 * ``Bool(value: bool)`` - Boolean

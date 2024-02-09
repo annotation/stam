@@ -1,0 +1,241 @@
+{
+    "@type": "AnnotationDataSet",
+    "@id": "http://www.w3.org/ns/anno.jsonld",
+    "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "creator",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "generator",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "rights",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "homepage",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "created",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "generated",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "modified",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "sourceDate",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "sourceDateStart",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "sourceDateEnd",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "motivation",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "purpose",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "audience",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "scope",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "textDirection",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "language",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "processingLanguage",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "value",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "name",
+        },
+        {
+          "@type": "DataKey",
+          "@id": "label",
+        },
+    ],
+    "data": [
+        {
+            "@type": "AnnotationData",
+            "@id": "assessing",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "assessing",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "bookmarking",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "bookmarking",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "classifying",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "classifying",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "classifying",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "classifying",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "commenting",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "commenting",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "describing",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "describing",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "editing",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "editing",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "highlighting",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "highlighting",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "identifying",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "identifying",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "linking",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "linking",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "moderating",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "moderating",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "questioning",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "questioning",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "replying",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "replying",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "tagging",
+            "key": "motivation",
+            "value": {
+                "@type": "String",
+                "value": "tagging",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "autoDirection",
+            "key": "textDirection",
+            "value": {
+                "@type": "String",
+                "value": "autoDirection",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "ltrDirection",
+            "key": "textDirection",
+            "value": {
+                "@type": "String",
+                "value": "ltrDirection",
+            }
+        },
+        {
+            "@type": "AnnotationData",
+            "@id": "rtlDirection",
+            "key": "textDirection",
+            "value": {
+                "@type": "String",
+                "value": "rtlDirection",
+            }
+        },
+    ]
+}

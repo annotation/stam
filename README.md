@@ -386,6 +386,11 @@ Note that there is no ``Map`` type to associate further nested key/value pairs. 
 you want to express nested relations, you *MUST* use `Annotation`s on
 `Annotation`s (i.e. using `AnnotationSelector`).
 
+The following overriding constraints apply for RDF:
+
+* Any String value that is a valid [IRI](https://datatracker.ietf.org/doc/html/rfc3987) *SHOULD* be interpreted as such
+  in conversion from/to RDF.
+
 ## Extended Data Model
 
 The classes in this next section are all part of the *extended data model* and are auxiliary

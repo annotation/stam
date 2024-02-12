@@ -37,12 +37,12 @@ This extension does not specify any extensions to the STAM data model itself -
 the core model suffices - instead, it defines some data annotation sets and
 protocols for conversion.
 
-## Mapping STAM to WebAnnotation
+## Mapping STAM to Web Annotation
 
 JSON-LD is the preferred serialization format for Web Annotation, using the
-context definition `http://www.w3.org/ns/anno.jsonld`. This extension defines
-how to serialize STAM to valid Web Annotations in JSON-LD. Note that although
-STAM JSON looks very similar to JSON-LD, it is not.
+context definition `http://www.w3.org/ns/anno.jsonld`. This STAM extension
+defines how to serialize STAM to valid Web Annotations in JSON-LD. Note that
+although STAM JSON looks very similar to JSON-LD, it is not.
 
 For interoperability with Web Annotations, you can reuse a lot of the
 vocabulary defined in `http://www.w3.org/ns/anno.jsonld` from within STAM. We prescribe that you
@@ -92,7 +92,7 @@ This translates to the following Web Annotation (JSON-LD):
 You're not limited to only the w3anno set, it is merely a convenience if you
 want to directly reuse terms defined in their JSON-LD context definition, and
 their use is *RECOMMENDED* if you know in advance you want to export to web
-annotations. Aside from these, you *MAY* use any RDF property as a key or value
+annotations. Aside from these, you *MAY* use any RDF predicate/object as a key/value
 as we established mapping rules for public identifiers in STAM and IRIs. 
 
 Web Annotations have the notion of *body*  which corresponds more or less to what is
@@ -103,16 +103,18 @@ there is multiple data associated with an annotation, they *SHOULD* translate to
 (If conversely, translating Web Annotations to STAM, multiple bodies *SHOULD* be translated
 to multiple STAM annotations).
 
-As shown in the first examples above, implementations of this extension *SHOULD*
-convert annotation data in the w3anno set (`http://www.w3.org/ns/anno.jsonld`)
-to properties directly on the web annotation *if and only if* these properties
-are commonly expressed on the web annotation. Any other properties *SHOULD* go
-into the `body` scope. As this can not be unambiguously determined,
-implementations have a fair degree of freedom in which properties they assign to the
-annotation as a whole, and which to a body (e.g. by parametrising this).
+In the first examples above we showed that `creator` was mapped directly onto
+the annotation (rather than the body); implementations of this extension
+*SHOULD* convert annotation data in the w3anno set
+(`http://www.w3.org/ns/anno.jsonld`) to properties directly on the web
+annotation *if and only if* these properties are commonly expressed on the web
+annotation. Any other properties *SHOULD* go into the `body` scope. As this can
+not be unambiguously determined, implementations have a fair degree of freedom
+in choosing which properties they assign to the annotation as a whole, and which to a
+body (e.g. by parametrising this).
 
 Consider the next STAM JSON excerpt where we do not use the w3anno set but
-other sets that map to RDF:
+other sets that map to RDF via the mapping rules:
 
 ```json
 {
@@ -149,7 +151,7 @@ This translates to the following Web Annotation (JSON-LD):
     "body": {
         "type": "DataSet",
         "https://example.org/my-set/valuation": "I like this part!",
-        "https://example.org/my-set/contentRating": 5,
+        "https://schema.org/contentRating": 5,
     },
     "target": {
         ...
@@ -159,7 +161,7 @@ This translates to the following Web Annotation (JSON-LD):
 
 This example shows a few other things
 
-* The `type: DataSet` triple, which is *RECOMMENDED*. 
+* The body has `type: DataSet`, which is *RECOMMENDED*. 
 * The JSON-LD keys will be full IRIs as they are not part of the context. Implementations *MAY* generate additional context and use aliases.
 * The STAM dataset's public identifier and key public identifier have been joined to form a valid RDF URI,
 this *SHOULD* be done by concatenating them, adding a `/` in the middle *if and only if* the set identifier does not already end in `/` or `#`. 
@@ -269,16 +271,17 @@ This translates to the following Web Annotation (JSON-LD):
 ```
 
 The underlying coordinate system for STAM's `TextSelector` and w3anno's
-`TextPositionSelector` are identical (unicode points). STAM's `TextSelector`
-however, offers more expressive power, any `stam:EndAlignedCursor` *MUST* first
-be resolved to its absolute (begin-aligned) position. 
+`TextPositionSelector` are identical (unicode points, 0-indexed, end
+non-inclusive). STAM's `TextSelector` however, offers more expressive power,
+any `stam:EndAlignedCursor` *MUST* first be resolved to its absolute
+(begin-aligned) position. 
 
 ### Higher-order annotation and relative offsets
 
 STAM allows formulating annotations relative to the annotations that contain
-them (the `AnnotationSelector` supports selecting text offsets relative to
-the target annotation), such as words relative to sentences. This we call
-higher-order annotation with relative offsets. 
+them; the `AnnotationSelector` supports selecting text offsets relative to the
+target annotation. This can for example be used for expressing words relative
+to sentences. This we call higher-order annotation with relative offsets. 
 
 An example of this can be found [here](../../examples/explicit_containment_rdf.json).
 This has two annotations in STAM JSON, the first expresses a
@@ -307,11 +310,12 @@ In STAM we have the notion of *complex selectors*, a selector which selects mult
 This is either a  `MultiSelector` or `DirectionalSelector`, `CompositeSelector`.
 
 The [Web Annotation Data Model](https://www.w3.org/TR/annotation-model/) does
-not describe a clear unequivocal mechanism for referencing multiple targets. The underlying
-Web Annotation Vocabulary, however, does propose some solutions in section D.
-These, however, are not normative for the Web Annotation standard. They do make
-for the best and easiest translation when mapping from/to STAM. We therefore
-consider them *RECOMMENDED*:
+not describe a clear unequivocal mechanism for referencing multiple targets.
+The underlying [Web Annotation
+Vocabulary](https://www.w3.org/TR/annotation-vocab/), however, does propose
+some solutions in section D. These, however, are not normative for the Web
+Annotation standard. They do make for the best and easiest translation when
+mapping from/to STAM. We therefore consider them *RECOMMENDED*:
 
 * [oa:Composite](https://www.w3.org/TR/annotation-vocab/#composite) can be used for STAM's `CompositeSelector`.
 * [oa:Independents](https://www.w3.org/TR/annotation-vocab/#independents) can be used for STAM's `MultiSelector`.
@@ -385,17 +389,27 @@ This would translate to the following JSON-LD except for Web Annotations. As the
 }
 ```
 
-Do consider that due to this being non-normative in the Web Annotation specification, it may not be implemented widely.
+Do consider that due to this being non-normative in the Web Annotation
+specification, it may not be implemented widely.
+
+A `MultiSelector` *MAY* also be mapped simply to multiple `target` elements in
+the WebAnnotation output. Recall that this means that the annotation applies to
+all of targets equally, individually and independently.
 
 ### Limitations
-
-When mapping STAM to Web Annotations:
 
 * A `stam:AnnotationDataSet` itself can not be mapped to Web Annotations (out of
   scope), this also goes for any annotations using `stam:DataSetSelector`.
 * Public identifiers for `AnnotationData` are lost. This also implies that annotations using `stam:AnnotationDataSelector` can not be converted. The same also applied to `stam:DataKeySelector`. All these, however, are more interesting for STAM's internal model and out of scope for Web Annotations.
 
-When mapping Web Annotations to STAM:
+## Mapping Web Annotation to STAM
+
+Mapping Web Annotation to STAM generally follows the inverse of what we have
+already seen. However, Web Annotation and RDF upon which it builds forms a
+broader model than STAM typically provides, so not all that can be expressed
+there can be unambiguously expressed in STAM terms. 
+
+### Limitations 
 
 * As Web Annotations does not have the concept of annotation data set,
   implementations *SHOULD* allow users to associate some annotation data sets
@@ -414,8 +428,6 @@ When mapping Web Annotations to STAM:
   STAM `TextSelector` if deemed possible.
 
 ### Functionality
-
-For mapping Web Annotation to STAM:
 
 * Implementations *MUST* implement proper JSON-LD parsing for Web Annotations
 * Implementations *SHOULD* use a proper RDF triple store as a foundation

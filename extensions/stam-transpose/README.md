@@ -96,7 +96,7 @@ Likewise, you *MAY* also cover more than two text resources. Text selections
 *MAY* be sourced from multiple heterogeneous resources rather than all from a
 single one.
 
-### Segmentation
+### Resegmentation
 
 The STAM Transpose extension also defines **resegmentation**, because it is
 prerequisite for some types of transposition, as will be illustrated later. A

@@ -101,9 +101,6 @@ The following are currently defined:
 * [STAM-Textvalidation](extensions/stam-textvalidation) - Adds an extra redundancy layer that helps protecting data integrity and aids readability of serialisations 
 * [STAM-CSV](extensions/stam-csv) - Defines an alternative serialisation format using CSV.
 * [STAM Query Language (STAMQL)](extensions/stam-query) - This STAM extension defines a query language that allows end-users to formulate and subsequently execute searches on a STAM model. 
-
-The following are proposed:
-
 * [STAM-Transpose](extensions/stam-transpose) - This is an extension on top of STAM that allows linking identical textual parts across resources, which we call transposition. This extension defines a vocabulary and prescribes functionality enabled through this vocabulary.
 
 Implementations *SHOULD* explicitly state which extensions they support.

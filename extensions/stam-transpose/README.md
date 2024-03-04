@@ -107,12 +107,11 @@ We introduce the following key in the set ``https://w3id.org/stam/extensions/sta
 
 * `Resegmentation` (type: `Null`) - An annotation that *MUST* use a
   `DirectionalSelector` or `CompositeSelector` with underneath two
-  `AnnotationSelector`s to target exactly two annotations. Both annotations
-  *MUST* target the exact same text in the same resource(s) (using another
-  `DirectionalSelector`, `CompositeSelector` or directly using `TextSelector`), but can do so using different text
-  selectors.  The complex selectors at these level *MAY* therefore have a different
-  number of items on each side and unlike in transpositions, no one-to-one
-  relation is presumed between the items.
+  `AnnotationSelector`s to target two or more annotations. These annotations
+  *MUST* all target the exact same text, in the same order, in the same resource(s) (using another
+  `DirectionalSelector`, `CompositeSelector` or directly using `TextSelector`), but can cover the same text using different text selections. The complex selectors at these level *MAY* have a different
+  number of text selections on each side and unlike in transpositions, no one-to-one
+  relation is presumed between these items.
 
 The following image illustrates resegmentation:
 
@@ -162,7 +161,7 @@ original annotation as one of its sides (e.g. as one of the annotations in its
 complex selector). However, this is not always possible, as this particular
 example illustrates: If the original annotation references the text "know and"
 in resource C as a single text selection, it can by definition of how
-transpositions are defined not map two two text selections on the other side
+transpositions are defined not map two text selections on the other side
 (an exact one-to-one mapping between items in the complex selector of a
 transposition is *REQUIRED*). Although these type of transpositions *MUST* be
 supported, we then end up with a situation where the original annotation can

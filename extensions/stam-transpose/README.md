@@ -124,7 +124,7 @@ STAM implementations implementing this extension *MUST* provide the following fu
 
 * A transpose function that maps any arbitrary text selection(s) or annotation(s) (that refers to text selection(s)) over a (third) transposition. This effectively translates items in one coordinate system to another.
     * The function *MUST* produce transposed text selection(s)/annotation(s) as output.
-    * This function *MUST* itself be able produce a transposition as its output (linking to the above output), this effectively links to two text selections/annotations and is useful at least for keeping provenance information intact. The user *SHOULD* be able to ignore this output if not deemed needed for his/her use-case.
+    * This function *MUST* itself be able produce a transposition as its output (linking to the above output), this effectively links to two text selections/annotations and is useful at least for keeping provenance information intact. The user *SHOULD* be able to ignore this output if not deemed needed for his/her use-case. The function *SHOULD* also be able to output an additional resegmentation if resegmentation is necessary. (explained at the end of this section)
     * Transposing text selections or annotations is not possible if parts of the text selection(s)/annotation(s) is not covered by the transposition. In such cases the transpose function *MUST* reject operation with an error.
 
 To illustrate the transpose function on the basis of the schema shown earlier, assume we select the text selection *"know and"* in the derived resource C, we use red dashed lines to mark this in the next schema:

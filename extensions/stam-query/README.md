@@ -80,7 +80,7 @@ the following constraints and parameters:
 * `ANNOTATION AS TARGET` *id* - Only used with return type `ANNOTATION`, this is the inverse of the above `ANNOTATION` constraint. This constrains annotation based on having a specific annotation as target. That annotation is an older/lower annotation in the hierarchy formed by *AnnotationSelector*. Alternatively, you can use `ANNOTATION AS METADATA` as a synonym.
     * An extra qualifier `RECURSIVE` can be added (before the identifier), to search recursively in the annotation hierarchy rather than just one level.
     * *id* - An annotation identifier
-* `[` *constraint* ` OR ` *constraint* `]` - Constrain based on a union of constraints, meaning that only one of the constraints needs to be satisfied (disjunction). You can not just combine any constraints, constraints *MUST* have the same constraint type if they are to be used in a union.
+* `[` *constraint* ` OR ` *constraint* `]` - Constrain based on a union of constraints, meaning that only one of the constraints needs to be satisfied (disjunction). 
 
 Various constraints can also be used with variables. Variables come from parent queries (assuming the current query is a subquery), as will be explained layer in the section on query composition, or from context variables that have been injected by other means:
 

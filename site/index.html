@@ -409,9 +409,13 @@ store<strong>.save()</strong>
         </p>
 
         <p>
-        Efforts are ongoing for increased interoperability with <a href="https://www.w3.org/TR/annotation-model/">W3C Web Annotations</a>
+        We seek a fair degree of interoperability with <a href="https://www.w3.org/TR/annotation-model/">W3C Web Annotations</a>
         , linked open data in general, <a href="https://proycon.github.io/folia">FoLiA</a>, 
         <a href="https://tei-c.org/">Text Encoding Initiative (TEI)</a>, <a href="https://universaldependencies.org/format.html">CoNLL-U</a> and <a href="https://github.com/annotation/text-fabric">Text Fabric</a>.
+        Various converters and mappings to this end have been implemented, such as a W3C Web Annotation exporter (<a
+        href="https://github.com/annotation/stam/tree/master/extensions/stam-webannotations">specification</a>), and a
+        generic XML importer that effectively <em>untangles</em> an XML file with inline annotations (like TEI) and splits it into 
+        plain text and stand-off annotations.
         </p>
 
     </div> <div class="right">
@@ -462,7 +466,9 @@ Type       Id  Text    TextSelection     testset/pos
         <h2>Querying &amp; Visualisation</h2>
 
         <p><a href="https://github.com/annotation/stam-tools">Tools</a> are also provided for querying and visualisation. A <a href="https://github.com/annotation/stam/tree/master/extensions/stam-query">STAM Query Language
-        (STAMQL)</a> is available to that end. Visualisation works either in the browser (HTML) or in the terminal (ANSI text).</p>
+        (STAMQL)</a> is available to that end. Visualisation works either in the browser (HTML) or in the terminal (ANSI text), and is 
+        also exposed via <a href="https://github.com/annotation/stam-python">stam-python</a> for use in for example Jupyter Notebooks.
+        </p>
 
 <pre class="inline">
 <strong>$</strong> stam view --query <em>'SELECT RESOURCE ?res'</em> \
@@ -475,6 +481,32 @@ Type       Id  Text    TextSelection     testset/pos
     <img style="width: 320px;" src="assets/stamview.png" alt="visualisation of an annotation in the browser" />
     <img style="width: 320px;" src="assets/stamview2.png" alt="visualisation of an annotation on the terminal" />
 
+
+    </div>
+
+    </section>
+
+    <section class="left">
+
+    <div class="left">
+
+        <h2>Computing with Annotations</h2>
+
+        <p>
+        STAM, through its Rust and Python library and the command line tools, offers a lot of functionality for various <em>computations</em> on text and their annotations.
+
+        <ul>
+            <li>Conversion between character <em>offsets</em> in a relative frame (any text selection/annotation) and absolute frame (the full resource text), as well as 
+                conversion between UTF-8 byte offsets and unicode characters offers.</li>
+            <li>Computation of <em>spatial relationships</em> between text selections/annotations, e.g. embedding, overlap, adjacency, and retrieval of annotations bases on such relationships (also via STAMQL).</li>
+            <li>Common regular-expression based text search (also via STAMQL).</li>
+            <li>Automatic <em>alignment</em> two or more similar texts (Smith-Waterman/Needleman-Wunsch) and automatic <a
+                    href="https://github.com/annotation/stam/blob/master/extensions/stam-transpose/README.md">transposition</a> of annotations
+                from one text to another, following such an alignment.</li>
+            <li><a href="https://github.com/annotation/stam/tree/master/extensions/stam-textvalidation/README.md">Validation</a> of the integrity of stand-off annotations. Do they still point to the right text?</li>
+        </ul>
+
+        </p>
 
     </div>
 

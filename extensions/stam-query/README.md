@@ -180,8 +180,8 @@ SELECT ANNOTATION WHERE
 
 ### Constraints by Data
 
-**Syntax (1):** `DATA` *set* *key*
-**Syntax (2):** `DATA` *set* *key* *operator* *value*
+* **Syntax (1):** `DATA` *set* *key*
+* **Syntax (2):** `DATA` *set* *key* *operator* *value*
 
 The first form constrains based on a key, regardless of its value. In contexts where this could be ambiguous (like `RESOURCE`), it is about annotation that target the text in some way. Parameters are:
  
@@ -227,8 +227,8 @@ to resort to more complex query composition (see later).
 
 There are two more forms, using the qualifier `AS METADATA`:
 
-**Syntax (3):** `DATA AS METADATA` *set* *key*
-**Syntax (4):** `DATA AS METADATA` *set* *key* *operator* *value*
+* **Syntax (3):** `DATA AS METADATA` *set* *key*
+* **Syntax (4):** `DATA AS METADATA` *set* *key* *operator* *value*
 
 Whereas forms 1 and 2 test data that pertains to text (following a *TextSelector*), 3 and 4 test against data associated with annotations that target the (result type) `RESOURCE`,  `KEY` or `DATA` item *as metadata* via respectively a *ResourceSelector*, *DataKeySelector*, or *AnnotationDataSelector*. It does not make sense in other contexts.
 
@@ -243,13 +243,13 @@ Compare this to this following example, which would instead select resources tha
 
 ```sparql
 SELECT RESOURCE ?res WHERE
-    DATA "myset" "author" = "John Doe";
+    DATA "myset" "author" = "John Doe";and aim
 ```
 
 The last form is used with a variable, the variable must come from a `DATA` or `KEY` context here. This is explained in *Query Composition*.
 
-**Syntax (5):** `DATA` *variable*
-**Syntax (6):** `DATA AS METADATA` *variable*
+* **Syntax (5):** `DATA` *variable*
+* **Syntax (6):** `DATA AS METADATA` *variable*
 
 ### Constraints by Data Value only
 

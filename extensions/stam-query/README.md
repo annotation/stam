@@ -289,6 +289,8 @@ In a `TEXT` context, you can further specify `OFFSET` *begin* *end* to select a 
 
 The above two constraints are equivalent and are only used in `ANNOTATION` context. This is the inverse of the above `ANNOTATION` constraint. It constrains an annotation based on having a specific annotation as target. That annotation is an older/lower annotation in the hierarchy formed by *AnnotationSelector*. 
 
+**Note:** An extra qualifier `RECURSIVE` can be added (before the identifier), to search recursively in the annotation hierarchy rather than just one level.
+
 There are also forms used with variables, the variable must come from a `TEXT` or `ANNOTATION` context here. This is explained in *Query Composition*:
 
 * **Syntax (5):**: `ANNOTATION` *variable* 

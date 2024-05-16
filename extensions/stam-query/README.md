@@ -70,9 +70,9 @@ We distinguish three types of queries, they are introduced via one of the follow
 
 A select query follows the following syntax (simplified, the formal grammar shown earlier will be more precise). We show three forms, each adds some further optional components:
 
-* `SELECT` *type* *name*
-* `SELECT` *type* *name* `WHERE` *constraint*`;` 
-* `SELECT` *type* *name* `WHERE` *constraint*`;` `{` *subquery* `}`
+* `SELECT` *type* *name*?
+* `SELECT` *type* *name*? `WHERE` (*constraint*`;`)+
+* `SELECT` *type* *name*? `WHERE` (*constraint*`;`)+ `{` *subquery* `}`
 
 *type* denotes what the result type of the query is, the type of data it
 returns, and is set by one of the following keywords:
@@ -156,7 +156,7 @@ form implementations yet).
 
 We will now explain the various constraint there are in STAMQL. Each *MUST* be
 introduced by a keyword that identifies the nature of the constraint, then it has a set of parameters, which
-*MUST* be seperated by whitespace.
+*MUST* be separated by whitespace.
 
 We distinguish constraints listed below and describe their parameters and the
 contexts in which they can be used. When we things like say *in context of
@@ -510,4 +510,57 @@ For ease of interpretation, you could read the word *this* or the variable from 
 
 ### Delete Query
 
+A query to delete anything (annotations, resources, annotation data, etc..) from the model is introduced with the `DELETE` keyword.
+
+* **Syntax:** `DELETE` *type* *variable* `{` *subquery* `}`
+
+The subquery *SHOULD* be a `SELECT` statement that selects the items to be deleted. It may itself also consist of subqueries. The variable from the `DELETE` statement *MUST* refer to the variable that is bound to in any of the subqueries.
+
+**Example:**  *Delete a single annotation with a specific ID*
+
+```sparql
+DELETE ANNOTATION ?a { 
+    SELECT ANNOTATION ?a 
+        WHERE ID "A1"; 
+}
+```
+
+The types in the `DELETE` query and the subquery must typically correspond, but where possible implementations *SHOULD* derive them if they don't match (e.g. `ANNOTATION` from `TEXT`).
+
+A `DELETE` query does not return any results itself.
+
 ### Add Query
+
+Adding anything (annotation, resources, annotation data, etc..) to the model is accomplished with an `ADD` query.
+
+* **Syntax:** `ADD` *type* *result-variable*? `WITH` (assignment`;`) `{` *subquery* `}`
+
+The optional result-variable expresses the variable that will be used in
+returning the results, i.e. the added items. The *type* expresses both the
+result type and, by definition, the type of what is added.
+
+`SELECT` queries take a `WHERE` clause followed by constraints, `ADD` queries,
+on the other hand, take a `WITH` clause followed by *assignments*.
+
+The following assignments exist, multiple are allowed, each *MUST* end with a semicolon. 
+
+* `DATA` *set* *key* *value*?  - Associates annotation data with the new annotation. Usable in `ANNOTATION` context. If no *value* is provided, it will be set to NULL.
+* `ID` *identifier* - Assigns an identifier to the new item. Usable in `ANNOTATION`, `RESOURCE`, `DATASET` context.
+* `TARGET` *variable* - The variable refers to a single variable in the subquery (or any subqueries thereof). It determines what it being annotated. A target is *REQUIRED* in `ANNOTATION` context.
+* `COMPOSITE`  - This assignment, if used, *MUST* come *prior* to any `TARGET` assignments, and indicates that a Composite Selector will be created over *multiple* targets. If multiple `TARGET` items are encountered, this is the default unless any of the below are encountered.
+* `MULTI`  - This assignment, if used, *MUST* come *prior* to any `TARGET` assignments, and indicates that a Multi Selector will be created over *multiple* targets. Applying to each individually and independently.
+* `DIRECTIONAL`  - This assignment, if used, *MUST* come *prior* to any `TARGET` assignments, and indicates that a Directional Selector will be created over *multiple* targets. Applying to all in the exact order specified.
+
+A subquery is *REQUIRED* in an `ANNOTATION` context and selects the items that are to be annotated:
+
+**Example:**  *Tag all instances of the word 'electrocution' as noun*
+
+```sparql
+ADD ANNOTATION ?a WITH 
+    DATA "myset" "part-of-speech" "noun"; 
+    DATA "myset" "author" "me"; 
+    TARGET ?x; 
+{
+    SELECT TEXT ?x WHERE 
+        TEXT "electrocution";
+}";

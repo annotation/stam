@@ -563,4 +563,4 @@ ADD ANNOTATION ?a WITH
 {
     SELECT TEXT ?x WHERE 
         TEXT "electrocution";
-}";
+};

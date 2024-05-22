@@ -247,6 +247,26 @@
               font-weight: 700;
               src: url('assets/roboto-v30-latin-700italic.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
             }
+
+            @media print {
+                #navbar {
+                    display: none;
+                }
+                #cover #logo, .huclogo, .clariahlogo {
+                    display: none;
+                }
+                section {
+                    flex-direction: column;
+                }
+                h1 {
+                    filter: none;
+                }
+                section.left, section.right {
+                    background: #fffff;
+                    filter: none;
+                    border-bottom: 1px solid black;
+                }
+            }
         </style>
     </head>
 </html>

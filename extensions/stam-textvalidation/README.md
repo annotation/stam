@@ -17,15 +17,15 @@ RFC 2119.
 ## Vocabulary
 
 This extension defines an annotation dataset with ID `https://w3id.org/stam/extensions/stam-textvalidation/`.
-In this set we define the following keys, using either one of them is *RECOMMENDED* by this extension:
+In this set we define the following keys, the use of `checksum` over `text` is *RECOMMENDED* by this extension:
 
+* ``checksum``: The SHA-1 checksum of the text of the annotation. We use SHA-1 because it is *fast* and *small enough* (40 bytes). It does not offer strong cryptographic security though.
 * ``text``: The exact text of the current annotation
 * ``delimiter``: The delimiter to use to concatenate text selections in case the current annotation has a complex selector. If this key is not supplied, concatenation *MUST* proceed without delimiter.
-* ``checksum``: The SHA-1 checksum of the text of the annotation. We use SHA-1 because it is *fast* and *small enough* (40 bytes). It does not offer strong cryptographic security though.
 
 The advantage of `text` over `checksum` is that it is directly interpretable
-and facilitates readability of a serialisation. However, for large texts
-the overhead may become a nuisance and a `checksum` may be more appropriate.
+and facilitates readability of a serialisation. For any other purposes, 
+the overhead quickly becomes a nuisance and a `checksum` is appropriate, the latter is therefore *RECOMMENDED*.
 
 ## Functionality
 
@@ -33,4 +33,3 @@ Parser implementations, whenever encountering a `text` or `checksum` key in an a
 *MUST* verify if the text of the annotation matches the `text`
 property or the SHA-1 checksum in the `checksum` property. If not,
 implementations *SHOULD* raise a hard validation failure. 
-

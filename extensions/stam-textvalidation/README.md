@@ -17,19 +17,25 @@ RFC 2119.
 ## Vocabulary
 
 This extension defines an annotation dataset with ID `https://w3id.org/stam/extensions/stam-textvalidation/`.
-In this set we define the following keys, the use of `checksum` over `text` is *RECOMMENDED* by this extension:
+In this set we define the following keys:
 
-* ``checksum``: The SHA-1 checksum of the text of the annotation. We use SHA-1 because it is *fast* and *small enough* (40 bytes). It does not offer strong cryptographic security though.
-* ``text``: The exact text of the current annotation
+* ``checksum``: The SHA-1 checksum of the text of the annotation, in hexadecimal representation (lower case). We use SHA-1 because it is *fast* and *small enough* (40 bytes). It does not offer strong cryptographic security though. Use of this field is *RECOMMENDED* for texts longer than 40 bytes.
+* ``text``: The exact text of the current annotation. Use of this field is *RECOMMENDED* for texts shorter than 40 bytes.
 * ``delimiter``: The delimiter to use to concatenate text selections in case the current annotation has a complex selector. If this key is not supplied, concatenation *MUST* proceed without delimiter.
 
 The advantage of `text` over `checksum` is that it is directly interpretable
-and facilitates readability of a serialisation. For any other purposes, 
-the overhead quickly becomes a nuisance and a `checksum` is appropriate, the latter is therefore *RECOMMENDED*.
+and facilitates readability of a serialisation. For large texts, 
+the overhead quickly becomes a nuisance and a `checksum` is appropriate.
+
+Annotation data using any of the above keys *MUST* be directly associated with the annotation they are validating, i.e.
+there *MUST NOT* be an extra Annotation and AnnotationSelector involved.
 
 ## Functionality
 
-Parser implementations, whenever encountering a `text` or `checksum` key in an annotation's data,
+Parser implementations, whenever encountering a `text` and/or `checksum` key in an annotation's data,
 *MUST* verify if the text of the annotation matches the `text`
-property or the SHA-1 checksum in the `checksum` property. If not,
+property and if the SHA-1 checksum in the `checksum` property matches the checksum of the text of the annotations. If not,
 implementations *SHOULD* raise a hard validation failure. 
+
+Implementations *MAY* dynamically chose use of either `text` or `checksum` based text-length, resulting in 
+an optimal.

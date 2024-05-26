@@ -357,6 +357,60 @@ SELECT ANNOTATION WHERE
     [ DATA "myset" "part-of-speech" = "noun" OR DATA "myset" "syntactic-unit" = "noun-phrase" ];
 ```
 
+### Limit Constraint
+
+* **Syntax (1)**: `LIMIT` *items*
+* **Syntax (2)**: `LIMIT` -*items*
+* **Syntax (3)**: `LIMIT` *begin* *end*
+
+This selects a subpart of a sequence, it comes in three forms. 
+
+* With a positive integer (`LIMIT` *n*), it returns the first *n* items.
+* With a negative integer (`LIMIT` *-n*), it returns the last *n* items.
+* With two integers (`LIMIT` *begin* *end*), it returns the items *begin* to *end* (0-indexed, non-inclusive end).
+  * The integers may be signed
+  * And `end` value of 0 is interpreted as *until the very end*.
+
+* **Example:** *Return the first sentence*
+
+```sparql
+SELECT ANNOTATION ?sentence WHERE
+    DATA "myset" "type" = "sentence";
+    LIMIT 1;
+```
+
+* **Example:** *Return the last two sentences*
+
+```sparql
+SELECT ANNOTATION ?a WHERE
+    DATA "myset" "type" = "sentence";
+    LIMIT -2;
+```
+
+* **Example:** *Return the second, third and fourth sentence*
+
+```sparql
+SELECT ANNOTATION ?a WHERE
+    DATA "myset" "type" = "sentence";
+    LIMIT 1 4;
+```
+
+* **Example:** *Return all sentences except the first*
+
+```sparql
+SELECT ANNOTATION ?a WHERE
+    DATA "myset" "type" = "sentence";
+    LIMIT 1 0;
+```
+
+* **Example:** *Return all sentences except the last*
+
+```sparql
+SELECT ANNOTATION ?a WHERE
+    DATA "myset" "type" = "sentence";
+    LIMIT 0 -1;
+```
+
 ### Query Composition
 
 A single query is not always expressive enough to retrieve the data you a

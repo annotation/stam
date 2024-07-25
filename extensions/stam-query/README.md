@@ -34,10 +34,11 @@ A STAM query follows the syntax as laid out below in [Extended Backus-Naur form]
 ```ebnf
 query ::= selectQuery | addQuery | deleteQuery
 
-selectQuery ::= "SELECT" resultType bindVariable? whereClause? subQuery
+selectQuery ::= "SELECT" resultType bindVariable? whereClause? subQueryBlock
 resultType ::= "ANNOTATION" | "DATA" | "TEXT" | "RESOURCE" | "KEY" | "DATASET" modifier?
 whereClause ::= "WHERE" (constraint ";")+
-subQuery ::= "{" query "}"
+subQueryBlock ::= "{" subQueries "}"
+subQueries ::= query | subQueries "|" query
 bindVariable ::= "?"[a-zA-Z0-9_]+
 literal = simpleLiteral | quotedLiteral 
 simpleLiteral ::= [a-zA-Z0-9_]
@@ -72,7 +73,7 @@ A select query follows the following syntax (simplified, the formal grammar show
 
 * `SELECT` *type* *name*?
 * `SELECT` *type* *name*? `WHERE` (*constraint*`;`)+
-* `SELECT` *type* *name*? `WHERE` (*constraint*`;`)+ `{` *subquery* `}`
+* `SELECT` *type* *name*? `WHERE` (*constraint*`;`)+ `{` *subqueries* `}`
 
 *type* denotes what the result type of the query is, the type of data it
 returns, and is set by one of the following keywords:
@@ -414,9 +415,14 @@ SELECT ANNOTATION ?a WHERE
 ### Query Composition
 
 A single query is not always expressive enough to retrieve the data you a
-looking for. STAMQL solves this by allowing for each query statement to have a
-*subquery*. A subquery is evaluated in the context of its parent query.
-Programatically, a subquery can be interpreted as a nested `for` loop. When
+looking for. STAMQL solves this by allowing for each query statement to have
+*subqueries*. A *subquery* is evaluated in the context of its parent query.
+Subqueries *MUST* be in a subquery block marked by curly braces, i.e. it that
+starts with `{` and ends with `}`. If such a block is used, there *MUST* be one
+or more subqueries in it. Multiple subqueries are separated by a `|`.
+Subqueries can in turn have subqueries of their own.
+
+Programmatically, a subquery can be interpreted as a nested `for` loop. When
 using subqueries, we need the ability to name our query results (which we have
 hitherto neglected in the examples) and refer back to them via *variables*.
 Subqueries *MUST* have at least one constraint that links it to its parent (by means of a variable).
@@ -512,6 +518,16 @@ SELECT TEXT ?vb WHERE
 The above needn't be the most efficient way and, as said, it depends on how
 things are modelled exactly, but this one reads easily in a top-down fashion. 
 
+#### Multiple subqueries
+
+Multiple subqueries are allowed at the same level and are then separated by a
+pipe character (`|`). This will lead to a combinatorial explosion though if
+deeply nested. In the query results only one of the subqueries is returned in a
+result row at a time. In other words, subqueries at the same level (siblings)
+always behave as a disjunction.
+
+Subqueries *MUST NOT* reference any variables made in sibling-subqueries.
+
 ### Context variables
 
 In addition to the context variables from parent queries, STAMQL implementations
@@ -566,9 +582,9 @@ For ease of interpretation, you could read the word *this* or the variable from 
 
 A query to delete anything (annotations, resources, annotation data, etc..) from the model is introduced with the `DELETE` keyword.
 
-* **Syntax:** `DELETE` *type* *variable* `{` *subquery* `}`
+* **Syntax:** `DELETE` *type* *variable* `{` *subqueries* `}`
 
-The subquery *SHOULD* be a `SELECT` statement that selects the items to be deleted. It may itself also consist of subqueries. The variable from the `DELETE` statement *MUST* refer to the variable that is bound to in any of the subqueries.
+Each subquery *SHOULD* be a `SELECT` statement that selects the items to be deleted. It may itself also consist of deeper subqueries. The variable from the `DELETE` statement *MUST* refer to the variable that is bound to in any of the subqueries.
 
 **Example:**  *Delete a single annotation with a specific ID*
 
@@ -587,7 +603,7 @@ A `DELETE` query does not return any results itself.
 
 Adding anything (annotation, resources, annotation data, etc..) to the model is accomplished with an `ADD` query.
 
-* **Syntax:** `ADD` *type* *result-variable*? `WITH` (assignment`;`) `{` *subquery* `}`
+* **Syntax:** `ADD` *type* *result-variable*? `WITH` (assignment`;`) `{` *subqueries* `}`
 
 The optional result-variable expresses the variable that will be used in
 returning the results, i.e. the added items. The *type* expresses both the

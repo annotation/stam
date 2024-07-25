@@ -417,7 +417,7 @@ SELECT ANNOTATION ?a WHERE
 A single query is not always expressive enough to retrieve the data you a
 looking for. STAMQL solves this by allowing for each query statement to have
 *subqueries*. A *subquery* is evaluated in the context of its parent query.
-Subqueries *MUST* be in a subquery block marked by curly braces, i.e. it that
+Subqueries *MUST* be in a subquery block marked by curly braces, i.e. it 
 starts with `{` and ends with `}`. If such a block is used, there *MUST* be one
 or more subqueries in it. Multiple subqueries are separated by a `|`.
 Subqueries can in turn have subqueries of their own.

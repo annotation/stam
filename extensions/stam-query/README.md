@@ -518,6 +518,7 @@ SELECT TEXT ?vb WHERE
 The above needn't be the most efficient way and, as said, it depends on how
 things are modelled exactly, but this one reads easily in a top-down fashion. 
 
+
 #### Multiple subqueries
 
 Multiple subqueries are allowed at the same level and are then separated by a
@@ -526,7 +527,35 @@ deeply nested. In the query results only one of the subqueries is returned in a
 result row at a time. In other words, subqueries at the same level (siblings)
 always behave as a disjunction.
 
+
 Subqueries *MUST NOT* reference any variables made in sibling-subqueries.
+
+#### Optional subqueries
+
+You *MAY* mark a subquery as being optional by adding the qualifier `OPTIONAL`
+after the `SELECT` keyword. This means the query will return even if the
+subquery is not matched succesfully.
+
+The following example returns all sentences. If they have the word *fly* in it
+with a proper part-of-speech tag, that too will be returned. If not, you still
+get the sentences. Without `OPTIONAL`, you would only get sentences that
+include the word *fly*.
+
+```sparql
+SELECT TEXT ?sentence WHERE
+    DATA "myset" "type" = "sentence"; 
+{
+    SELECT OPTIONAL TEXT ?word WHERE
+        RELATION ?sentence EMBEDS;
+        DATA "myset" "part-of-speech" = "noun";
+        TEXT "fly";
+}
+```
+
+Multiple subqueries by definition are optional, in the sense that only one one
+them can apply at any time. You *SHOULD NOT* specify `OPTIONAL` in this case.
+However, if you want the query to return results even if *all* of the multiple
+subqueries fail, then add `OPTIONAL` keyword to all of them.
 
 ### Context variables
 

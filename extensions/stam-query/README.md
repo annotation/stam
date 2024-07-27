@@ -555,7 +555,7 @@ SELECT TEXT ?sentence WHERE
 Multiple subqueries by definition are optional, in the sense that only one one
 them can apply at any time. You *SHOULD NOT* specify `OPTIONAL` in this case.
 However, if you want the query to return results even if *all* of the multiple
-subqueries fail, then add `OPTIONAL` keyword to all of them.
+subqueries fail, then add the `OPTIONAL` keyword to all of them.
 
 ### Context variables
 

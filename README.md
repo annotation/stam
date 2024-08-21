@@ -731,7 +731,7 @@ Serialisation implementations *MAY* reproduce inline annotations as read during 
 
 Rather than have one big json file with the entire annotation store and all it
 references, serialisations *SHOULD* be split over multiple files, it is
-*RECOMMENDED* to have separate files for each annotation set and it is *RECOMMENDED* to keep the
+*RECOMMENDED* to have separate files for each annotation dataset and it is *RECOMMENDED* to keep the
 text resources in external files. Annotation instances *MAY* also be split over
 one or more external files. References to files are made by using the special key
 ``@include``, consider the Example A2 where the annotation store references
@@ -800,21 +800,85 @@ An example of the latter is shown below:
 }
 ```
 
-The ``@include`` statements can only be used  at the level of the
-`AnnotationStore` for `resources` or `annotationsets`. It *MUST NOT* be used in
-other place. Annotations themselves *MUST NOT* not be split from the
-AnnotationStore using separate `@include` statements, as they by definition
-require the context of both resources and annotation sets and can not stand on
-their own. They only make sense within an AnnotationStore context.
+The ``@include`` statements can only be used at the level of the
+`AnnotationStore` for `resources` or `annotationsets`, or at the root level
+(to be discussed later). It *MUST NOT* be used in other place. Annotations
+themselves *MUST NOT* not be split from the AnnotationStore using separate
+`@include` statements, as they by definition require the context of both
+resources and annotation sets and can not stand on their own. They only make
+sense within an AnnotationStore context.
 
 How to deal with annotations across multiple files then? It may be desirable
 not to keep all annotations in one basket, but have multiple. You *MAY* simply
 define multiple annotation stores in multiple STAM JSON files. Implementations
-*SHOULD* be able to load multiple annotation stores, although internally they
-*MAY* likely keep only a single one and effectively merge everything. When data
-is in conflict, e.g. annotation store A defines a text with id X and annotation
-store B defines the same text with ID X *but with a different text* content,
-then an error *SHOULD* be raised.
+*SHOULD* be able to load and merge multiple annotation stores into one. Implementations *SHOULD* also
+be able to serialise back into multiple stand-off annotation stores. This is again achieved via the
+`@include` mechanism, but now at the root level.
+
+The `@include` mechanism can at the root level expresses that annotation stores
+may include other annotation stores as *dependencies*. All resources, annotation
+datasets and annotations that are defined in these dependencies are available to
+the parent store as if they were defined in the parent store themselves.
+
+This mechanism *MUST* support recursion. So Store A can include store B and
+store B can in turn include store C. When using this mechanism, cyclic include
+references *MUST* be rejected with an error message. Multiple references to the
+same include from different places *MUST* be allowed as long as the acyclic
+nature is respected. In such cases, implementations *SHOULD* keep simply keep
+track of whether a file was already parsed, and not do it again.
+
+When any data is in conflict, e.g. annotation store A defines a text with id X
+and annotation store B defines the same text with ID X *but with a different
+text* content, then an error *SHOULD* be raised.
+
+An concise example of the `@include` mechanism at root level is shown below.
+
+First we show store A:
+
+```json
+{
+    "@type": "AnnotationStore",
+    "@id": "Example A",
+    "@include": "b.stam.store.json",
+    "resources":  [],
+    "annotationsets": [],
+    "annotations": [{
+        ...
+    }]
+}
+```
+
+The `@include` field *MUST* allow both a string type (file/URL), as well an
+array of strings in the case where multiple dependencies are desired. This
+latter case is only permitted at the root level and not in other cases of
+`@include`.
+
+Then store B (`b.stam.store.json`), which is a dependency for A:
+
+```json
+{
+    "@type": "AnnotationStore",
+    "@id": "Example B",
+    "resources":  [{
+        "@type": "TextResource",
+        "@id": "https://somewhere.over.the.rainbow/hello.txt",
+        "@include": "hello.txt"
+    }],
+    "annotationsets": [{
+        "@type": "AnnotationDataSet",
+        "@id": "https://somewhere.over.the.rainbow/myannotationset",
+        "@include": "my.annotationset.json"
+    }],
+    "annotations": []
+}
+```
+
+In this contrived example, store A does not define any resources or datasets,
+however, it inherits them from store B. So an annotation in A can make
+reference to those. This would also apply to annotations using an
+`AnnotationSelector`, annotations in store A can point to annotations actually
+defined in store B. This mechanism allows users to split data into stand-off
+files as they see fit.
 
 For resources, annotation datasets, as well as the merging of multiple
 annotation stores, implementations *SHOULD* implement the necessary bookkeeping

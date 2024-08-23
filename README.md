@@ -816,16 +816,19 @@ be able to serialise back into multiple stand-off annotation stores. This is aga
 `@include` mechanism, but now at the root level.
 
 The `@include` mechanism can at the root level expresses that annotation stores
-may include other annotation stores as *dependencies*. All resources, annotation
-datasets and annotations that are defined in these dependencies are available to
-the parent store as if they were defined in the parent store themselves.
+may include other annotation stores as *dependencies*, we call then these
+*substores*. All resources, annotation datasets and annotations that are
+defined in these dependencies are available to the parent store as if they were
+defined in the parent store themselves.
 
 This mechanism *MUST* support recursion. So Store A can include store B and
-store B can in turn include store C. When using this mechanism, cyclic include
-references *MUST* be rejected with an error message. Multiple references to the
-same include from different places *MUST* be allowed as long as the acyclic
-nature is respected. In such cases, implementations *SHOULD* keep simply keep
-track of whether a file was already parsed, and not do it again.
+store B can in turn include store C. When using the substore mechanism, cyclic
+include references *MUST* be rejected with an error message. Store A can not
+include store B which in turn includes store A. Multiple references to the same
+annotation store from different places *MUST* be allowed as long as the acyclic
+nature is respected, so A may include B and C when both B and C in turn include
+D. In such cases, implementations *SHOULD* keep simply keep track of whether a
+file was already parsed, and *MUST NOT* do it again.
 
 When any data is in conflict, e.g. annotation store A defines a text with id X
 and annotation store B defines the same text with ID X *but with a different
@@ -850,10 +853,11 @@ First we show store A:
 
 The `@include` field *MUST* allow both a string type (file/URL), as well an
 array of strings in the case where multiple dependencies are desired. This
-latter case is only permitted at the root level and not in other cases of
-`@include`.
+latter case is only permitted at the root level and not for the other uses of
+`@include`. The `@include` directive *MUST* occur before the `resources`,
+`annotationsets`, and `annotations` fields.
 
-Then store B (`b.stam.store.json`), which is a dependency for A:
+Next we show store B (`b.stam.store.json`), which is a dependency for/substore of A:
 
 ```json
 {
@@ -875,10 +879,17 @@ Then store B (`b.stam.store.json`), which is a dependency for A:
 
 In this contrived example, store A does not define any resources or datasets,
 however, it inherits them from store B. So an annotation in A can make
-reference to those. This would also apply to annotations using an
-`AnnotationSelector`, annotations in store A can point to annotations actually
-defined in store B. This mechanism allows users to split data into stand-off
-files as they see fit.
+reference to those. When using the `@include` mechanism at the root level, it
+is *RECOMMENDED* to also use it on the resource and annotation dataset level in
+all the substores. If this is the case, then multiple annotation stores *MAY*
+reference even the same resources/datasets with the same ID. If they are on the
+other hand defined inline, then they *MUST* be confined to one annotation
+store.
+
+Annotation substores for example allow annotations using an
+`AnnotationSelector` where annotations in store A point to annotations actually
+defined in store B. This mechanism allows users to split data into arbitrary
+stand-off files as they see fit.
 
 For resources, annotation datasets, as well as the merging of multiple
 annotation stores, implementations *SHOULD* implement the necessary bookkeeping

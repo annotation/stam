@@ -764,10 +764,9 @@ included files (json or plain text) *MUST* be encoded as UTF-8.
 If plain text files are included, this translates to a `TextResource` with the
 filename as ID. The filenames for `@include` adhere to the following constraints:
 
-* Relative filenames in `@include` statements are interpreted as
-  the implementation sees fit, usually relative to the current working directory
-  or some document root directory. 
-* Absolute filenames (stating with a slash) *MUST* be absolute on the
+* Relative filenames in `@include` statements *MUST* be interpreted relative
+  to the path of the Annotation Store that does the include.
+* Absolute filenames (starting with a slash) *MUST* be absolute on the
   filesystem but *MAY* be rejected by implementations (for example on security grounds).
 * URLs *MAY* be used, but implementations are *NOT REQUIRED* to
   implement networking logic and *MAY* reject this (it again has security

@@ -102,8 +102,7 @@ The following are currently defined:
 * [STAM-CSV](extensions/stam-csv) - Defines an alternative serialisation format using CSV.
 * [STAM Query Language (STAMQL)](extensions/stam-query) - This STAM extension defines a query language that allows end-users to formulate and subsequently execute searches on a STAM model. 
 * [STAM-Transpose](extensions/stam-transpose) - This is an extension on top of STAM that allows linking identical textual parts across resources, which we call transposition. This extension defines a vocabulary and prescribes functionality enabled through this vocabulary.
-
-Implementations *SHOULD* explicitly state which extensions they support.
+* [STAM-Translate](extensions/stam-translate) -  This is a more generic variant of transpositions, that allows relating any texts, even if not identical. It is useful for alignments of translations, corrections, normalisations, etc.. .This extension defines a vocabulary.
 
 ## Implementations
 

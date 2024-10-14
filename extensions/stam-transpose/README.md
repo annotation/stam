@@ -1,9 +1,9 @@
-# STAM-Transpose: Linking identical text selections across resources
+# STAM-Transpose: Linking identical text selections
 
 ## Introduction
 
 This is an extension on top of STAM that allows linking identical textual parts
-across resources, which we call *transposition*. This extension defines a
+(including across resources), which we call *transposition*. This extension defines a
 vocabulary and prescribes functionality enabled through this vocabulary. This
 extension does not alter the underlying core data model.
 
@@ -180,4 +180,5 @@ transposed variant:
 Transposition is by definition limited to relating text selections whilst
 preserving their textual content unmodified. It *MUST NOT* be used in cases
 where you want to relate text selections of a different nature, such as
-translations, transliterations, normalisations or corrections.
+translations, transliterations, normalisations or corrections. Use
+[translations (STAM-translate extension)](../stam-translate/README.md) for those.

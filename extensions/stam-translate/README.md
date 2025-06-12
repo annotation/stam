@@ -38,4 +38,4 @@ STAM implementations implementing this extension do not need to provide any spec
 ## Limitations
 
 Translations do not hold the same properties as transpositions do, i.e. you can not use them to transpose annotations over.
-If you want to map equal text in different places, then use [transposigions (STAM-transpose extension)](../stam-transpose/README.md) instead.
+If you want to map equal text in different places, then use [transpositions (STAM-transpose extension)](../stam-transpose/README.md) instead.

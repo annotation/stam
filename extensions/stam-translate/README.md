@@ -24,7 +24,7 @@ that describe translations are explicitly marked as being a translation by
 the following key in the annotation dataset with identifier
 ``https://w3id.org/stam/extensions/stam-translate/``:
 
-* `Translation` (type: `Null`) - Marks an annotation as being a transposition. A transposition *MUST* use a `DirectionalSelector` or `CompositeSelector`, with underneath an `TextSelector` to target two or more text selections directly. 
+* `Translation` (type: `Null`) - Marks an annotation as being a translation. A translation *MUST* use a `DirectionalSelector` or `CompositeSelector`, with underneath an `TextSelector` to target two or more text selections directly. 
 
 In case the translation is a natural language translation, this extension
 *RECOMMENDS* the use of the following key to identify the language:

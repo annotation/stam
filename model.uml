@@ -217,6 +217,7 @@ enum DataValue {
     Float(value: float)
     Datetime(value: datetime)
     List(value: [DataValue])
+    Map(value: {str,DataValue})
     --
     <i>Encapsulates a data value</i>
     <i>along with its type</i>
@@ -260,7 +261,7 @@ enum DataOperator <<functional>> {
     GreaterThanOrEqual(other: DataValue)
     LessThanOrEqual(other: DataValue)
     HasElement(other: DataValue)
-    HasElement(key: DataValue)
+    GetKey(key: DataValue, test: DataOperator?)
     And([DataOperator++])
     Or([DataOperator++])
     Not(DataOperator)

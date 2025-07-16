@@ -191,7 +191,7 @@ The first form constrains based on a key, regardless of its value. In contexts w
 
 The second form expands this and adds an actual test on the data value. 
 
-* *operator* - The operator, may be one of `=`, `!=`,`>`,`<`, `>=`,`<=`. The operator and next value parameter are *optional*, if omitted, then all data pertaining to a datakey is selected (as shown in the previous item)
+* *operator* - The operator, may be one of `=`, `!=`,`>`,`<`, `>=`,`<=`, `HAS`, `.` . The operator and next value parameter are *optional*, if omitted, then all data pertaining to a datakey is selected (as shown in the previous item)
 * *value* - The data value to test against. Numeric values (integers, floats) *MUST NOT* be quoted for them to be recognised as such. Multiple values may be specified and separated by a pipe character. If you want a literal pipe character in a value, you *MUST* escape it with a backslash.
 
 **Example:** *select all annotations that have the exact text "fly" and which are nouns*

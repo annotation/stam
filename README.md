@@ -377,15 +377,22 @@ It can be set to one of the following:
 * ``Datetime(value: datetime)`` - A date/time representation, compatible with ``xsd:datetime``.
 * The following are recursive collection types:
     * ``List(value: [DataValue])`` - An ordered list of multiple ``DataValue`` instances
+    * ``Map(value: {key: str, value: DataValue})`` - A key/value map, containing one or more ``DataValue`` instances. This was introduced in STAM v1.2.
 
-Note that there is no ``Map`` type to associate further nested key/value pairs. If
-you want to express nested relations, you *MUST* use `Annotation`s on
-`Annotation`s (i.e. using `AnnotationSelector`).
+Note that the ``Map`` type to associate further nested key/value pairs *SHOULD
+NOT* be used to express deeper annotations on annotations; for those you
+*MUST* use `Annotation`s on `Annotation`s (i.e. using `AnnotationSelector`)
+instead. The map type's use limited to grouping inter-dependent data together.
+Note that a map does not reuse `DataKey` instances, which implies that the keys
+in this map are not heavily optimised to the extent that the datakeys are,
+neither do they carry dataset information. A map *SHOULD* be interpreted as an
+entity as a whole and is not optimised for deeper search/indexing or for
+associating further schema information.
 
-The following overriding constraints apply for RDF:
+The following notes/constraints apply for RDF conversion:
 
-* Any String value that is a valid [IRI](https://datatracker.ietf.org/doc/html/rfc3987) *SHOULD* be interpreted as such
-  in conversion from/to RDF.
+* Whether a String value resolves to a string literal or to an [IRI](https://datatracker.ietf.org/doc/html/rfc3987) in conversion to RDF is not specified and up to the implementation. When RDF is serialised as JSON-LD then the JSON-LD context provides an excellent means of resolving this issue, provided such additional context can be supplied to the converter.
+* When you use the `Map` type. The keys in the map *SHOULD* be IRIs to enable serialisation to RDF, values that are not IRIs are passed as-is, which is useful in case of JSON-LD serialisation where the JSON-LD context determines their exact interpretation. However, they *MAY* also be rejected by implementations as they can be possibly undefined.
 
 ## Extended Data Model
 
@@ -495,7 +502,8 @@ We discern the following variants, they are to be considered *RECOMMENDED*:
  * `LessThan(other: DataValue)`
  * `GreaterThanOrEqual(other: DataValue)`
  * `LessThanOrEqual(other: DataValue)`
- * `HasElement(other: DataValue)` - Applies only when applied to annotation data with `DataValue::List()` , tests if the element is in the list.
+ * `HasElement(other: DataValue)` - When applied to annotation data with `DataValue::List()` , tests if the element is in the list.
+ * `GetKey(key: str, test: DataOperator?)` - When applied to annotation data with `DataValue::Map()` , tests if the key exists in the map and if the additional test (optional) holds. This was introduced in STAM v1.2.
  * `And([DataOperator++])` - Conjunction combining multiple tests
  * `Or([DataOperator++])` - Disjunction combining multiple tests
  * `Not(DataOperator)` - Unary operator that inverts the logic.

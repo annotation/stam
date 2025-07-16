@@ -3,7 +3,7 @@
 ## Introduction
 
 This is an extension on top of STAM that allows for interoperability between
-[W3C Web Annotation](https://www.w3.org/TR/annotation-model/) and STAM.
+[W3C Web Annotation Data Model](https://www.w3.org/TR/annotation-model/) and STAM.
 
 The [Web Annotation Data Model](https://www.w3.org/TR/annotation-model/) offers
 a model for describing annotations in which the annotations and their targets
@@ -24,10 +24,13 @@ RFC 2119.
 
 ## Data Model
 
-W3C Web Annotation builds on RDF. This means that for interoperability to
-work, all the RDF constraints posed in the core STAM specification *MUST* be adhered
-to. This mostly entails that all identifiers *MUST* either be [IRI](https://datatracker.ietf.org/doc/html/rfc3987)s
-or transformable into one, we recap from from section Identifiers in the main specification:
+The W3C Web Annotation Data Model builds on
+[RDF](https://www.w3.org/TR/rdf11-concepts/). This means that for
+interoperability to work, all the RDF constraints posed in the core STAM
+specification *MUST* be adhered to. This mostly entails that all identifiers
+*MUST* either be [IRI](https://datatracker.ietf.org/doc/html/rfc3987)s or
+transformable into one, we recap from from section Identifiers in the main
+specification:
 
 > The public identifier of keys *MUST* be able to be transformed into an IRI as follows:
 >    * It it already an IRI by itself (no transformation necessary).
@@ -37,21 +40,22 @@ This extension does not specify any extensions to the STAM data model itself -
 the core model suffices - instead, it defines some data annotation sets and
 protocols for conversion.
 
-## Mapping STAM to Web Annotation
+## Mapping STAM to Web Annotations
 
-JSON-LD is the preferred serialization format for Web Annotation, using the
-context definition `http://www.w3.org/ns/anno.jsonld`. This STAM extension
-defines how to serialize STAM to valid Web Annotations in JSON-LD. Note that
-although STAM JSON looks very similar to JSON-LD, it is not.
+[JSON-LD](https://www.w3.org/TR/json-ld/) is the preferred serialization format
+for Web Annotations, using the context definition
+`http://www.w3.org/ns/anno.jsonld`. This STAM extension defines how to
+serialize STAM to valid Web Annotations in JSON-LD. Note that although STAM
+JSON looks very similar to JSON-LD, it is not.
 
-For interoperability with Web Annotations, you can reuse a lot of the
-vocabulary defined in `http://www.w3.org/ns/anno.jsonld` from within STAM. We prescribe that you
-*SHOULD* use a STAM Annotation DataSet with that exact URI as identifier if you
-want to use any of the terms of that vocabulary. The keys in the JSON-LD file
-then correspond one-to-one to the STAM datakeys in the set. This allows us to use much of the
-web annotation vocabulary from STAM without any complicated mappings. We will
-refer to this as the w3anno set in this documentation, simply to avoid having
-to mention the full URI every time.
+For interoperability with Web Annotation, you can reuse a lot of the
+vocabulary defined in `http://www.w3.org/ns/anno.jsonld` from within STAM. We
+prescribe that you *MUST* use a STAM Annotation DataSet with that exact URI as
+identifier if you want to use any of the terms of that vocabulary. The keys in
+the JSON-LD file then correspond one-to-one to the STAM datakeys in the set.
+This allows us to use much of the web annotation vocabulary from STAM without
+any complicated mappings. We will refer to this as the w3anno set in this
+documentation, simply to avoid having to mention the full URI every time.
 
 Let's illustrate this with an example. Consider the following STAM
 Annotation in STAM JSON (partial excerpt) in which we express an annotation
@@ -396,6 +400,304 @@ A `MultiSelector` *MAY* also be mapped simply to multiple `target` elements in
 the WebAnnotation output. Recall that this means that the annotation applies to
 all of targets equally, individually and independently.
 
+### Referencing external resources and interpreting JSON-LD contexts
+
+A lot of the value in using linked data comes from the ability to actually
+*link* to external resources, which may live anywhere and are identified by an
+[IRI](https://datatracker.ietf.org/doc/html/rfc3987). RDF triples take an IRI
+as object and RDF makes a strong distinction between string literals and IRIs.
+STAM, however, does not make such a distinction in its data values, as there is
+just the string literal.
+
+If we convert from STAM to Web Annotations, the distinction between
+IRIs and string literals becomes important again. Fortunately, the JSON-LD
+serialization solves this problem for us. JSON by itself does
+not have the distinction either, but the JSON-LD context adds these semantics.
+When converting from STAM to Web Annotations, users *SHOULD* be able to specify
+additional JSON-LD contexts with are then added to the `@context` part of the
+output. For this to work, the converter *SHOULD* parse the specified JSON-LD
+contexts and use the aliases defined in it.
+
+If this is to abstract, consider the following STAM JSON example (partial excerpt):
+
+```json
+{
+    "@type": "Annotation",
+    "@id": "https://example.org/annotation1",
+    "data": [
+        {
+            "@type": "AnnotationData",
+            "set": "https://example.org/my_vocab"
+            "key": "review",
+            "value": "https://example.org/my_review",
+        },
+    ],
+    "target": {
+        ...
+    }
+}
+```
+
+This translates to the following web annotation (partial excerpt) in JSON-LD:
+
+
+```json
+{
+    "@context": "http://www.w3.org/ns/anno.jsonld",
+    "id": "https://example.org/annotation1",
+    "creator": "proycon",
+    "body": {
+        "type": "DataSet",
+        "https://example.org/my_vocab/review": "https://example.org/my_review", 
+    }
+    "target": {
+            ...
+    }
+}
+```
+
+At this point `https://example.org/my_review` would be just string literal. To
+solve this,  we make a JSON-LD context for our vocabulary, let's pretend we
+host this at `https://example.org/my_vocab.jsonld`:
+
+```json
+{   
+    "@context": {
+        "myvocab": "https://example.org/my_vocab/",
+        "review": {
+            "@type": "@id",
+            "@id": "myvocab:review"
+        }
+    },
+}
+```
+
+Now all we have to do is pass our STAM to web annotation converter our extra
+context to include. STAM to Webannotation converters parse this JSON-LD context
+and resolve the full IRIs to the aliases mentioned. We then get the following
+output instead:
+
+```json
+{
+    "@context": [ "http://www.w3.org/ns/anno.jsonld","https://example.org/my_vocab.jsonld"],
+    "id": "https://example.org/annotation1",
+    "creator": "proycon",
+    "body": {
+        "type": "DataSet",
+        "review": "https://example.org/my_review", 
+    }
+    "target": {
+            ...
+    }
+}
+```
+
+The predicate which we saw in expanded form before is now resolved to its alias and any JSON-LD capable parser will now
+interpret the value as an IRI rather than a string literal, as that is how it is defined in the context (via `@type`: `@id`).
+
+Because of the extra type information and cleaner web annotation output, the
+use of JSON-LD contexts for your vocabulary is *RECOMMENDED*.
+
+### Hierarchical data structures
+
+As RDF can encode generic knowledge graphs, you can have an arbitrary nesting
+of information in for instance the annotation body, example:
+
+```json
+{
+    "@context": [
+        "http://www.w3.org/ns/anno.jsonld",
+        {
+            "sdo": "http://schema.org/",
+            "myvocab": "https://example.org/my_vocab/",
+        }
+    ],
+    "body": {
+        "@type": "DataSet",
+        "reviewer": {
+            "@type": "sdo:Person",
+            "sdo:givenName": "John",
+            "sdo:familyName": "Doe",
+            "sdo:affiliation": {
+                "@type": "sdo:Organization",
+                "sdo:name": "United Nations",
+            }
+        }
+    },
+    ...
+}
+```
+
+In RDF-terms, both reviewer and affiliation are so-called blank nodes, as no ID is associated with them.
+
+If you want to encode this nested information in STAM, you *SHOULD* use the `Map` DataValue type, as shown in the following STAM JSON excerpt:
+
+```json
+{
+    "@type": "Annotation",
+    "@id": "https://example.org/annotation1",
+    "data": [
+        {
+            "@type": "AnnotationData",
+            "set": "http://www.w3.org/ns/anno.jsonld"
+            "key": "type",
+            "value": "DataSet",
+        },
+        {
+            "@type": "AnnotationData",
+            "set": "https://example.org/my_vocab/",
+            "key": "reviewer",
+            "value": {
+                "@type": "Map",
+                "type": {
+                    "@type": "String",
+                    "value": "http://schema.org/Person",
+                },
+                "http://schema.org/givenName": {
+                    "@type": "String",
+                    "value": "John",
+                },
+                "http://schema.org/familyName": {
+                    "@type": "String",
+                    "value": "Doe",
+                },
+                "http://schema.org/affiliation": {
+                    "@type": "Map",
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": {
+                        "@type": "String",
+                        "value": "http://schema.org/Organization",
+                    },
+                    "http://schema.org/name": {
+                        "@type": "String",
+                        "value": "United Nations",
+                    }
+                }
+
+            }
+        }
+    ],
+    "target": {
+        ...
+    }
+}
+```
+
+Map keys *SHOULD* be either be full IRIs or otherwise are passed as-is in conversion to RDF / Web Annotation.
+This implies that keys that are not full IRIs may be undefined in the output if there is no JSON-LD context that
+covers those. Note that unlike `DataKey` in STAM, map keys do not carry their own set. 
+
+The key `http://www.w3.org/1999/02/22-rdf-syntax-ns#type` translates to `@type`
+in JSON-LD, converters *MUST* implement this conversion as `@type` in STAM JSON
+is a different keyword. In the example above we just used `type`, which will be
+mapped to JSON-LD as-is and is given meaning by the JSON-LD context.
+
+### Foreign targets and selectors
+
+The Web Annotation Data model has a large number of selectors for different
+format and media types which do not exist in STAM, so we call them *foreign*.
+Still, you might want to make use of these foreign targets and selectors when
+converting to web annotations. The way to encode them in STAM is as annotation
+data using the `target` key in the w3anno dataset
+(`http://www.w3.org/ns/anno.jsonld`, which covers all web annotation vocabulary
+and was established earlier in this specification for use in the conversion
+process).
+
+Though `target` can take a simple string as value as is also the case in the
+web annotation model, in most cases you will want to take a `Map` as value and
+mirror the structured linked data representation for the selector you want.
+Example, say we want to output the following Web Annotation (JSON-LD):
+
+```json
+{
+    "@context": "http://www.w3.org/ns/anno.jsonld",
+    "body": {
+        ...
+    },
+    "target": [
+        {
+            "source": "https://example.org/hello.txt",
+            "selector": {
+                "type": "TextPositionSelector",
+                "start": 0,
+                "end": 5
+            }
+        },
+        {
+            "source": "https://example.org/hello.xml",
+            "selector": {
+                "type": "XPathSelector",
+                "value": "/html/body/p[1]/span[1]"
+            }
+        },
+    ]
+    ...
+}
+```
+
+(Note that multiple targets in the web annotation data model means that the
+annotation applies to each of the targets equally and independently (cf. STAM's
+MultiSelector))
+
+The first target is a normal one that is covered by STAM's
+`TextSelector`, the second however, has no STAM counterpart. We can still encode
+this by putting that target in the annotation data as follows, following all
+the other rules established in this specification. That leads us to this STAM
+JSON excerpt as input for the conversion:
+
+```json
+{
+    "@type": "Annotation",
+    "@id": "https://example.org/annotation1",
+    "data": [
+        {
+            "@type": "AnnotationData",
+            "set": "http://www.w3.org/ns/anno.jsonld"
+            "key": "target",
+            "value": {
+                "@type": "Map",
+                "value": {
+                    "source": {
+                        "@type": "String",
+                        "value": "https://example.org/hello.xml",
+                    },
+                    "selector": {
+                        "@type": "Map",
+                        "type": {
+                            "@type": "String",
+                            "value": "XPathSelector",
+                        },
+                        "value": { 
+                            "@type": "String",
+                            "value": "/html/body/p[1]/span[1]"
+                        }
+                    },
+                }
+            }
+        },
+    ],
+    "target": {
+        "@type": "TextSelector",
+        "resource": "http://example.org/hello.txt"
+        "offsets": {
+            "begin": {
+                "@type": "BeginAlignedCursor",
+                "value": 0,
+            }, 
+            "end": {
+                "@type": "BeginAlignedCursor",
+                "value": 5,
+            }, 
+        }
+    }
+}
+```
+
+It may feel odd to have a target in the annotation data rather than as an
+actual target, but as far as STAM is concerned it's just annotation data like
+any other, and it's pretty agnostic about it. Targets in STAM have their own
+specific semantics. This pseudo-target only gains its meaning after it's
+converted to web annotations and interpreted in that model.
+
 ### Limitations
 
 * A `stam:AnnotationDataSet` itself can not be mapped to Web Annotations (out of
@@ -405,9 +707,10 @@ all of targets equally, individually and independently.
 ## Mapping Web Annotation to STAM
 
 Mapping Web Annotation to STAM generally follows the inverse of what we have
-already seen. However, Web Annotation and RDF upon which it builds forms a
-broader model than STAM typically provides, so not all that can be expressed
-there can be unambiguously expressed in STAM terms. 
+already seen, but is not strictly specified in the current specification.
+However, Web Annotation and RDF upon which it builds forms a broader model than
+STAM typically provides, so not all that can be expressed there can be
+unambiguously expressed in STAM terms. 
 
 ### Limitations 
 
@@ -426,8 +729,3 @@ there can be unambiguously expressed in STAM terms.
   Implementations parsing web annotations for STAM, when encountering any other
   selectors, *MUST* produce either an error or convert the selector to an
   STAM `TextSelector` if deemed possible.
-
-### Functionality
-
-* Implementations *MUST* implement proper JSON-LD parsing for Web Annotations
-* Implementations *SHOULD* use a proper RDF triple store as a foundation

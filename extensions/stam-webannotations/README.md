@@ -56,6 +56,8 @@ the JSON-LD file then correspond one-to-one to the STAM datakeys in the set.
 This allows us to use much of the web annotation vocabulary from STAM without
 any complicated mappings. We will refer to this as the w3anno set in this
 documentation, simply to avoid having to mention the full URI every time.
+The full mechanism that enables this behaviour is explained in the section on
+referencing external resources and using JSON-LD contexts.
 
 Let's illustrate this with an example. Consider the following STAM
 Annotation in STAM JSON (partial excerpt) in which we express an annotation
@@ -400,7 +402,7 @@ A `MultiSelector` *MAY* also be mapped simply to multiple `target` elements in
 the WebAnnotation output. Recall that this means that the annotation applies to
 all of targets equally, individually and independently.
 
-### Referencing external resources and interpreting JSON-LD contexts
+### Referencing external resources and using JSON-LD contexts
 
 A lot of the value in using linked data comes from the ability to actually
 *link* to external resources, which may live anywhere and are identified by an
@@ -413,12 +415,32 @@ If we convert from STAM to Web Annotations, the distinction between
 IRIs and string literals becomes important again. Fortunately, the JSON-LD
 serialization solves this problem for us. JSON by itself does
 not have the distinction either, but the JSON-LD context adds these semantics.
-When converting from STAM to Web Annotations, users *SHOULD* be able to specify
-additional JSON-LD contexts with are then added to the `@context` part of the
-output. For this to work, the converter *SHOULD* parse the specified JSON-LD
-contexts and use the aliases defined in it.
 
-If this is to abstract, consider the following STAM JSON example (partial excerpt):
+For this to work a STAM to Web Annotation converter *SHOULD* accept the following parameter:
+
+* one or **JSON-LD Context URL**s: This will be propagated directly to the `@context` portion of the output.
+  The converter is *NOT REQUIRED* to actually parse and interpret the JSON-LD context.
+
+The URL to a JSON-LD context doubles as STAM dataset identifier: Any STAM dataset
+passed via this parameter *MUST* have its keys directly passed as-is, as if
+they are aliases. There is one exception: this *MUST NOT* be applies to keys that are already full IRIs.
+That means the standard rules for forming IRIs by concatenating the dataset ID (if an IRI)
+and the key ID (if not an IRI) will be bypassed in this case.
+
+The `http://www.w3.org/ns/anno.jsonld` context *MUST* be implied already by
+the converter and does not need to be passed explicitly. Converters *MAY* implement
+an additional parameter (opt-in or opt-out) to automatically detect whether there are any used dataset
+IDs ending in `.json` or `.jsonld` and add them to this list. This simplifies things for the caller.
+
+It is always the responsibility of the caller (not the converter) to ensure
+that the keys from these datasets are indeed defined as aliases in the JSON-LD
+context. If this is not the case, then the resulting JSON-LD output can contain
+aliases that do not expand to IRIs and therefore are not valid RDF. It is also
+the responsibility of the caller to ensure that keys from multiple such
+datasets do not conflict, as this effectively strips the namespace function
+datasets normally fulfill.
+
+This can all sound rather abstract, so let's illustrate it with the following STAM JSON example (partial excerpt):
 
 ```json
 {
@@ -427,7 +449,7 @@ If this is to abstract, consider the following STAM JSON example (partial excerp
     "data": [
         {
             "@type": "AnnotationData",
-            "set": "https://example.org/my_vocab"
+            "set": "https://example.org/my_vocab.jsonld"
             "key": "review",
             "value": "https://example.org/my_review",
         },
@@ -438,17 +460,16 @@ If this is to abstract, consider the following STAM JSON example (partial excerp
 }
 ```
 
-This translates to the following web annotation (partial excerpt) in JSON-LD:
+This translates to the following web annotation (partial excerpt) in JSON-LD, provided that we explicitly pass `https://example.org/my_vocab.jsonld` as parameter to the converter, telling it to add it to the context:
 
 
 ```json
 {
-    "@context": "http://www.w3.org/ns/anno.jsonld",
+    "@context": [ "http://www.w3.org/ns/anno.jsonld", "https://example.org/my_vocab.jsonld" ]
     "id": "https://example.org/annotation1",
-    "creator": "proycon",
     "body": {
         "type": "DataSet",
-        "https://example.org/my_vocab/review": "https://example.org/my_review", 
+        "review": "https://example.org/my_review", 
     }
     "target": {
             ...
@@ -456,9 +477,8 @@ This translates to the following web annotation (partial excerpt) in JSON-LD:
 }
 ```
 
-At this point `https://example.org/my_review` would be just string literal. To
-solve this,  we make a JSON-LD context for our vocabulary, let's pretend we
-host this at `https://example.org/my_vocab.jsonld`:
+At this point the interpretation of `review` as either an IRI or string literal, is determined by the JSON-LD context.
+Assume we create the following JSON-LD context and serve it at `https://example.org/my_vocab.jsonld`:
 
 ```json
 {   
@@ -472,31 +492,13 @@ host this at `https://example.org/my_vocab.jsonld`:
 }
 ```
 
-Now all we have to do is pass our STAM to web annotation converter our extra
-context to include. STAM to Webannotation converters parse this JSON-LD context
-and resolve the full IRIs to the aliases mentioned. We then get the following
-output instead:
+This will ensure the predicate is value interpreted as an IRI rather than a
+string literal, by any JSON-LD aware processors.
 
-```json
-{
-    "@context": [ "http://www.w3.org/ns/anno.jsonld","https://example.org/my_vocab.jsonld"],
-    "id": "https://example.org/annotation1",
-    "creator": "proycon",
-    "body": {
-        "type": "DataSet",
-        "review": "https://example.org/my_review", 
-    }
-    "target": {
-            ...
-    }
-}
-```
-
-The predicate which we saw in expanded form before is now resolved to its alias and any JSON-LD capable parser will now
-interpret the value as an IRI rather than a string literal, as that is how it is defined in the context (via `@type`: `@id`).
-
-Because of the extra type information and cleaner web annotation output, the
-use of JSON-LD contexts for your vocabulary is *RECOMMENDED*.
+Because of the extra type information,  the simpler STAM representation and the
+cleaner web annotation output that is a one-to-one mapping of the former, the
+use of JSON-LD contexts in your dataset IDs is *RECOMMENDED* if you do
+conversion to web annotation.
 
 ### Hierarchical data structures
 

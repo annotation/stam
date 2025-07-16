@@ -167,6 +167,7 @@ The following overriding constraints apply only for compatibility with RDF:
 *  The public identifier of keys *MUST* be able to be transformed into an IRI as follows:
     * It it already an IRI by itself (no transformation necessary).
     * It forms an IRI when appended to the public identifier of the annotation data set. If identifier of the annotation data set does not end in `/` or `#`, an extra `/` *SHOULD* be inserted as delimiter in the concatenation.
+    * An exception to this rule is if the intended output is JSON-LD. A dataset identifier *MAY* be explicitly exempted via a parameter and keys *SHOULD* then be propagated as-is (they may function as aliases) and it is up to the JSON-LD context to resolve them.
 *  There *SHOULD* be a public identifier for each `Annotation`
 
 ### Offsets

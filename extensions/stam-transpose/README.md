@@ -45,8 +45,8 @@ the following key in the annotation dataset with identifier
 ``https://w3id.org/stam/extensions/stam-transpose/``:
 
 * `Transposition` (type: `Null`) - Marks an annotation as being a transposition. A transposition *MUST* either: 
-    * use a `DirectionalSelector` or `CompositeSelector`, with underneath an `TextSelector` to target two or more text selections directly. We call this the *simple transposition*. The text selections on either side *MUST* have the exact same *textual content*. 
-    * use a `DirectionalSelector` or `CompositeSelector`, with underneath an `AnnotationSelector` to target two or more annotations. We call this this *complex transposition*. The text targeted by the annotations *MUST* be identical on either side.
+    * use a `DirectionalSelector` or `CompositeSelector`, with underneath a `TextSelector` to target two or more text selections directly. We call this the *simple transposition*. The text selections on either side *MUST* have the exact same *textual content*. 
+    * use a `DirectionalSelector` or `CompositeSelector`, with underneath an `AnnotationSelector` to target two or more annotations. We call this this *complex transposition*. The text targeted by the annotations *MUST* be identical on either side. The annotations themselves 
 
 The full notion of transposition is illustrated in the following schematic, where resource A and B are recombined into a derived resource C:
 
@@ -62,12 +62,9 @@ by the underlying `AnnotationSelector` *MAY* themselves have a *complex
 selector* (`DirectionalSelector`, `CompositeSelector` or `MultiSelector`). In
 this case, the complex selectors on either side *MUST* describe the same number
 of text selections with the exact same textual content on either side, which
-implies that both selectors as a whole describe the same textual content.
+implies that both selectors as a whole describe the same textual content. In all cases, target annotations on either side of the transposition *MUST* have the same selector type.
 
-In all cases, target annotations on either side of the transposition *MUST*
-have the same selector type.
-
-You may wonder how re-ordering is accomplished. Transpositions that re-order
+Transposition can also be used to re-order text. Transpositions that re-order
 multiple text selections (i.e. place text selection B' before A' whereas A was
 before B in the source) *MUST* use a `DirectionalSelector`. This implies that
 the textual reading of the annotation as a whole is identical on both sides
@@ -122,7 +119,7 @@ The following image illustrates resegmentation:
 
 STAM implementations implementing this extension *MUST* provide the following functionality:
 
-* A transpose function that maps any arbitrary text selection(s) or annotation(s) (that refers to text selection(s)) over a (third) transposition. This effectively translates items in one coordinate system to another.
+* A transpose function that maps any arbitrary text selection(s) or annotation(s) (that refers to text selection(s)) over a (third) transposition annotation (also called the pivot). This effectively translates items in one coordinate system to another.
     * The function *MUST* produce transposed text selection(s)/annotation(s) as output.
     * This function *MUST* itself be able produce a transposition as its output (linking to the above output), this effectively links to two text selections/annotations and is useful at least for keeping provenance information intact. The user *SHOULD* be able to ignore this output if not deemed needed for his/her use-case. The function *SHOULD* also be able to output an additional resegmentation if resegmentation is necessary. (explained at the end of this section)
     * Transposing text selections or annotations is not possible if parts of the text selection(s)/annotation(s) is not covered by the transposition. In such cases the transpose function *MUST* reject operation with an error.

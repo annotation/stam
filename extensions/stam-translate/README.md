@@ -94,12 +94,18 @@ STAM implementations implementing this extension *MUST* provide the following fu
         * The text selection that is being translated *MUST* fully cover one or more text selections on the source side of the translation pivot. This implies that is must begin and end at established boundaries and *MUST NOT* intersect a text selection on the source side.
     * Translating text selections or annotations is not possible if parts of the text selection(s)/annotation(s) are not covered by the translation. In such cases the translate function *MUST* reject operation with an error.
     * Zero-width text selections *MUST* be supported, annotations that target second on one side but are zero-width on the other side are allowed.
+    * The pivot annotation *MUST* be a *complex translation*. Translating over a simple translation is a no-op as that would by definition produce the pivot itself as output.
 
 An example will illustrate all of this further:
 
 Assume we have the same translation as we saw before. This is our pivot translation. Then assume we have an additional annotation on "благодарю вас" on resource 1, showed in dashed green box in the schema below. Via the translate function we should now be able to translate this annotation from resource 1 to resource 2 (the same logic also holds in the other direction) and get an annotation on "blagodaryu vas", along with a new output translation that records the mapping. The following schema illustrates this:
 
 ![STAM Translate: Translation](translation4.png)
+
+In the above translation, the fine-grained segmentation is lost on the output side, but this produces simpler annotations that 
+relate the source annotation directly to its new target, which may be preferable in many use-cases. Implementations, however, *MUST* also support maintaining the exact segmentation as shown in the next schema. In such cases, an extra resegmentation (as explained in the [STAM transpose](../stam-transpose) documentation) annotation may be needed to map the actual input annotation to the source side of the translation. This is not depicted in this schema.
+
+![STAM Translate: Translation](translation5.png)
 
 To understand the limitations of these translations; consider a linguist placed an annotation on the morpheme "ю" (this indicates first person singular on a certain class of verbs). Can they now automatically translate this annotation to the transliterated resource 2 using the same translation pivot and the translate function? The answer here is no, as we can only perform translations if the source annotation matches one of more contiguous text selections on the source-side of the translation. The current pivot translation lacks the fine-grained information needed to translate that morpheme.
 

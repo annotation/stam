@@ -578,8 +578,9 @@ the query language from which a lot of expressive power is derived.
 
 The relation keyword determines the nature of the relation, the following are defined:
 
-* `EMBEDS` - The references text selection embeds the current candidate text selection. So the subject is wider and entirely subsumes the candidate.
-* `OVERLAPS` - The references text selection overlaps with current candidate text selection. 
+* `EMBEDS` - The referenced text selection embeds the current candidate text selection. So the subject is wider and entirely subsumes the candidate.
+* `EMBEDDED` - The referenced text selection is embedded within the current candidate text selection. So the subject is narrower and the candidate entirely subsumes the reference.
+* `OVERLAPS` - The referenced text selection overlaps with current candidate text selection. 
 * `PRECEDES` - The referenced text selection precedes the current candidate, they are directly adjacent. So the current candidate comes after the mentioned variable.
 * `SUCCEEDS` - The references text selection succeeds the current candidate, they are directly adjacent. So the current candidate comes before the mentioned variable.
 * `BEFORE` - The referenced text selection comes before the current candidate. 

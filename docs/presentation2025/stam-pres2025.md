@@ -16,6 +16,8 @@ titlegraphic: ../presentation/logo.png
 
 *Theory* & *Practise* go hand in hand, STAM aims to provide a *solid generic foundation upon which you can build*.
 
+**Project website: <https://annotation.github.io/stam>**
+
 --------
 
 ![STAM ecosystem](stam-ecosystem.png)
@@ -198,7 +200,7 @@ Querying and exporting often go hand-in-hand:
 
 ### Alignment, Transposition & Translation
 
-* **Alignment** -- (``stam-align``) Align two similar texts (Smith-Waterman / Needleman-Wunsch)
+* **Alignment** -- (``stam align``) Align two similar texts (Smith-Waterman / Needleman-Wunsch)
     * *produces transpositions or translations*
 * **Normalisation** -- (``stam translatetext``) Change a text based on simple rewrite rules 
     * *produces translations*
@@ -221,7 +223,9 @@ Querying and exporting often go hand-in-hand:
 
 ## Conclusion
 
-**STAM** ...
+**Project website: <https://annotation.github.io/stam>**
+
+**STAM** ... 
 
 * ... offers a **solid generic foundation** upon which you can build higher-level applications
       for working with stand-off annotation on text
@@ -234,7 +238,6 @@ Querying and exporting often go hand-in-hand:
   open to contributors.
 * ... has had well over 1500 development hours since january 2023
       (in part funded by CLARIAH)
-
 
 
 

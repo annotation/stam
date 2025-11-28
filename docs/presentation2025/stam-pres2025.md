@@ -1,6 +1,7 @@
 ---
 title: "STAM: Working with stand-off annotations on text"
 author: Maarten van Gompel
+date: "December 2025"
 institute: KNAW Humanities Cluster
 fontsize: 11pt
 urlcolor: blue
@@ -12,7 +13,7 @@ titlegraphic: ../presentation/logo.png
 **What is STAM?**
 
 1. A **data model** for **stand-off annotation** on **text**
-2. A set of low-level **software tools** for working with  **stand-off annotation** on **text**
+2. A set of *low-level* **software tools** for working with  **stand-off annotation** on **text**
 
 *Theory* & *Practise* go hand in hand, STAM aims to provide a *solid generic foundation upon which you can build*.
 
@@ -145,12 +146,12 @@ The software library...
 
 ## Functionality from extensions
 
-* **STAM Vocab** -- Express and validate against user-defined vocabularies
+* **STAM Vocab** -- Express/validate against user-defined vocabularies
 * **STAM Webannotations** -- Allows modelling W3C Web Annotations using STAM (full export support)
 * **STAM Textvalidation** -- Adds an extra redundancy layer that helps protecting data integrity and aids readability of serialisations
 * **STAM CSV** -- Tabular serialisation format
-* **STAM Query Language (STAMQL)** -- A query language that allows end-users to formulate and subsequently execute searches on a STAM model.
-* **STAM Transpose** - Links identical textual parts across resources, allows *transposition* of annotations from one to another.
+* **STAM Query Language (STAMQL)** -- An extensive query language that allows end-users to formulate and subsequently execute searches on a STAM model.
+* **STAM Transpose** - Links identical textual parts across resources, allows *transposition* of annotations. 
 * **STAM Translate** - Links non-identical parts of texts, allows *translation* of annotations from one to another.
 
 All extensions have their **own specifications** *(separation from implementation)*
@@ -223,8 +224,6 @@ Querying and exporting often go hand-in-hand:
 
 ## Conclusion
 
-**Project website: <https://annotation.github.io/stam>**
-
 **STAM** ... 
 
 * ... offers a **solid generic foundation** upon which you can build higher-level applications
@@ -232,12 +231,22 @@ Querying and exporting often go hand-in-hand:
 * ... is **modular**; pick and use the parts you need for your task
 * ... is **flexible**; you decide how to model your data and bring **your own vocabulary**
 * ... takes cares of the boring **computational groundwork** so you don't have to
-* ... provides different **interfaces** for different **audiences**
+* ... provides different **interfaces** for different technical **audiences**
 * ... has focus on **performance** and implementations are written in Rust
 * ... is **free open source software** (GNU General Public License v3) and
   open to contributors.
-* ... has had well over 1500 development hours since january 2023
-      (in part funded by CLARIAH)
+* ... > 40k lines Rust code, > 1500 development hours, since january 2023
+      (funded in part by CLARIAH)
 
+## Fin
 
+**Further information:** Project website -- <https://annotation.github.io/stam>
 
+* STAM Specification & Extension specifications
+* Library API References (Rust & Python)
+* Python tutorial "Standoff Text Annotation for Pythonistas"  (Jupyter Notebook)
+* Screencast video for stam-tools
+* Poster
+* These slides
+
+![Project website - https://annotation.github.io/stam](qr.png)

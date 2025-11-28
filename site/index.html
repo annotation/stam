@@ -282,7 +282,7 @@
 <body>
     <div id="navbar">
         <nav>
-            <a href="https://github.com/annotation/stam/blob/master/README.md">Specification</a> | 
+            <a href="specs/">Specification</a> | 
             <a href="https://github.com/annotation/stam-rust">Rust Library</a> | 
             <a href="https://docs.rs/stam">Rust API Docs</a> | 
             <a href="https://github.com/annotation/stam-python">Python Library</a> | 
@@ -411,7 +411,7 @@ store<strong>.save()</strong>
         not use.</p>
 
         <p>
-        All are documented in a <a href="https://github.com/annotation/stam/blob/master/README.md">formal specification</a>, independent of any
+        All are documented in a <a href="specs/">formal specification</a>, independent of any
         implementations.<p>
 
         <p>
@@ -453,7 +453,7 @@ store<strong>.save()</strong>
         , linked open data in general, <a href="https://proycon.github.io/folia">FoLiA</a>, 
         <a href="https://tei-c.org/">Text Encoding Initiative (TEI)</a>, <a href="https://universaldependencies.org/format.html">CoNLL-U</a> and <a href="https://github.com/annotation/text-fabric">Text Fabric</a>.
         Various converters and mappings to this end have been implemented, such as a W3C Web Annotation exporter (<a
-        href="https://github.com/annotation/stam/tree/master/extensions/stam-webannotations">specification</a>), and a
+        href="specs/extensions/stam-webannotations">specification</a>), and a
         generic XML importer that effectively <em>untangles</em> an XML file with inline annotations/markup (like TEI) and splits it into 
         plain text and pure stand-off annotations referencing that text.
         </p>
@@ -505,7 +505,7 @@ Type       Id  Text    TextSelection     testset/pos
 
         <h2>Querying &amp; Visualisation</h2>
 
-        <p><a href="https://github.com/annotation/stam-tools">Tools</a> are also provided for querying and visualisation. A <a href="https://github.com/annotation/stam/tree/master/extensions/stam-query">STAM Query Language
+        <p><a href="https://github.com/annotation/stam-tools">Tools</a> are also provided for querying and visualisation. A <a href="specs/extensions/stam-query">STAM Query Language
         (STAMQL)</a> is available to that end. Visualisation works either in the browser (HTML) or in the terminal (ANSI text), and is 
         also exposed via <a href="https://github.com/annotation/stam-python">stam-python</a> for use in for example Jupyter Notebooks.
         </p>
@@ -541,9 +541,9 @@ Type       Id  Text    TextSelection     testset/pos
             <li>Computation of <em>spatial relationships</em> between text selections/annotations, e.g. embedding, overlap, adjacency, and retrieval of annotations bases on such relationships (also via STAMQL).</li>
             <li>Common regular-expression based text search (also via STAMQL).</li>
             <li>Automatic <em>alignment</em> of two or more similar texts (Smith-Waterman/Needleman-Wunsch) and automatic <a
-                    href="https://github.com/annotation/stam/blob/master/extensions/stam-transpose/README.md">transposition</a> of annotations
+                    href="specs/extensions/stam-transpose/">transposition</a> of annotations
                 from one text to another, following such an alignment.</li>
-            <li><a href="https://github.com/annotation/stam/tree/master/extensions/stam-textvalidation/README.md">Validation</a> of the integrity of stand-off annotations. Do they still point to the right text?</li>
+            <li><a href="specs/extensions/stam-textvalidation/">Validation</a> of the integrity of stand-off annotations. Do they still point to the right text?</li>
         </ul>
 
         </p>

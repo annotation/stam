@@ -74,6 +74,7 @@ nav:
     - "STAM Query": "extensions/stam-query/README.md"
     - "STAM Vocab": "extensions/stam-vocab/README.md"
     - "STAM Web Annotations": "extensions/stam-webannotations/README.md"
+  - "STAM Tools": "tools/README.md"
   - "Implementations (sources)":
     - "stam-rust": "https://github.com/annotation/stam-rust"
     - "stam-tools": "https://github.com/annotation/stam-tools"
@@ -82,4 +83,6 @@ nav:
   - "API References":
     - "stam-rust": "https://docs.rs/stam"
     - "stam-python": "https://stam-python.readthedocs.io"
+  - "Tutorials":
+    - "Stand-off Text Annotation for Pythonistas": "https://nbviewer.org/github/annotation/stam-python/blob/master/tutorial.ipynb"
 

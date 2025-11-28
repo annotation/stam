@@ -15,6 +15,7 @@ env:
 mkdocsrc:
 	mkdir $@ &&\
 	cd $@ &&\
+	git clone https://github.com/annotation/stam-tools tools &&\
 	ln -s ../extensions &&\
 	ln -s ../examples &&\
 	ln -s ../README.md &&\

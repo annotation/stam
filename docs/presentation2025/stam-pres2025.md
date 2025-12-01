@@ -71,7 +71,7 @@ STAM's **core model** is our answer to this.
 
 --------
 
-![Collections](../presentation/slide4.png)
+![STAM concepts and relations](../../site/assets/modelintro2.png)
 
 ## Data Model Characteristics
 
@@ -92,9 +92,9 @@ STAM offers a framework to build upon, not the full solution:
 
 |       | size | r/w speed | stand-off | readability | support |
 | ----- | ---- | ------- | --------- | ----------- | -------- |
-| JSON  | huge | normal | optional       | good        | canonical |
-| CSV   | medium | normal | always    | good        | extension |
-| CBOR  | small | fast | never     | bad         | implementation |
+| JSON  | huge | normal | optional       | some        | canonical |
+| CSV   | medium | normal | always    | easy        | extension |
+| CBOR  | small | fast | never     | no         | implementation |
 
 * *Stand-off*: Annotation Stores, Annotation Datasets, Text resources (plain text) can be stored in separate files.
 * in the current STAM library (in-memory model), after parsing memory usage will be identical regardless of serialisation
@@ -203,8 +203,18 @@ Querying and exporting often go hand-in-hand:
 
 * **Alignment** -- (``stam align``) Align two similar texts (Smith-Waterman / Needleman-Wunsch)
     * *produces transpositions or translations*
+
+![A translation resulting from alignment, given two similar texts](../../extensions/stam-translate/translation3.png)
+
+------
+
 * **Normalisation** -- (``stam translatetext``) Change a text based on simple rewrite rules 
-    * *produces translations*
+    * *produces new texts and translations*
+
+![Resource 2 is generated from resource 1 given translation rules (same as Figure 16)](../../extensions/stam-translate/translation3.png)
+
+------
+
 * **Translation & Transposition** -- Copy annotations from one text to another over a translation/transposition
     * ``stam translate`` & ``stam transpose``
 

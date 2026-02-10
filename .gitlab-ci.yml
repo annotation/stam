@@ -1,9 +1,12 @@
 pages:
   image: alpine:latest
   script:
-    - apk add make python3 py3-venv py3-pip
+    - apk add make python3 py3-pip
     - make specs
     - mv site public
   pages: true
+  artifacts:
+    paths:
+      - public
   rules:
     - if: $CI_COMMIT_BRANCH == "master"

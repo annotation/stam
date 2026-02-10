@@ -1,7 +1,10 @@
+variables:
+  GIT_DEPTH: 0
+
 pages:
   image: alpine:latest
   script:
-    - apk add make python3 py3-pip git
+    - apk add make python3 py3-pip git tzdata
     - make specs
     - mv site public
   pages: true

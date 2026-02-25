@@ -1,7 +1,7 @@
 ---
 title: "STAM: Stand-off annotatie op tekst -- een intro"
 author: Maarten van Gompel
-date: "February 2026"
+date: "februari 2026"
 institute: KNAW Humanities Cluster
 fontsize: 11pt
 urlcolor: blue
@@ -82,6 +82,8 @@ die bij annotatie op tekst komen kijken.
 
 Alle implementaties zijn in Rust geschreven
 
+--------
+
 ![STAM ecosystem](stam-ecosystem.png)
 
 ## Wat doet Team Text ermee?
@@ -114,6 +116,8 @@ In projecten als Globalize:
 
 ![A STAMQL query for adjective-noun word pairs](query3.png)
 
+----
+
 * Simpele HTML **visualisaties**:
 
 ![STAM HTML visualisation (``stam query -F html``)](stamvis.png)
@@ -124,14 +128,14 @@ In projecten als Globalize:
 
 **STAM** ...
 
-* ... biedt een **sterke generieke basis** waarom je verdere applicaties kan bouwen
+* ... biedt een **sterke generieke basis** waarop je verdere applicaties kan bouwen
         die iets doen met annotatie op tekst.
 * ... is **modulair**; kies en gebruik de delen die je nodig hebt voor je taak
 * ... is **flexibel**; jij kiest hoe je je data modelleert en brengt je **eigen vocabulaire** mee.
 * ... regelt al **het rekenkundige basiswerk** zodat jij dat niet hoeft te doen
 * ... biedt **interfaces** voor diverse *technische* **gebruikersgroepen**
 * ... heeft een focus op **performance**, implementaties zijn in Rust geschreven
-* ... is **open source software** (GNU General Public License v3) 
+* ... is **open source software** (GNU General Public License v3)
 * ... > 40k regels Rust code, > 1500 ontwikkeluren, sinds january 2023
       (funding grotendeels via CLARIAH)
 

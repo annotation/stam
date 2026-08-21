@@ -1,6 +1,7 @@
 variables:
   GIT_DEPTH: 0
 
+#deploys to  https://tt.pages.huc.knaw.nl/stam 
 pages:
   image: alpine:latest
   script:

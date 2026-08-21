@@ -6,11 +6,11 @@
         <meta property="og:title" content="STAM: Stand-off Text Annotation Model" />
         <meta property="og:description" content="STAM is a standalone data model for stand-off annotation on text. It allows you to describe annotations on text in your own terms and offers practical tooling to do so." />
         <meta property="description" content="STAM is a standalone data model for stand-off annotation on text. It allows you to describe annotations on text in your own terms and offers practical tooling to do so." />
-        <meta property="og:image" content="https://annotation.github.io/stam/assets/preview.jpg" />
+        <meta property="og:image" content="https://proycon.codeberg.page/stam/assets/preview.jpg" />
         <!-- Twitter is evil but people still use it unfortunately -->
         <meta property="twitter:title" content="STAM: Stand-off Text Annotation Model" />
         <meta property="twitter:description" content="STAM is a standalone data model for stand-off annotation on text. It allows you to describe annotations on text in your own terms and offers practical tooling to do so." />
-        <meta property="twitter:image" content="https://annotation.github.io/stam/assets/preview.jpg" />
+        <meta property="twitter:image" content="https://proycon.codeberg.page/stam/assets/preview.jpg" />
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="keywords" content="text, stand-off annotation, natural language processing, annotations software" />
         <style type="text/css">
@@ -283,13 +283,13 @@
     <div id="navbar">
         <nav>
             <a href="specs/">Specification</a> | 
-            <a href="https://github.com/annotation/stam-rust">Rust Library</a> | 
+            <a href="https://codeberg.org/proycon/stam-rust">Rust Library</a> | 
             <a href="https://docs.rs/stam">Rust API Docs</a> | 
-            <a href="https://github.com/annotation/stam-python">Python Library</a> | 
+            <a href="https://codeberg.org/proycon/stam-python">Python Library</a> | 
             <a href="https://stam-python.readthedocs.io">Python API Docs</a> | 
-            <a href="https://github.com/annotation/stam-tools">STAM Tools</a>
-            <a href="https://annotation.github.io/stam/specs/tools/">Tools Docs</a>
-            <a href="https://github.com/annotation/stamd">Webservice</a>
+            <a href="https://codeberg.org/proycon/stam-tools">STAM Tools</a>
+            <a href="https://proycon.codeberg.page/stam/specs/tools/">Tools Docs</a>
+            <a href="https://codeberg.org/proycon/stamd">Webservice</a>
         </nav>
     </div>
     <div id="cover">
@@ -351,12 +351,12 @@
         </p>
 
         <ul>
-        <li><a href="https://github.com/annotation/stam-rust">stam-rust</a> is the main library written in Rust with a focus on performance (<a href="https://docs.rs/stam">Rust API</a>).</li>
-        <li><a href="https://github.com/annotation/stam-python">stam-python</a> is a Python library built on-top of the Rust library (<a href="https://stam-python.readthedocs.io/">Python API</a>).<br/> A <a href="https://nbviewer.org/github/annotation/stam-python/blob/master/tutorial.ipynb">tutorial "Standoff Text Annotation for Pythonistas"</a> is available as a jupyter notebook. <pre class="inline"><strong>$</strong> pip install stam</pre></li>
-        <li><a href="https://github.com/annotation/stam-tools">stam-tools</a> is a set of command-line tools to work with STAM. (<a href="/specs/tools/">Documentation</a>)
+        <li><a href="https://codeberg.org/proycon/stam-rust">stam-rust</a> is the main library written in Rust with a focus on performance (<a href="https://docs.rs/stam">Rust API</a>).</li>
+        <li><a href="https://codeberg.org/proycon/stam-python">stam-python</a> is a Python library built on-top of the Rust library (<a href="https://stam-python.readthedocs.io/">Python API</a>).<br/> A <a href="https://nbviewer.org/github/annotation/stam-python/blob/master/tutorial.ipynb">tutorial "Standoff Text Annotation for Pythonistas"</a> is available as a jupyter notebook. <pre class="inline"><strong>$</strong> pip install stam</pre></li>
+        <li><a href="https://codeberg.org/proycon/stam-tools">stam-tools</a> is a set of command-line tools to work with STAM. (<a href="/specs/tools/">Documentation</a>)
         <pre class="inline"><strong>$</strong> cargo install stam-tools</pre>
         </li>
-        <li><a href="https://github.com/annotation/stamd">stamd</a> is a webservice that allow working with STAM via a RESTful Web API. 
+        <li><a href="https://codeberg.org/proycon/stamd">stamd</a> is a webservice that allow working with STAM via a RESTful Web API. 
         <pre class="inline"><strong>$</strong> cargo install stamd</pre>
         </li>
         </ul>
@@ -506,9 +506,9 @@ Type       Id  Text    TextSelection     testset/pos
 
         <h2>Querying &amp; Visualisation</h2>
 
-        <p><a href="https://github.com/annotation/stam-tools">Tools</a> are also provided for querying and visualisation. A <a href="specs/extensions/stam-query">STAM Query Language
+        <p><a href="https://codeberg.org/proycon/stam-tools">Tools</a> are also provided for querying and visualisation. A <a href="specs/extensions/stam-query">STAM Query Language
         (STAMQL)</a> is available to that end. Visualisation works either in the browser (HTML) or in the terminal (ANSI text), and is 
-        also exposed via <a href="https://github.com/annotation/stam-python">stam-python</a> for use in for example Jupyter Notebooks.
+        also exposed via <a href="https://codeberg.org/proycon/stam-python">stam-python</a> for use in for example Jupyter Notebooks.
         </p>
 
 <pre class="inline">
@@ -562,8 +562,8 @@ Type       Id  Text    TextSelection     testset/pos
             <ul>
                 <li><a href="assets/stam.webm">This screencast video</a> (no audio) shows <strong>stam-tools</strong>, the command-line tools for STAM</li>
                 <li><a href="https://nbviewer.org/github/annotation/stam-python/blob/master/tutorial.ipynb">Python tutorial "Standoff Text Annotation for Pythonistas"</a> is a tutorial for <strong>stam-python</strong> in the form of an interactive jupyter notebook.</li>
-                <li><a href="https://raw.githubusercontent.com/annotation/stam/master/docs/poster.pdf">Poster</a></li>
-                <li><a href="https://raw.githubusercontent.com/annotation/stam/master/docs/presentation2025/stam-pres2025.pdf">Presentation slides</a> (Dec 2025)</li>
+                <li><a href="https://codeberg.org/proycon/stam/raw/branch/master/docs/poster.pdf">Poster</a></li>
+                <li><a href="https://codeberg.org/proycon/stam/raw/branch/master/docs/presentation2025/stam-pres2025.pdf">Presentation slides</a> (Dec 2025)</li>
             </ul>
         </div>
     </section>

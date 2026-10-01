@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/annotation/stam/raw/master/logo.png" alt="stam logo" width="320" />
+    <img src="logo.png" alt="stam logo" width="320" />
 </p>
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -7,7 +7,7 @@
 
 # STAM: Stand-off Text Annotation Model
 
-**TL;DR:** For a short introduction see the [project website](https://annotation.github.io/stam/).
+**TL;DR:** For a short introduction see the [project website](https://proycon.codeberg.page/stam/).
 
 ## Introduction
 
@@ -111,9 +111,9 @@ implemented in software, although the data model is designed in such a way as
 to facilitate an efficient implementation. We refer to the following
 implementations:
 
-* [stam-rust](https://github.com/annotation/stam-rust) - A STAM library written in Rust, aims to be a *full STAM implementation* with high performance and *memory-based* storage model.
-    * [stam-python](https://github.com/annotation/stam-python) - A STAM Library for Python. This is not a full independent implementation but it is a Python binding to the above Rust library.
-    * [stam-tools](https://github.com/annotation/stam-tools) - A set of STAM commmand line tools implement on top of the Rust library. This is not a full independent implementation but adds extra functionality on top of the Rust library and offers a command-line interface.
+* [stam-rust](https://codeberg.org/proycon/stam-rust) - A STAM library written in Rust, aims to be a *full STAM implementation* with high performance and *memory-based* storage model.
+    * [stam-python](https://codeberg.org/proycon/stam-python) - A STAM Library for Python. This is not a full independent implementation but it is a Python binding to the above Rust library.
+    * [stam-tools](https://codeberg.org/proycon/stam-tools) - A set of STAM commmand line tools implement on top of the Rust library. This is not a full independent implementation but adds extra functionality on top of the Rust library and offers a command-line interface.
 
 Please read the [Functionality](#Functionality) section further down to see a
 specification of requirements for implementations.
